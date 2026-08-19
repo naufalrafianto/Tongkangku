@@ -1,0 +1,173 @@
+# ==========================================
+# Tongkangku - Fullstack
+# ==========================================
+
+# ==========================================
+# OS / IDE
+# ==========================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.sln.iml
+
+
+# ==========================================
+# .NET Backend
+# ==========================================
+
+# Build output
+**/bin/
+**/obj/
+
+# .NET generated files
+*.dll
+*.exe
+*.pdb
+*.cache
+*.nupkg
+*.snupkg
+
+# Test results
+TestResults/
+**/TestResults/
+*.trx
+
+# Coverage
+coverage/
+**/coverage/
+*.coverage
+*.coveragexml
+
+# NuGet
+packages/
+*.nuget.props
+*.nuget.targets
+
+# ASP.NET Core
+wwwroot/
+
+# User secrets
+**/secrets.json
+
+# Local configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# Entity Framework
+**/Migrations/*Designer.cs
+**/Migrations/*Snapshot.cs
+
+
+# ==========================================
+# Angular Frontend
+# ==========================================
+
+# Dependencies
+**/node_modules/
+
+# Angular build
+**/dist/
+**/.angular/
+
+# Angular cache
+.angular/
+
+# Environment files
+# Uncomment if these contain secrets
+# **/src/environments/environment.ts
+# **/src/environments/environment.development.ts
+
+# npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager cache
+.npm/
+.pnpm-store/
+
+# Angular temporary files
+**/.sass-cache/
+**/.eslintcache/
+
+
+# ==========================================
+# Environment / Secrets
+# ==========================================
+
+.env
+.env.*
+!.env.example
+
+# Certificates / local HTTPS
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+
+
+# ==========================================
+# Logs
+# ==========================================
+
+*.log
+logs/
+**/logs/
+
+
+# ==========================================
+# Database / Local Development
+# ==========================================
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Local database dumps
+*.sql
+*.dump
+
+
+# ==========================================
+# Temporary Files
+# ==========================================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Temporary folders
+tmp/
+temp/
+**/tmp/
+**/temp/
