@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using tongkangku_be.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;using tongkangku_be.Models;
 
 namespace tongkangku_be.Models
 {
 
+    [Table("vessels")]
     public class Vessel
     {
-        public Guid id { get; set; }
-        public string? name { get; set; }
-        [Column("VESSEL_OWNER_ID")]
+        [Key]
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
         public Guid OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]
         public User? Owner { get; set; }
@@ -19,11 +20,11 @@ namespace tongkangku_be.Models
         [ForeignKey(nameof(PortId))]
         public Port? Port { get; set; }
 
-        public int capacityFeed { get; set; }
-        public int dwtCapacity { get; set; }
-        public int year { get; set; }
-        public decimal ratePerDay { get; set; }
-        public VesselStatus status { get; set; }
+        public int CapacityFeed { get; set; }
+        public int DwtCapacity { get; set; }
+        public int Year { get; set; }
+        public decimal RatePerDay { get; set; }
+        public VesselStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 

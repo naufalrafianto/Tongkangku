@@ -1,19 +1,25 @@
-﻿namespace tongkangku_be.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace tongkangku_be.Models
 {
+    [Table("laytime_record")]
     public class LaytimeRecord
     {
-        public Guid id { get; set; }
-        public DateTime startTime { get; set; }
-        public DateTime endTime { get; set; }
+        [Key]
+        public Guid Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public int LayTimeHours { get; set; }
-        public int actualDurationHours { get; set; }
-        public int overTimeHours { get; set; }
-        public int savedHours { get; set; }
-        public decimal demurrageRate { get; set; }
-        public decimal demurrageAmount { get; set; }
-        public decimal despatchRate { get; set; }
-        public decimal despatchAmount { get; set; } 
-        public string notes { get; set; }
+        public int ActualDurationHours { get; set; }
+        public int OverTimeHours { get; set; }
+        public int SavedHours { get; set; }
+        public decimal DemurrageRate { get; set; }
+        public decimal DemurrageAmount { get; set; }
+        public decimal DespatchRate { get; set; }
+        public decimal DespatchAmount { get; set; } 
+        public decimal TotalPrice { get; set; } 
+        public string Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 

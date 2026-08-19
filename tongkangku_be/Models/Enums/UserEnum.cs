@@ -1,9 +1,9 @@
-﻿namespace tongkangku_be.Models.Enums
+﻿namespace tongkangku_be.Models
 {
-    public enum UserEnum
+    public enum UserRole
     {
-     Charterer,
-     Owner,
-     Admin
+        Charterer,
+        Owner,
+        Admin
     }
 }

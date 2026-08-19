@@ -1,12 +1,23 @@
-﻿namespace tongkangku_be.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace tongkangku_be.Models
 {
+    [Table("port")]
     public class Port
     {
-        public Guid id { get; set; }
-        public string name { get; set; }
-        public string city { get; set; }
-        public string province { get; set; }
-        DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        DateTime UpdateAt { get; set; } = DateTime.UtcNow;
+        [Key]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string? City { get; set; }
+
+        public string? Province { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
     }
 }

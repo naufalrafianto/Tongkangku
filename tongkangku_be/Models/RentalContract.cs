@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Models
@@ -7,8 +7,9 @@ namespace tongkangku_be.Models
     [Table("rental_contract")]
     public class RentalContract
     {
+        [Key]
+
         public Guid Id { get; set; }
-        [Required]
         public string ContractNum { get; set; } = string.Empty;
         public Guid RentalRequestId { get; set; }
         public Guid ChartererId { get; set; }
@@ -27,11 +28,7 @@ namespace tongkangku_be.Models
         public RentalRequest? RentalRequest { get; set; }
 
         [ForeignKey(nameof(OwnerId))]
-        public User? Owner
-        {
-            get; set;
-
-        }
+        public User? Owner {get; set; }
 
         public ICollection<ContractCargo> ContractCargos { get; set; }
         = new List<ContractCargo>();

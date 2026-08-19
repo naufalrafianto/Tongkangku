@@ -1,22 +1,31 @@
-﻿namespace tongkangku_be.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace tongkangku_be.Models
 {
+    [Table("contract_cargo")]
     public class ContractCargo
     {
+        [Key]
         public Guid Id { get; set; }
 
         public Guid ContractId { get; set; }
 
+        [ForeignKey(nameof(ContractId))]
+        public RentalContract? Contract { get; set; }
+
         public Guid CargoTypeId { get; set; }
 
-        public decimal? WeightTon { get; set; }
+        [ForeignKey(nameof(CargoTypeId))]
+        public CargoType? CargoType { get; set; }
 
-        public string? Notes { get; set; }
+        public string CargoName { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; }
+        public double Quantity { get; set; }
 
-        // Navigation
-        public RentalContract Contract { get; set; } = null!;
+        public string Unit { get; set; } = string.Empty;
 
-        public CargoType CargoType { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

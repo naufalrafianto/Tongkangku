@@ -1,17 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using tongkangku_be.Models.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("USER")]
+    [Table("user")]
     public class User
     {
-        
-        public Guid id { get; set; }
-        public string? name { get; set; }
-        public string? email { get; set; }
-        public string pw { get; set; }
-        public UserEnum role { get; set; }
-        
+        [Key]
+        public Guid Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
+
+        public UserRole Role { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [InverseProperty(nameof(Vessel.Owner))]
+        public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
+
+        [InverseProperty(nameof(RentalRequest.Charterer))]
+        public ICollection<RentalRequest> RentalRequests { get; set; } = new List<RentalRequest>();
+
+        [InverseProperty(nameof(RentalContract.Owner))]
+        public ICollection<RentalContract> OwnerContracts { get; set; } = new List<RentalContract>();
+
+        [InverseProperty(nameof(RentalContract.Charterer))]
+        public ICollection<RentalContract> ChartererContracts { get; set; } = new List<RentalContract>();
     }
 }
