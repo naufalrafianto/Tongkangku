@@ -1,6 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using tongkangku_be.Data;
 using tongkangku_be.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connStr = builder.Configuration
+.GetConnectionString("TongkangkuDb");
+builder.Services.AddDbContext<ApplicationDbContext>(
+opt => opt.UseNpgsql(connStr));
 
 // Add services to the container.
 

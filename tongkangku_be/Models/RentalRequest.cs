@@ -9,22 +9,26 @@ namespace tongkangku_be.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public Guid VesselId { get; set; }
 
+        public Guid VesselId { get; set; }
         public Guid ChartererId { get; set; }
-        public Guid RentalContractId { get; set; }
+
         public DateTime StartDate { get; set; }
         public int PlanDay { get; set; }
         public decimal TotalEstimatedPrice { get; set; }
+
         public RentalRequestStatus Status { get; set; }
         public string Notes { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey(nameof(VesselId))]
         public Vessel? Vessel { get; set; }
 
-        [ForeignKey(nameof(RentalContractId))]
+        [ForeignKey(nameof(ChartererId))]
+        public User? Charterer { get; set; }
+
         public RentalContract? RentalContract { get; set; }
     }
 }
