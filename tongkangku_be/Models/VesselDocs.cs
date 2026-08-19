@@ -1,33 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using tongkangku_be.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("VesselDocs")]
+    [Table("vessel_docs")]
     public class VesselDocs
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public Guid vesselId { get; set; }
+        public Guid VesselId { get; set; }
 
-        [ForeignKey(nameof(vesselId))]
-        public Vessel? vessel { get; set; }
+        [ForeignKey(nameof(VesselId))]
+        public Vessel? Vessel { get; set; }
 
-        public string? documentType { get; set; }
+        public string? DocumentType { get; set; }
 
-        public string? docsName { get; set; }
+        public string? DocsName { get; set; }
 
-        public string? docsNum { get; set; }
+        public string? DocsNum { get; set; }
 
-        public DateTime? issueDate { get; set; }
+        public DateTime? IssueDate { get; set; }
 
-        public DateTime? expiryDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
 
-        public string? fileUrl { get; set; }
+        public string? FileUrl { get; set; }
 
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }
 

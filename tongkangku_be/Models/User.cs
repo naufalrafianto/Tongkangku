@@ -1,34 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("User")]
+    [Table("user")]
     public class User
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public string name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public string email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
-        public string password { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
-        public UserRole role { get; set; }
+        public UserRole Role { get; set; }
 
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [InverseProperty(nameof(Vessel.owner))]
+        [InverseProperty(nameof(Vessel.Owner))]
         public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
 
-        [InverseProperty(nameof(RentalRequest.charterer))]
+        [InverseProperty(nameof(RentalRequest.Charterer))]
         public ICollection<RentalRequest> RentalRequests { get; set; } = new List<RentalRequest>();
 
-        [InverseProperty(nameof(RentalContract.owner))]
+        [InverseProperty(nameof(RentalContract.Owner))]
         public ICollection<RentalContract> OwnerContracts { get; set; } = new List<RentalContract>();
 
-        [InverseProperty(nameof(RentalContract.charterer))]
+        [InverseProperty(nameof(RentalContract.Charterer))]
         public ICollection<RentalContract> ChartererContracts { get; set; } = new List<RentalContract>();
     }
 }

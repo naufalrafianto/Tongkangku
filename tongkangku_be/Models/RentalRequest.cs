@@ -23,8 +23,10 @@ namespace tongkangku_be.Models
 
         [ForeignKey(nameof(ChartererId))]
         public User? Charterer { get; set; }
+
         [ForeignKey(nameof(VesselId))]
         public Vessel? Vessel { get; set; }
+
         [ForeignKey(nameof(RentalContractId))]
         public RentalContract? RentalContract { get; set; }
     }

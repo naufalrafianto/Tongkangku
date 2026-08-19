@@ -1,23 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("CargoType")]
+    [Table("cargo_type")]
     public class CargoType
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public string name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public string? description { get; set; }
+        public string? Description { get; set; }
 
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
-        public ICollection<ContractCargo> ContractCargos { get; set; } = new List<ContractCargo>();
+        public DateTime UpdatedAt { get; set; }
+
+        // Navigation
+        public ICollection<ContractCargo> ContractCargos { get; set; }
+            = new List<ContractCargo>();
     }
 }
