@@ -21,9 +21,6 @@ namespace tongkangku_be.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(ChartererId))]
-        public User? Charterer { get; set; }
-
         [ForeignKey(nameof(VesselId))]
         public Vessel? Vessel { get; set; }
 
