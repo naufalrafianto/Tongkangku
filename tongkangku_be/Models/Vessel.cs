@@ -29,6 +29,7 @@ namespace tongkangku_be.Models
         public DateTime UpdateAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<VesselDocs> VesselDocs { get; set; } = new List<VesselDocs>();
+        public ICollection<RentalRequest> RentalRequests { get; set; } = new List<RentalRequest>();
     }
 
 }
