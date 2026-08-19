@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using tongkangku_be.Data;
+using tongkangku_be.Interfaces;
 using tongkangku_be.Middlewares;
+using tongkangku_be.Services;
+using tongkangku_be.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 opt => opt.UseNpgsql(connStr));
 
 // Add services to the container.
+builder.Services.AddScoped<IRentalService, RentalService>();
+
+builder.Services.AddScoped(
+    typeof(IRepository<>),
+    typeof(Repository<>)
+);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

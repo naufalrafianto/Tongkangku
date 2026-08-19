@@ -23,7 +23,7 @@ namespace tongkangku_be.Shared
         {
             return new ApiResponse<T>
             {
-                Success = true,
+                Success = false,
                 Message = message,
                 Data = default,
                 Error = new ApiErrorResponse
