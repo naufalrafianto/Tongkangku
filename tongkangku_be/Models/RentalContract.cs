@@ -33,5 +33,8 @@ namespace tongkangku_be.Models
 
         }
 
+        public ICollection<ContractCargo> ContractCargos { get; set; }
+        = new List<ContractCargo>();
     }
+
 }
