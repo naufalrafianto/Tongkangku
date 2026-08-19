@@ -1,7 +1,48 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Code\\Tongkangku\\tongkangku_be\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\rentalrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\rentalrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\vessel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\vessel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\enums\\rentalrequeststatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\enums\\rentalrequeststatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\laytimerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\laytimerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\vesseldocs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\vesseldocs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\enums\\vesselstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\enums\\vesselstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\vesselcategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\vesselcategory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\userenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\userenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|c:\\users\\adicipta\\documents\\tongkangku\\tongkangku\\tongkangku_be\\models\\port.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9292447-2706-4542-85C8-2DF3FE057FC2}|tongkangku_be.csproj|solutionrelative:models\\port.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +50,141 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LaytimeRecord.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\LaytimeRecord.cs",
+              "RelativeDocumentMoniker": "Models\\LaytimeRecord.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\LaytimeRecord.cs",
+              "RelativeToolTip": "Models\\LaytimeRecord.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAA1wA8AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T07:19:54.567Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "VesselStatus.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Enums\\VesselStatus.cs",
+              "RelativeDocumentMoniker": "Models\\Enums\\VesselStatus.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Enums\\VesselStatus.cs",
+              "RelativeToolTip": "Models\\Enums\\VesselStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T07:19:19.705Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RentalRequestStatus.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Enums\\RentalRequestStatus.cs",
+              "RelativeDocumentMoniker": "Models\\Enums\\RentalRequestStatus.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Enums\\RentalRequestStatus.cs",
+              "RelativeToolTip": "Models\\Enums\\RentalRequestStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T07:12:35.922Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RentalRequest.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\RentalRequest.cs",
+              "RelativeDocumentMoniker": "Models\\RentalRequest.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\RentalRequest.cs",
+              "RelativeToolTip": "Models\\RentalRequest.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAQwAcAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T07:10:20.066Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Vessel.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Vessel.cs",
+              "RelativeDocumentMoniker": "Models\\Vessel.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Vessel.cs",
+              "RelativeToolTip": "Models\\Vessel.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T06:41:31.95Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T06:13:29.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UserEnum.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\UserEnum.cs",
+              "RelativeDocumentMoniker": "Models\\UserEnum.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\UserEnum.cs",
+              "RelativeToolTip": "Models\\UserEnum.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T06:39:47.496Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "VesselDocs.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\VesselDocs.cs",
+              "RelativeDocumentMoniker": "Models\\VesselDocs.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\VesselDocs.cs",
+              "RelativeToolTip": "Models\\VesselDocs.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAADwvwkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T06:52:10.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "VesselCategory.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\VesselCategory.cs",
+              "RelativeDocumentMoniker": "Models\\VesselCategory.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\VesselCategory.cs",
+              "RelativeToolTip": "Models\\VesselCategory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T07:00:43.887Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Port.cs",
+              "DocumentMoniker": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Port.cs",
+              "RelativeDocumentMoniker": "Models\\Port.cs",
+              "ToolTip": "C:\\Users\\Adicipta\\Documents\\TongkangKu\\Tongkangku\\tongkangku_be\\Models\\Port.cs",
+              "RelativeToolTip": "Models\\Port.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T06:50:23.85Z",
+              "EditorCaption": ""
+            },
+            {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "Name": "ST:0:0:{56df62a4-05a3-4e5b-aa1a-99371ccfb997}"
             }
           ]
         }
