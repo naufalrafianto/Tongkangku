@@ -1,15 +1,13 @@
-``using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using tongkangku_be.Data;
-using tongkangku_be.Repositories;
 
-namespace CineBook.Repositories
+namespace tongkangku_be.Repositories
 {
     public class Repository<T>(ApplicationDbContext context) : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context = context;
         private readonly DbSet<T> _dbSet = context.Set<T>();
-        private IDbContextTransaction? _transaction;
 
         public async Task<T?> GetByIdAsync(Guid id)
         {
@@ -23,7 +21,7 @@ namespace CineBook.Repositories
             {
                 query = query.Include(includeProperty);
             }
-            return await query.FirstOrDefaultAsync(e => EF.Property<long>(e, "Id") == id);
+            return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
         }
 
         public async Task<List<T>> GetAllAsync()
