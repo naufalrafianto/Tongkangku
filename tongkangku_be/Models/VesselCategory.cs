@@ -1,19 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("VesselCategory")]
+    [Table("vessel_category")]
     public class VesselCategory
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        public string name { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public string? description { get; set; }
+        public string? Description { get; set; }
 
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
     }

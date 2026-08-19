@@ -1,34 +1,31 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("ContractCargo")]
+    [Table("contract_cargo")]
     public class ContractCargo
     {
         [Key]
-        public Guid id { get; set; }
+        public Guid Id { get; set; }
 
-        [Column("CONTRACT_ID")]
-        public Guid contractId { get; set; }
+        public Guid ContractId { get; set; }
 
-        [ForeignKey(nameof(contractId))]
-        public RentalContract? contract { get; set; }
+        [ForeignKey(nameof(ContractId))]
+        public RentalContract? Contract { get; set; }
 
-        [Column("CARGO_TYPE_ID")]
-        public Guid cargoTypeId { get; set; }
+        public Guid CargoTypeId { get; set; }
 
-        [ForeignKey(nameof(cargoTypeId))]
-        public CargoType? cargoType { get; set; }
+        [ForeignKey(nameof(CargoTypeId))]
+        public CargoType? CargoType { get; set; }
 
-        public string cargoName { get; set; } = string.Empty;
+        public string CargoName { get; set; } = string.Empty;
 
-        public double quantity { get; set; }
+        public double Quantity { get; set; }
 
-        public string unit { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
 
-        public DateTime createdAt { get; set; } = DateTime.UtcNow;
-        public DateTime updatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

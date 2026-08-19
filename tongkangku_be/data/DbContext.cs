@@ -20,15 +20,7 @@ public class DbContext : DbContext
 		base.OnModelCreating(modelBuilder);
 		modelBuilder.Entity<User>()
 				.HasIndex(u => u.email)
-				.IsUnique();
-
-		modelBuilder.Entity<RentalContract>()
-			.HasIndex(rc => rc.contractNum)
-			.IsUnique();
-
-		modelBuilder.Entity<RentalContract>()
-			.HasIndex(rc => rc.rentalRequestId)
-			.IsUnique();
+				.IsUnique();;
 
 		modelBuilder.Entity<Vessel>()
 			.HasOne(v => v.owner)
@@ -109,10 +101,6 @@ public class DbContext : DbContext
 			.WithMany(ct => ct.ContractCargos)
 			.HasForeignKey(cc => cc.cargoTypeId)
 			.OnDelete(DeleteBehavior.Restrict);
-
-
-
-
 	}
 
 }
