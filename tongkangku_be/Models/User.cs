@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Models
 {

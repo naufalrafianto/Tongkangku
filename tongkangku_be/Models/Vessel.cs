@@ -12,11 +12,9 @@ namespace tongkangku_be.Models
         public Guid OwnerId { get; set; }
         [ForeignKey(nameof(OwnerId))]
         public User? Owner { get; set; }
-        [Column("VESSEL_CATEGORY_ID")]
         public Guid CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]
-        public VesselCategory Category { get; set; }
-        [Column("VESSEL_PORT_ID")]
+        public VesselCategory? Category { get; set; }  
         public Guid PortId { get; set; }
         [ForeignKey(nameof(PortId))]
         public Port? Port { get; set; }

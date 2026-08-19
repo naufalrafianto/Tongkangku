@@ -1,4 +1,4 @@
-﻿namespace tongkangku_be.Models
+﻿namespace tongkangku_be.Models.Enums
 {
     public enum UserEnum
     {
