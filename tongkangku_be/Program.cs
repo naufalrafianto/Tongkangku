@@ -14,11 +14,14 @@ opt => opt.UseNpgsql(connStr));
 
 // Add services to the container.
 builder.Services.AddScoped<IRentalService, RentalService>();
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped(
     typeof(IRepository<>),
     typeof(Repository<>)
 );
+
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
