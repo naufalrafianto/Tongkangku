@@ -15,7 +15,7 @@ Desktop.ini
 .DS_Store
 
 # Visual Studio
-.vs/
+**/.vs/
 *.user
 *.userosscache
 *.suo
@@ -65,19 +65,16 @@ packages/
 *.nuget.props
 *.nuget.targets
 
-# ASP.NET Core
-wwwroot/
+# ASP.NET Core - Uploaded User Files Only
+# (Jangan meng-ignore seluruh wwwroot agar static assets tetap ter-push)
+wwwroot/uploads/
 
 # User secrets
 **/secrets.json
 
-# Local configuration
-appsettings.Development.json
-appsettings.Local.json
-
-# Entity Framework
-**/Migrations/*Designer.cs
-**/Migrations/*Snapshot.cs
+# Local configuration (buka jika ingin mengabaikan appsettings lokal)
+# appsettings.Development.json
+# appsettings.Local.json
 
 
 # ==========================================
@@ -90,14 +87,6 @@ appsettings.Local.json
 # Angular build
 **/dist/
 **/.angular/
-
-# Angular cache
-.angular/
-
-# Environment files
-# Uncomment if these contain secrets
-# **/src/environments/environment.ts
-# **/src/environments/environment.development.ts
 
 # npm logs
 npm-debug.log*
