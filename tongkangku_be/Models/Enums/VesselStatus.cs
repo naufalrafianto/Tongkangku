@@ -2,7 +2,7 @@
 {
     public enum VesselStatus
     {
-      Available,
-      Unavailable
+        Available,
+        Unavailable
     }
 }

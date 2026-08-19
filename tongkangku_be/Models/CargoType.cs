@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("VesselCategory")]
-    public class VesselCategory
+    [Table("CargoType")]
+    public class CargoType
     {
         [Key]
         public Guid id { get; set; }
@@ -15,6 +18,6 @@ namespace tongkangku_be.Models
         public DateTime createdAt { get; set; } = DateTime.UtcNow;
         public DateTime updatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
+        public ICollection<ContractCargo> ContractCargos { get; set; } = new List<ContractCargo>();
     }
 }
