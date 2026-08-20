@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Models
 {
@@ -16,7 +17,7 @@ namespace tongkangku_be.Models
         public decimal DemurrageRate { get; set; }
         public decimal DespatchRate { get; set; }
         public decimal? AgreedTotalPrice { get; set; }
-        public ContractStatus Status { get; set; }
+        public RentalContractStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         [ForeignKey(nameof(RentalRequestId))]

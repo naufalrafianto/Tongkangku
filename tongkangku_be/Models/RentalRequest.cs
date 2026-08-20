@@ -18,6 +18,7 @@ namespace tongkangku_be.Models
         public decimal TotalEstimatedPrice { get; set; }
 
         public RentalRequestStatus Status { get; set; }
+        public string? RejectionReason { get; set; }
         public string Notes { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

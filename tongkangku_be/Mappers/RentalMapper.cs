@@ -1,4 +1,4 @@
-﻿using tongkangku_be.Dtos;
+﻿using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Models;
 
 namespace tongkangku_be.Mappers
@@ -20,11 +20,20 @@ namespace tongkangku_be.Mappers
                 StartDate = rental.StartDate,
                 PlanDay = rental.PlanDay,
                 TotalEstimatedPrice = rental.TotalEstimatedPrice,
-                Status = (int)rental.Status,
+                Status = rental.Status,
+                RejectionReason = rental.RejectionReason,
                 Notes = rental.Notes,
 
                 CreatedAt = rental.CreatedAt,
                 UpdateAt = rental.UpdateAt
+            };
+        }
+        public static RentalStatusResponseDto ToStatusDto(RentalRequest rental)
+        {
+            return new RentalStatusResponseDto
+            {
+                Id = rental.Id,
+                Status = rental.Status
             };
         }
     }
