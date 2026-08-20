@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using tongkangku_be.Data;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Middlewares;
-using tongkangku_be.Services;
+using tongkangku_be.Middlewares.tongkangku_be.Middleware;
 using tongkangku_be.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -63,6 +63,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<NotFoundMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -1,4 +1,6 @@
-﻿namespace tongkangku_be.Dtos
+﻿using tongkangku_be.Models.Enums;
+
+namespace tongkangku_be.Dtos.RentalRequest
 {
     public class RentalResponseDto
     {
@@ -10,9 +12,16 @@
         public DateTime StartDate{ get; set; } 
         public int PlanDay{ get; set; }
         public decimal TotalEstimatedPrice{ get; set; }
-        public int Status { get; set; }
+        public RentalRequestStatus Status { get; set; }
+        public string? RejectionReason { get; set; } = string.Empty;
         public string? Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
+    }
+
+    public class RentalStatusResponseDto
+    {
+        public Guid Id { get; set; }
+        public RentalRequestStatus Status { get; set; }
     }
 }
