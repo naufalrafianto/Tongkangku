@@ -5,14 +5,14 @@
 namespace tongkangku_be.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRejectionReasonToRentalRequest : Migration
+    public partial class AddOfferRejectionReason : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "RejectionReason",
-                table: "rental_requests",
+                table: "rental_offers",
                 type: "text",
                 nullable: true);
         }
@@ -22,7 +22,7 @@ namespace tongkangku_be.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "RejectionReason",
-                table: "rental_requests");
+                table: "rental_offers");
         }
     }
 }

@@ -10,10 +10,10 @@ using tongkangku_be.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 
-
-
-
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
+var jwtKey = config["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT Key belum dikonfigurasi.");
 
 var connStr = builder.Configuration
 .GetConnectionString("TongkangkuDb");
@@ -42,15 +42,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                System.Text.Encoding.UTF8.GetBytes(jwtKey)
             )
         };
     });
 
+builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+
 // Add services to the container.
-builder.Services.AddScoped<IRentalService, RentalService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
+<<<<<<< HEAD
 builder.Services.AddScoped<IVesselService, VesselService>();
+=======
+builder.Services.AddScoped<IRentalService, RentalService>();
+>>>>>>> 7516ffa5584811da900c40789c2bbeee6774f1ae
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
 builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped(

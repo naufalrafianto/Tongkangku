@@ -29,5 +29,8 @@ namespace tongkangku_be.Models
         [InverseProperty(nameof(RentalContract.Owner))]
         public ICollection<RentalContract> OwnerContracts { get; set; } = new List<RentalContract>();
 
+        [InverseProperty(nameof(RentalOffer.Owner))]
+        public ICollection<RentalOffer> OwnerOffers { get; set; }
+            = new List<RentalOffer>();
     }
 }

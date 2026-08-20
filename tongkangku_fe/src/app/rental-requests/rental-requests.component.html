@@ -1,0 +1,140 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Create Rental Request</h1>
+
+    <p>Create a new rental request for this vessel.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-card">
+    <!-- Rental Information -->
+    <section class="form-section">
+      <h2 class="form-section-title">Rental Information</h2>
+
+      <div class="form-grid">
+        <app-form-field label="Charterer" [required]="true">
+          <app-form-select
+            [control]="form.controls.chartererId"
+            [options]="[]"
+            placeholder="Select charterer"
+          />
+        </app-form-field>
+
+        <app-form-field label="Charter Type" [required]="true">
+          <app-form-select
+            [control]="form.controls.charterType"
+            [options]="[]"
+            placeholder="Select charter type"
+          />
+        </app-form-field>
+
+        <app-form-field label="Loading Port" [required]="true">
+          <app-form-select
+            [control]="form.controls.loadingPortId"
+            [options]="[]"
+            placeholder="Select loading port"
+          />
+        </app-form-field>
+
+        <app-form-field label="Discharging Port" [required]="true">
+          <app-form-select
+            [control]="form.controls.dischargingPortId"
+            [options]="[]"
+            placeholder="Select discharging port"
+          />
+        </app-form-field>
+
+        <app-form-field label="Start Date" [required]="true">
+          <app-form-date [control]="form.controls.startDate" />
+        </app-form-field>
+
+        <app-form-field label="Plan Day" [required]="true">
+          <app-form-input
+            type="number"
+            [control]="form.controls.planDay"
+            placeholder="Number of days"
+          />
+        </app-form-field>
+
+        <div class="full-width">
+          <app-form-field label="Notes">
+            <app-form-textarea
+              [control]="form.controls.notes"
+              placeholder="Additional notes..."
+            />
+          </app-form-field>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cargo -->
+    <section class="form-section">
+      <h2 class="form-section-title">Cargo</h2>
+
+      <div class="cargo-list" formArrayName="cargos">
+        @for (cargo of cargos.controls; track cargo; let i = $index) {
+          <div class="cargo-item" [formGroupName]="i">
+            <div class="cargo-header">
+              <span class="cargo-title"> Cargo {{ i + 1 }} </span>
+
+              <button
+                type="button"
+                class="button button-danger remove-button"
+                (click)="removeCargo(i)"
+              >
+                Remove
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <app-form-field label="Cargo" [required]="true">
+                <app-form-select
+                  [control]="cargo.controls.cargoId"
+                  [options]="[]"
+                  placeholder="Select cargo"
+                />
+              </app-form-field>
+
+              <app-form-field label="Quantity" [required]="true">
+                <app-form-input
+                  type="number"
+                  [control]="cargo.controls.quantity"
+                  placeholder="Quantity"
+                />
+              </app-form-field>
+
+              <div class="full-width">
+                <app-form-field label="Notes">
+                  <app-form-input
+                    [control]="cargo.controls.notes"
+                    placeholder="Cargo notes"
+                  />
+                </app-form-field>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="button button-secondary"
+        (click)="addCargo()"
+      >
+        + Add Cargo
+      </button>
+    </section>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="button button-secondary">Cancel</button>
+
+      <button
+        type="submit"
+        class="button button-primary"
+        [disabled]="form.invalid"
+      >
+        Create Rental Request
+      </button>
+    </div>
+  </form>
+</div>

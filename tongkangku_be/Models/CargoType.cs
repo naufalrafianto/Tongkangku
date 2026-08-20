@@ -20,5 +20,8 @@ namespace tongkangku_be.Models
         // Navigation
         public ICollection<ContractCargo> ContractCargos { get; set; }
             = new List<ContractCargo>();
+
+        public ICollection<RentalRequestCargo> RentalRequestCargos { get; set; }
+            = new List<RentalRequestCargo>();
     }
 }
