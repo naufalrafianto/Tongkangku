@@ -4,7 +4,7 @@ using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Models
 {
-    [Table("laytime_record")]
+    [Table("laytime_records")]
     public class LaytimeRecord
     {
         [Key]

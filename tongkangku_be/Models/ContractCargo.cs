@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("contract_cargo")]
+    [Table("contract_cargos")]
     public class ContractCargo
     {
         [Key]
