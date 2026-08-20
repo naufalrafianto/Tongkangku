@@ -16,6 +16,10 @@ namespace tongkangku_be.Models
         public DateTime EndDate { get; set; }
         public decimal DemurrageRate { get; set; }
         public decimal DespatchRate { get; set; }
+        public decimal AgreedRatePerDay { get; set; }
+        public decimal AgreedHireAmount { get; set; }
+        public decimal AgreedBunkerAmount { get; set; }
+        public decimal AgreedOtherCharges { get; set; }
         public decimal? AgreedTotalPrice { get; set; }
         public RentalContractStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

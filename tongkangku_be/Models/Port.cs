@@ -18,6 +18,14 @@ namespace tongkangku_be.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<Vessel> Vessels { get; set; } = new List<Vessel>();
+        public ICollection<Vessel> Vessels { get; set; }
+            = new List<Vessel>();
+
+        public ICollection<RentalRequest> LoadingRentalRequests { get; set; }
+            = new List<RentalRequest>();
+ 
+        public ICollection<RentalRequest> DischargingRentalRequests { get; set; }
+            = new List<RentalRequest>();
+
     }
 }

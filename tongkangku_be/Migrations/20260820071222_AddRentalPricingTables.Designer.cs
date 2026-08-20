@@ -12,8 +12,8 @@ using tongkangku_be.Data;
 namespace tongkangku_be.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260820041146_AddRejectionReasonToRentalRequest")]
-    partial class AddRejectionReasonToRentalRequest
+    [Migration("20260820071222_AddRentalPricingTables")]
+    partial class AddRentalPricingTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,6 +68,9 @@ namespace tongkangku_be.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<decimal?>("FreightRatePerTon")
+                        .HasColumnType("numeric");
+
                     b.Property<double>("Quantity")
                         .HasColumnType("double precision");
 
@@ -120,6 +123,9 @@ namespace tongkangku_be.Migrations
 
                     b.Property<int>("LaytimeHours")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("NetLaytimeAmount")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Notes")
                         .IsRequired()
@@ -180,6 +186,18 @@ namespace tongkangku_be.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("AgreedBunkerAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AgreedHireAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AgreedOtherCharges")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AgreedRatePerDay")
+                        .HasColumnType("numeric");
+
                     b.Property<decimal?>("AgreedTotalPrice")
                         .HasColumnType("numeric");
 
@@ -224,17 +242,195 @@ namespace tongkangku_be.Migrations
                     b.ToTable("rental_contracts");
                 });
 
+            modelBuilder.Entity("tongkangku_be.Models.RentalCostItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Bearer")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CostType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RentalRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RentalRequestId");
+
+                    b.ToTable("rental_cost_items");
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalOffer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BunkerAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("HireAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("OtherCharges")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("RatePerDay")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("RentalRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ValidUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("RentalRequestId");
+
+                    b.ToTable("rental_offers");
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalOperationalCost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CostType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CostType")
+                        .IsUnique();
+
+                    b.ToTable("rental_operational_costs", (string)null);
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalPricingSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<decimal>("ContingencyRate")
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("LongDurationMultiplier")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("MediumDurationMaxDays")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("MediumDurationMultiplier")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("ShortDurationMaxDays")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("ShortDurationMultiplier")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("TargetMargin")
+                        .HasColumnType("decimal(5,4)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("rental_pricing_settings", (string)null);
+                });
+
             modelBuilder.Entity("tongkangku_be.Models.RentalRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("BaseHirePrice")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("CharterType")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("ChartererId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DischargingPortId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("DurationMultiplier")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("EstimatedCost")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("LoadingPortId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Notes")
                         .IsRequired()
@@ -252,6 +448,9 @@ namespace tongkangku_be.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("TargetMargin")
+                        .HasColumnType("numeric");
+
                     b.Property<decimal>("TotalEstimatedPrice")
                         .HasColumnType("numeric");
 
@@ -265,9 +464,48 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("ChartererId");
 
+                    b.HasIndex("DischargingPortId");
+
+                    b.HasIndex("LoadingPortId");
+
                     b.HasIndex("VesselId");
 
                     b.ToTable("rental_requests");
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalRequestCargo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CargoTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("RentalRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CargoTypeId");
+
+                    b.HasIndex("RentalRequestId", "CargoTypeId")
+                        .IsUnique();
+
+                    b.ToTable("rental_request_cargos");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.User", b =>
@@ -468,11 +706,53 @@ namespace tongkangku_be.Migrations
                     b.Navigation("RentalRequest");
                 });
 
+            modelBuilder.Entity("tongkangku_be.Models.RentalCostItem", b =>
+                {
+                    b.HasOne("tongkangku_be.Models.RentalRequest", "RentalRequest")
+                        .WithMany("CostItems")
+                        .HasForeignKey("RentalRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RentalRequest");
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalOffer", b =>
+                {
+                    b.HasOne("tongkangku_be.Models.User", "Owner")
+                        .WithMany("OwnerOffers")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("tongkangku_be.Models.RentalRequest", "RentalRequest")
+                        .WithMany("Offers")
+                        .HasForeignKey("RentalRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("RentalRequest");
+                });
+
             modelBuilder.Entity("tongkangku_be.Models.RentalRequest", b =>
                 {
                     b.HasOne("tongkangku_be.Models.User", "Charterer")
                         .WithMany("RentalRequests")
                         .HasForeignKey("ChartererId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("tongkangku_be.Models.Port", "DischargingPort")
+                        .WithMany("DischargingRentalRequests")
+                        .HasForeignKey("DischargingPortId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("tongkangku_be.Models.Port", "LoadingPort")
+                        .WithMany("LoadingRentalRequests")
+                        .HasForeignKey("LoadingPortId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -484,7 +764,30 @@ namespace tongkangku_be.Migrations
 
                     b.Navigation("Charterer");
 
+                    b.Navigation("DischargingPort");
+
+                    b.Navigation("LoadingPort");
+
                     b.Navigation("Vessel");
+                });
+
+            modelBuilder.Entity("tongkangku_be.Models.RentalRequestCargo", b =>
+                {
+                    b.HasOne("tongkangku_be.Models.CargoType", "CargoType")
+                        .WithMany("RentalRequestCargos")
+                        .HasForeignKey("CargoTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("tongkangku_be.Models.RentalRequest", "RentalRequest")
+                        .WithMany("Cargos")
+                        .HasForeignKey("RentalRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CargoType");
+
+                    b.Navigation("RentalRequest");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Vessel", b =>
@@ -528,10 +831,16 @@ namespace tongkangku_be.Migrations
             modelBuilder.Entity("tongkangku_be.Models.CargoType", b =>
                 {
                     b.Navigation("ContractCargos");
+
+                    b.Navigation("RentalRequestCargos");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Port", b =>
                 {
+                    b.Navigation("DischargingRentalRequests");
+
+                    b.Navigation("LoadingRentalRequests");
+
                     b.Navigation("Vessels");
                 });
 
@@ -544,12 +853,20 @@ namespace tongkangku_be.Migrations
 
             modelBuilder.Entity("tongkangku_be.Models.RentalRequest", b =>
                 {
+                    b.Navigation("Cargos");
+
+                    b.Navigation("CostItems");
+
+                    b.Navigation("Offers");
+
                     b.Navigation("RentalContract");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.User", b =>
                 {
                     b.Navigation("OwnerContracts");
+
+                    b.Navigation("OwnerOffers");
 
                     b.Navigation("RentalRequests");
 
