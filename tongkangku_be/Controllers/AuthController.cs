@@ -24,6 +24,15 @@ namespace tongkangku_be.Controllers
             return Ok(result);
 
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto request)
+        {
+            var result = await _authService.LoginAsync(request);
+            if (result == null)
+                return Unauthorized(new { status = "error", message = "email atau password salah" });
+            return Ok(result);
+        }
+
     }
-    
 }
