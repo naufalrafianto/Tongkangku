@@ -3,6 +3,7 @@ using tongkangku_be.Dtos;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Mappers;
 using tongkangku_be.Models;
+using tongkangku_be.Models.Enums;
 using tongkangku_be.Repositories;
 using tongkangku_be.Shared;
 
@@ -97,7 +98,7 @@ namespace tongkangku_be.Services
                 StartDate = dto.StartDate,
                 PlanDay = dto.PlanDay,
                 TotalEstimatedPrice = totalEstimatedPrice,
-                Status = 0,
+                Status = RentalRequestStatus.Pending,
                 Notes = dto.Notes,
                 CreatedAt = DateTime.UtcNow,
                 UpdateAt = DateTime.UtcNow
@@ -116,6 +117,75 @@ namespace tongkangku_be.Services
             return RentalMapper.ToDto(createRental);
 
             });
+        }
+        public async Task<RentalResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto)
+        {
+            if (dto.PlanDay <= 0)
+            {
+                throw new ValidationException(new
+                {
+                    PlanDay = "Plan day must be greater than 0."
+                });
+            }
+
+            var rental = await _rentalRepository.GetByIdAsync(id);
+
+            if (rental is null)
+            {
+                throw new NotFoundException(
+                    $"Rental request with id '{id}' was not found."
+                );
+            }
+
+            var vessel = await _vesselRepository.GetByIdAsync(dto.VesselId);
+
+            if (vessel is null)
+            {
+                throw new NotFoundException(
+                    $"Vessel with id '{dto.VesselId}' was not found."
+                );
+            }
+
+            var faktorDurasi = dto.PlanDay switch
+            {
+                < 7 => 1.3m,
+                <= 30 => 1.0m,
+                _ => 0.85m
+            };
+
+            var totalEstimatedPrice =
+                vessel.RatePerDay * dto.PlanDay * faktorDurasi;
+
+            await _context.ExecuteInTransactionAsync(async () =>
+            {
+                rental.VesselId = dto.VesselId;
+                rental.StartDate = dto.StartDate;
+                rental.PlanDay = dto.PlanDay;
+                rental.Notes = dto.Notes;
+                rental.TotalEstimatedPrice = totalEstimatedPrice;
+                rental.UpdateAt = DateTime.UtcNow;
+
+                _rentalRepository.Update(rental);
+
+                await _rentalRepository.SaveChangesAsync();
+            });
+
+            return RentalMapper.ToDto(rental);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var rental = await _rentalRepository.GetByIdAsync(id);
+            if (rental == null)
+            {
+                throw new NotFoundException(
+                   $"Rental request with id '{id}' was not found."
+               );
+            }
+
+            _rentalRepository.Delete(rental);
+
+            await _rentalRepository.SaveChangesAsync();
         }
     }
 }

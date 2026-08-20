@@ -44,6 +44,21 @@ namespace tongkangku_be.Controllers
 
             return StatusCode(StatusCodes.Status201Created, ApiResponse<RentalResponseDto>.SuccessResult(result, "Rental request created successfully"));
         }
+        
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<RentalResponseDto>>> Update(Guid id, UpdateRentalDto dto)
+        {
+            var result = await _rentalService.UpdateAsync(id, dto);
 
+            return Ok( ApiResponse<RentalResponseDto>.SuccessResult(result, "Rental request updated successfully"));
+        }
+        
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<object>>> Delete(Guid id)
+        {
+            await _rentalService.DeleteAsync(id);
+
+            return Ok( ApiResponse<object>.SuccessResult(null!, "Rental request deleted successfully"));
+        }
     }
 }

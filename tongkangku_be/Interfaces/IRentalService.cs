@@ -7,7 +7,8 @@ namespace tongkangku_be.Interfaces
         Task<RentalResponseDto> GetByIdAsync(Guid id);
         Task<List<RentalResponseDto>> GetAllAsync();
         Task<RentalResponseDto> CreateAsync(CreateRentalDto dto);
-        //Task<RentalResponseDto> UpdateAsync(Guid id, CreateRentalDto dto);
-        //Task DeleteAsync(Guid id);
+        Task<RentalResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto);
+        Task DeleteAsync(Guid id);
+        //Task<>
     }
 }

@@ -2,7 +2,7 @@
 {
     public enum OperationType
     {
-    Loading,
-    Discharging
+    Loading = 0,
+    Discharging =1
     }
 }

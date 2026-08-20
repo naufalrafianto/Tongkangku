@@ -2,8 +2,8 @@
 {
     public enum UserRole
     {
-        Charterer,
-        Owner,
-        Admin
+        Charterer = 1,
+        Owner = 2,
+        Admin = 0
     }
 }
