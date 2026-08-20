@@ -6,7 +6,7 @@ using tongkangku_be.Shared;
 namespace tongkangku_be.Controllers
 {
     [ApiController]
-    [Route("api/rental")]
+    [Route("api/rental-request")]
     public class RentalController(IRentalService rentalService):ControllerBase
     {
         private readonly IRentalService _rentalService = rentalService;
@@ -35,6 +35,14 @@ namespace tongkangku_be.Controllers
                     "Rental requests retrieved successfully"
                 )
             );
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ApiResponse<RentalResponseDto>>> Create(CreateRentalDto dto)
+        {
+            var result = await _rentalService.CreateAsync(dto);
+
+            return StatusCode(StatusCodes.Status201Created, ApiResponse<RentalResponseDto>.SuccessResult(result, "Rental request created successfully"));
         }
 
     }
