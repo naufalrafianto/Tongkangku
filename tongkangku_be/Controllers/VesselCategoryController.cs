@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using tongkangku_be.Dtos;
+using tongkangku_be.Dtos.VesselCategoryRequest;
 using tongkangku_be.Interfaces;
 
 namespace tongkangku_be.Controllers

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using tongkangku_be.Dtos;
+using tongkangku_be.Dtos.AuthRequest;
 using tongkangku_be.Interfaces;
 
 namespace tongkangku_be.Controllers

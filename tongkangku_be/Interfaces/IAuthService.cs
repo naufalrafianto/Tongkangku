@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using tongkangku_be.Dtos;
+using tongkangku_be.Dtos.AuthRequest;
 
 namespace tongkangku_be.Interfaces
 {
