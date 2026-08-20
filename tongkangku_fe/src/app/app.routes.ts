@@ -1,3 +1,15 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { RentalRequestsComponent } from './rental-requests/rental-requests.component';
+
+export const routes: Routes = [
+  {
+    path: 'vessels',
+    children: [
+      {
+        path: ':id/rental-request',
+        component: RentalRequestsComponent,
+      },
+    ],
+  },
+];

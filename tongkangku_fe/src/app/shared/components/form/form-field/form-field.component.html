@@ -1,0 +1,17 @@
+<div class="form-field">
+  <label>
+    {{ label() }}
+
+    @if (required()) {
+      <span>*</span>
+    }
+  </label>
+
+  <ng-content />
+
+  @if (error()) {
+    <small class="error">
+      {{ error() }}
+    </small>
+  }
+</div>
