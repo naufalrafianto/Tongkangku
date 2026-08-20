@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using tongkangku_be.Dtos;
+using tongkangku_be.Dtos.AuthRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;

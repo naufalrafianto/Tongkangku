@@ -6,6 +6,8 @@ using tongkangku_be.Middlewares.tongkangku_be.Middleware;
 using tongkangku_be.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using tongkangku_be.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 
 
@@ -49,6 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IRentalService, RentalService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
+builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped(
     typeof(IRepository<>),
     typeof(Repository<>)
