@@ -12,12 +12,30 @@ namespace tongkangku_be.Controllers
         private readonly IRentalService _rentalService = rentalService;
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<RentalResponseDto>>>GetById(Guid id, RentalResponseDto? result)
+        public async Task<ActionResult<ApiResponse<RentalResponseDto>>> GetById(Guid id)
         {
+            var result = await _rentalService.GetByIdAsync(id);
 
             return Ok(
-                ApiResponse<RentalResponseDto>.SuccessResult(await _rentalService.GetByIdAsync(id))
+                ApiResponse<RentalResponseDto>.SuccessResult(
+                    result,
+                    "Rental request retrieved successfully"
+                )
             );
         }
+
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<List<RentalResponseDto>>>> GetAll()
+        {
+            var result = await _rentalService.GetAllAsync();
+
+            return Ok(
+                ApiResponse<List<RentalResponseDto>>.SuccessResult(
+                    result,
+                    "Rental requests retrieved successfully"
+                )
+            );
+        }
+
     }
 }

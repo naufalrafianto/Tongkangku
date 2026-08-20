@@ -114,5 +114,46 @@ namespace tongkangku_be.Data
                 .HasIndex(cc => new { cc.ContractId, cc.CargoTypeId })
                 .IsUnique();
         }
+
+        public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action)
+        {
+            var strategy = Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await Database.BeginTransactionAsync();
+                try
+                {
+                    var result = await action();
+                    await transaction.CommitAsync();
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+
+        public async Task ExecuteInTransactionAsync(Func<Task> action)
+        {
+            var strategy = Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = await Database.BeginTransactionAsync();
+                try
+                {
+                    await action();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
     }
 }
