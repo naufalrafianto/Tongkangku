@@ -1,5 +1,6 @@
-﻿using tongkangku_be.Data;
-using tongkangku_be.Dtos;
+﻿using System.Net;
+using tongkangku_be.Data;
+using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Mappers;
 using tongkangku_be.Models;
@@ -29,7 +30,6 @@ namespace tongkangku_be.Services
 
             return rental == null ? throw new NotFoundException($"Rental request with id '{id}' was not found.") : RentalMapper.ToDto(rental);
         }
-
         public async Task<List<RentalResponseDto>> GetAllAsync()
         {
             var rentals = await _rentalRepository.GetAllAsync(
@@ -45,8 +45,7 @@ namespace tongkangku_be.Services
                 .Select(RentalMapper.ToDto)
                 .ToList();
         }
-
-        public async Task<RentalResponseDto> CreateAsync(CreateRentalDto dto)
+        public async Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto)
         {
             if(dto.PlanDay <= 0)
             {
@@ -114,11 +113,11 @@ namespace tongkangku_be.Services
                 throw new NotFoundException($"Rental request with id '{rental.Id}' was not found.");
             }
 
-            return RentalMapper.ToDto(createRental);
+            return RentalMapper.ToStatusDto(createRental);
 
             });
         }
-        public async Task<RentalResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto)
+        public async Task<RentalStatusResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto)
         {
             if (dto.PlanDay <= 0)
             {
@@ -170,9 +169,8 @@ namespace tongkangku_be.Services
                 await _rentalRepository.SaveChangesAsync();
             });
 
-            return RentalMapper.ToDto(rental);
+            return RentalMapper.ToStatusDto(rental);
         }
-
         public async Task DeleteAsync(Guid id)
         {
             var rental = await _rentalRepository.GetByIdAsync(id);
@@ -186,6 +184,61 @@ namespace tongkangku_be.Services
             _rentalRepository.Delete(rental);
 
             await _rentalRepository.SaveChangesAsync();
+        }
+        public async Task<RentalStatusResponseDto> ApproveAsync(Guid id)
+        {
+            var rental = await _rentalRepository.GetByIdAsync(id);
+            if (rental == null)
+            {
+                throw new NotFoundException(
+                   $"Rental request with id '{id}' was not found."
+               );
+            }
+            if (rental.Status != (int)RentalRequestStatus.Pending)
+            {
+                throw new AppException("Only pending rental requests can be approved", HttpStatusCode.Conflict, "INVALID_STATUS");
+            }
+
+            rental.Status = (RentalRequestStatus)(int)RentalRequestStatus.Approved;
+            rental.UpdateAt = DateTime.UtcNow;
+
+            _rentalRepository.Update(rental);
+
+            await _rentalRepository.SaveChangesAsync();
+
+            return RentalMapper.ToStatusDto(rental);
+        }
+
+        public async Task<RentalStatusResponseDto> RejectAsync(Guid id, RejectRentalDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Reason))
+            {
+                throw new ValidationException(new
+                {
+                    Reason = "Rejection reason is required"
+                });
+            }
+
+            var rental = await _rentalRepository.GetByIdAsync(id);
+            if (rental == null)
+            {
+                throw new NotFoundException(
+                   $"Rental request with id '{id}' was not found."
+               );
+            }
+
+            if (rental.Status != (int)RentalRequestStatus.Pending)
+            {
+                throw new AppException("Only pending rental requests can be approved", HttpStatusCode.Conflict, "INVALID_STATUS");
+            }
+
+            rental.Status = (RentalRequestStatus)(int)RentalRequestStatus.Rejected;
+            rental.UpdateAt = DateTime.UtcNow;
+
+            rental.RejectionReason = dto.Reason;
+            _rentalRepository.Update(rental);
+            await _rentalRepository.SaveChangesAsync();
+            return RentalMapper.ToStatusDto(rental);
         }
     }
 }

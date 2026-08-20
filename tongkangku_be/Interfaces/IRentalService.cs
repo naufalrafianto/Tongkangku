@@ -1,4 +1,4 @@
-﻿using tongkangku_be.Dtos;
+﻿using tongkangku_be.Dtos.RentalRequest;
 
 namespace tongkangku_be.Interfaces
 {
@@ -6,9 +6,10 @@ namespace tongkangku_be.Interfaces
     {
         Task<RentalResponseDto> GetByIdAsync(Guid id);
         Task<List<RentalResponseDto>> GetAllAsync();
-        Task<RentalResponseDto> CreateAsync(CreateRentalDto dto);
-        Task<RentalResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto);
+        Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto);
+        Task<RentalStatusResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto);
         Task DeleteAsync(Guid id);
-        //Task<>
+        Task<RentalStatusResponseDto> ApproveAsync(Guid id);
+        Task<RentalStatusResponseDto> RejectAsync(Guid id, RejectRentalDto dto);
     }
 }

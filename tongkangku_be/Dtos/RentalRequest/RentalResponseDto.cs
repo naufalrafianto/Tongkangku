@@ -1,6 +1,6 @@
 ﻿using tongkangku_be.Models.Enums;
 
-namespace tongkangku_be.Dtos
+namespace tongkangku_be.Dtos.RentalRequest
 {
     public class RentalResponseDto
     {
@@ -17,5 +17,11 @@ namespace tongkangku_be.Dtos
         public string? Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
+    }
+
+    public class RentalStatusResponseDto
+    {
+        public Guid Id { get; set; }
+        public RentalRequestStatus Status { get; set; }
     }
 }

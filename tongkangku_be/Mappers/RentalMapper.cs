@@ -28,5 +28,13 @@ namespace tongkangku_be.Mappers
                 UpdateAt = rental.UpdateAt
             };
         }
+        public static RentalStatusResponseDto ToStatusDto(RentalRequest rental)
+        {
+            return new RentalStatusResponseDto
+            {
+                Id = rental.Id,
+                Status = rental.Status
+            };
+        }
     }
 }
