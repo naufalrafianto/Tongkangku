@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("vessel_category")]
+    [Table("vessel_categories")]
     public class VesselCategory
     {
         [Key]

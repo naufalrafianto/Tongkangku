@@ -4,7 +4,7 @@ using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Models
 {
-    [Table("rental_request")]
+    [Table("rental_requests")]
     public class RentalRequest
     {
         [Key]

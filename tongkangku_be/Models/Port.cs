@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace tongkangku_be.Models
 {
-    [Table("port")]
+    [Table("ports")]
     public class Port
     {
         [Key]
