@@ -28,7 +28,7 @@ namespace tongkangku_be.Models
 
         public decimal DespatchRate { get; set; }
         public decimal DespatchAmount { get; set; }
-
+        public decimal NetLaytimeAmount { get; set; }
         public string Notes { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

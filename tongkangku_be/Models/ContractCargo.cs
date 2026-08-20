@@ -20,10 +20,10 @@ namespace tongkangku_be.Models
         public CargoType? CargoType { get; set; }
 
         public string CargoName { get; set; } = string.Empty;
-
         public double Quantity { get; set; }
+        public string Unit { get; set; } = "MT";
 
-        public string Unit { get; set; } = string.Empty;
+        public decimal? FreightRatePerTon { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

@@ -2,9 +2,9 @@
 {
     public class RegisterRequestDto
     {
-        public string name { get; set; }
-        public string email { get; set; }
-        public string password { get; set; }
+        public string name { get; set; } = string.Empty;
+        public string email { get; set; } = string.Empty;
+        public string password { get; set; } = string.Empty;
         public int role { get; set; }
 
     }
