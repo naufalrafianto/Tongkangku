@@ -7,18 +7,20 @@ using tongkangku_be.Dtos.AuthRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
-
+using System.Security.Claims;
 namespace tongkangku_be.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public AuthService(IRepository<User> userRepository, IConfiguration configuration)
+        public AuthService(IRepository<User> userRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _configuration = configuration;
+            _contextAccessor = httpContextAccessor;
         }
 
 
@@ -104,6 +106,30 @@ namespace tongkangku_be.Services
             };
 
 
+        }
+
+        public async Task<CurrentUserResponseDto> CurrentUserAsync()
+        {
+            var userIdClaim = _contextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
+                              ?? _contextAccessor.HttpContext?.User?.FindFirst("id");
+
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                throw new UnauthorizedAccessException("Token tidak valid atau belum login!");
+            }
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User tidak ditemukan!");
+            }
+
+            return new CurrentUserResponseDto
+            {
+                id = user.Id,
+                email = user.Email,
+                name = user.Name
+            };
         }
     }
 }

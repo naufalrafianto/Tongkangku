@@ -1,0 +1,25 @@
+<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+  <h2>Login TongkangKu</h2>
+
+  <div *ngIf="errorMessage" style="color: red; margin-bottom: 10px;">{{ errorMessage }}</div>
+
+  <form (ngSubmit)="onLogin()">
+    <div style="margin-bottom: 10px;">
+      <label>Email</label>
+      <input type="email" [(ngModel)]="loginData.email" name="email" required style="width: 100%; padding: 8px;" />
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label>Password</label>
+      <input type="password" [(ngModel)]="loginData.password" name="password" required style="width: 100%; padding: 8px;" />
+    </div>
+
+    <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+      Masuk
+    </button>
+  </form>
+
+  <p style="margin-top: 15px; text-align: center;">
+    Belum punya akun? <a routerLink="/register">Daftar di sini</a>
+  </p>
+</div>

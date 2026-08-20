@@ -33,7 +33,18 @@ namespace tongkangku_be.Controllers
                 return Unauthorized(new { status = "error", message = "email atau password salah" });
             return Ok(result);
         }
-        
+        [HttpGet("me")]
+        public async Task<IActionResult> CurrentUserAsync()
+        {
+            var result = await _authService.CurrentUserAsync();
+            if (result == null)
+            {
+                return Unauthorized(new { message = "error", error = "id tidak ditemukan" });
 
+            }
+            return Ok(result);
+
+
+        }
     }
 }

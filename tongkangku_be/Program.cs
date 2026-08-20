@@ -52,7 +52,11 @@ builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 // Add services to the container.
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+<<<<<<< HEAD
+builder.Services.AddScoped<IVesselService, VesselService>();
+=======
 builder.Services.AddScoped<IRentalService, RentalService>();
+>>>>>>> 7516ffa5584811da900c40789c2bbeee6774f1ae
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
 builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped(
@@ -60,7 +64,7 @@ builder.Services.AddScoped(
     typeof(Repository<>)
 );
 
-
+builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddControllers();
@@ -69,6 +73,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors("AllowAngular");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<NotFoundMiddleware>();
 
