@@ -48,6 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add services to the container.
 builder.Services.AddScoped<IRentalService, RentalService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
 builder.Services.AddScoped(
     typeof(IRepository<>),
     typeof(Repository<>)
