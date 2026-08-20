@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using tongkangku_be.Data;
+using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Models.Enums;
 

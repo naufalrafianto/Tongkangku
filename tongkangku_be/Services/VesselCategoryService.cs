@@ -1,4 +1,4 @@
-﻿using tongkangku_be.Dtos;
+﻿using tongkangku_be.Dtos.VesselCategoryRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
@@ -19,7 +19,7 @@ namespace tongkangku_be.Services
         {
             if (request == null)
             {
-                throw new ArgumentNullException(nameof(request), "Request tidak boleh kosong");
+                return null;
             }
 
            

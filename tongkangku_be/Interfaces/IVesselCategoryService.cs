@@ -1,4 +1,4 @@
-﻿using tongkangku_be.Dtos;
+﻿using tongkangku_be.Dtos.VesselCategoryRequest;
 
 namespace tongkangku_be.Interfaces
 {

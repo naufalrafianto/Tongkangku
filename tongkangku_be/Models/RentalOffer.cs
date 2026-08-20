@@ -31,6 +31,7 @@ namespace tongkangku_be.Models
         public RentalOfferStatus Status { get; set; }
 
         public string? Notes { get; set; }
+        public string? RejectionReason { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

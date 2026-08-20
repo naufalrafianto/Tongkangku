@@ -2,11 +2,10 @@
 {
     public enum RentalOfferStatus
     {
-        Draft = 1,
-        Submitted = 2,
-        Negotiation = 3,
-        Accepted = 4,
-        Rejected = 5,
-        Expired = 6
+        Pending = 1,
+        Accepted = 2,
+        Rejected = 3,
+        Withdrawn = 4,
+        Expired = 5
     }
 }

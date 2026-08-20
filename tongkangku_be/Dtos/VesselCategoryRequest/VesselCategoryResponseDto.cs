@@ -1,4 +1,4 @@
-﻿namespace tongkangku_be.Dtos
+﻿namespace tongkangku_be.Dtos.VesselCategoryRequest
 {
     public class VesselCategoryResponseDto
     {
