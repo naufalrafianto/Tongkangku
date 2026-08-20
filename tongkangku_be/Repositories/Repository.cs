@@ -21,7 +21,13 @@ namespace tongkangku_be.Repositories
             {
                 query = query.Include(includeProperty);
             }
-            return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
+
+            var results = await query.ToListAsync();
+            return results.FirstOrDefault(e =>
+            {
+                var prop = _context.Entry(e).Property("Id");
+                return prop != null && (Guid)prop.CurrentValue == id;
+            });
         }
 
         public async Task<List<T>> GetAllAsync()
