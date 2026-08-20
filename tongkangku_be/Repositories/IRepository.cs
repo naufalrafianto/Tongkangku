@@ -1,3 +1,5 @@
+using tongkangku_be.Models;
+
 namespace tongkangku_be.Repositories
 {
     public interface IRepository<T> where T : class
@@ -10,5 +12,6 @@ namespace tongkangku_be.Repositories
         void Update(T entity);
         void Delete(T entity);
         Task<int> SaveChangesAsync();
+     
     }
 }
