@@ -137,6 +137,16 @@ namespace tongkangku_be.Services
             });
         }
 
+        public async Task<List<RentalOfferResponseDto>> GetByRentalRequestIdAsync(Guid rentalRequestId)
+        {
+            var offers = await _rentalOfferRepository
+                .GetByRentalRequestIdAsync(rentalRequestId);
+
+            return offers
+                .Select(RentalOfferMapper.ToDto)
+                .ToList();
+        }
+
         public async Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto)
         {
             var offer = await _rentalOfferRepository.GetByIdAsync(id, "RentalRequest");

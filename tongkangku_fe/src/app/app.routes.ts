@@ -4,11 +4,13 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 import { VesselComponent } from './pages/vessel/vessel.component';
-import { RentalRequestsComponent } from './rental-requests/rental-requests.component';
+import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
 import { VesselDetailComponent } from './pages/vessel-detail/vessel-detail.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './shared/components/main-layout/main-layout.component';
+import { RentalRequestDetailComponent } from './pages/rental-request-detail/rental-request-detail.component';
+import { RentalRequestListComponent } from './pages/rental-request-list/rental-request-list.component';
 
 export const routes: Routes = [
   {
@@ -57,9 +59,25 @@ export const routes: Routes = [
       },
     ],
   },
+  // =========================
+  // Rental Requests
+  // =========================
+  {
+    path: 'rental-requests',
+    children: [
+      {
+        path: '',
+        component: RentalRequestListComponent,
+      },
+      {
+        path: ':id',
+        component: RentalRequestDetailComponent,
+      },
+    ],
+  },
 
   {
     path: '**',
-    redirectTo: 'auth/login',
+    redirectTo: 'vessels',
   },
 ];

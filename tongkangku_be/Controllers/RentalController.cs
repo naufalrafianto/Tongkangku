@@ -56,12 +56,12 @@ namespace tongkangku_be.Controllers
             return Ok( ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request updated successfully"));
         }
         
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<object>>> Delete(Guid id)
+        [HttpPatch("{id:guid}/cancel")]
+        public async Task<ActionResult<ApiResponse<object>>> Cancel(Guid id)
         {
             var chartererId = User.GetUserId();
             var result = await _rentalService.CancelAsync(id, chartererId);
-            return Ok( ApiResponse<object>.SuccessResult(null!, "Rental request deleted successfully"));
+            return Ok( ApiResponse<object>.SuccessResult(null!, "Rental request cancelled successfully"));
         }
 
         [HttpPatch("{id:guid}/approve")]

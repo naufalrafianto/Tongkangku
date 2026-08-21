@@ -22,7 +22,7 @@ import {
 
 import { toSignal } from '@angular/core/rxjs-interop';
 
-import { FormFieldComponent } from '../shared/components/form/form-field/form-field.component';
+import { FormFieldComponent } from '../../shared/components/form/form-field/form-field.component';
 
 import {
   FormDateComponent,
@@ -30,15 +30,15 @@ import {
   FormSelectComponent,
   FormTextareaComponent,
   SelectOption,
-} from '../shared/components/form';
+} from '../../shared/components/form';
 
-import { Vessel } from '../shared/types/vessel/vessel.type';
-import { RentalRequestsService } from '../core/services/rental-requests.service';
+import { Vessel } from '../../shared/types/vessel/vessel.type';
+import { RentalRequestsService } from '../../core/services/rental-requests.service';
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { AuthService } from '../core/services/auth.service';
-import { VesselService } from '../core/services/vessel.service';
-import { PortService } from '../core/services/port.service';
-import { CargoTypeService } from '../core/services/cargo-type.service';
+import { AuthService } from '../../core/services/auth.service';
+import { VesselService } from '../../core/services/vessel.service';
+import { PortService } from '../../core/services/port.service';
+import { CargoTypeService } from '../../core/services/cargo-type.service';
 
 @Component({
   selector: 'app-rental-requests',

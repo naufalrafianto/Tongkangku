@@ -1,3 +1,5 @@
+import { RentalStatus } from '../enum/rental-status.enum';
+
 export interface CargoPayload {
   cargoTypeId: string | null;
   quantity: number | null;
@@ -15,8 +17,18 @@ export interface CreateRentalRequestPayload {
   cargos: CargoPayload[];
 }
 
-export interface RentalStatusResponse {
+export interface RentalResponse {
   id: string;
-  status: number;
-  updatedAt: string;
+  vesselId: string;
+  vesselName: string;
+  chartererId: string;
+  chartererName: string;
+  startDate: string;
+  planDay: number;
+  totalEstimatedPrice: number;
+  status: RentalStatus;
+  rejectionReason?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  updateAt: string;
 }

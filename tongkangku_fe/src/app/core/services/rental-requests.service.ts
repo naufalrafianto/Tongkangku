@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../shared/types/api/response.type';
 import {
   CreateRentalRequestPayload,
-  RentalStatusResponse,
+  RentalResponse,
 } from '../../shared/types/rental-request/rental-request.type';
 
 @Injectable({
@@ -19,6 +19,12 @@ export class RentalRequestsService {
   private readonly http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  getAll(): Observable<ApiResponse<RentalResponse[]>> {
+    return this.http.get<ApiResponse<RentalResponse[]>>(
+      `${this.apiUrl}/rental-request`,
+    );
+  }
+
   estimate(payload: EstimateRentalPayload): Observable<EstimateRentalResponse> {
     return this.http.post<EstimateRentalResponse>(
       `${this.apiUrl}/rental-request/estimate`,
@@ -26,12 +32,23 @@ export class RentalRequestsService {
     );
   }
 
-  create(
-    payload: CreateRentalRequestPayload,
-  ): Observable<ApiResponse<RentalStatusResponse>> {
-    return this.http.post<ApiResponse<RentalStatusResponse>>(
+  getById(rentalId: string): Observable<ApiResponse<RentalResponse>> {
+    return this.http.get<ApiResponse<RentalResponse>>(
+      `${this.apiUrl}/rental-request/${rentalId}`,
+    );
+  }
+
+  create(payload: CreateRentalRequestPayload): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(
       `${this.apiUrl}/rental-request`,
       payload,
+    );
+  }
+
+  cancel(rentalId: string): Observable<ApiResponse<any>> {
+    return this.http.patch<ApiResponse<any>>(
+      `${this.apiUrl}/rental-request/${rentalId}/cancel`,
+      {},
     );
   }
 }
