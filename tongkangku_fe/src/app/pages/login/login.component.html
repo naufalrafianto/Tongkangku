@@ -1,25 +1,83 @@
-<div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
-  <h2>Login TongkangKu</h2>
-
-  <div *ngIf="errorMessage" style="color: red; margin-bottom: 10px;">{{ errorMessage }}</div>
-
-  <form (ngSubmit)="onLogin()">
-    <div style="margin-bottom: 10px;">
-      <label>Email</label>
-      <input type="email" [(ngModel)]="loginData.email" name="email" required style="width: 100%; padding: 8px;" />
+<div class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+    
+    <!-- Header Brand -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-xl mb-3 shadow-md shadow-blue-500/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-900">Masuk ke TongkangKu</h2>
+      <p class="text-sm text-slate-500 mt-1">Silakan masuk dengan akun yang sudah terdaftar</p>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label>Password</label>
-      <input type="password" [(ngModel)]="loginData.password" name="password" required style="width: 100%; padding: 8px;" />
+    <!-- Alert Error Global dari Backend -->
+    @if (errorMessage) {
+      <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium flex items-center gap-2">
+        <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+
+    <!-- Form Login -->
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="space-y-5">
+      
+      <!-- Input Email -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+        <input 
+          type="email" 
+          [(ngModel)]="loginData.email" 
+          name="email" 
+          required 
+          #emailInput="ngModel"
+          placeholder="contoh@domain.com"
+          class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition text-sm text-slate-800 placeholder-slate-400"
+        />
+        @if (emailInput.invalid && emailInput.touched) {
+          <p class="text-xs text-rose-500 mt-1.5 font-medium">Email wajib diisi.</p>
+        }
+      </div>
+
+      <!-- Input Password -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Password</label>
+        <input 
+          type="password" 
+          [(ngModel)]="loginData.password" 
+          name="password" 
+          required 
+          #passwordInput="ngModel"
+          placeholder="Masukkan password Anda"
+          class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition text-sm text-slate-800 placeholder-slate-400"
+        />
+        @if (passwordInput.invalid && passwordInput.touched) {
+          <p class="text-xs text-rose-500 mt-1.5 font-medium">Password wajib diisi.</p>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid"
+        class="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 hover:shadow-lg transition duration-200 text-sm">
+        Masuk
+      </button>
+
+    </form>
+
+    <!-- Footer Redirect -->
+    <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+      <p class="text-sm text-slate-500">
+        Belum punya akun? 
+        <a routerLink="/register" class="font-semibold text-blue-600 hover:text-blue-700 transition">
+          Daftar di sini
+        </a>
+      </p>
     </div>
 
-    <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
-      Masuk
-    </button>
-  </form>
-
-  <p style="margin-top: 15px; text-align: center;">
-    Belum punya akun? <a routerLink="/register">Daftar di sini</a>
-  </p>
+  </div>
 </div>

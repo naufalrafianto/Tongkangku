@@ -1,15 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
+
 import { LoadingPayload } from '../../shared/types/auth/login-payload.type';
 import { LoginApiResponse } from '../../shared/types/auth/login-response.type';
-import { environment } from '../../../environments/environment';
-import { EnumHelper } from '../helper/role.helper';
 import {
   CurrentUser,
   CurrentUserResponse,
 } from '../../shared/types/auth/current-user.type';
 import { UserRole } from '../../shared/types/enum/user.enum';
+
+import { environment } from '../../../environments/environment';
+import { EnumHelper } from '../helper/role.helper';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +19,12 @@ import { UserRole } from '../../shared/types/enum/user.enum';
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+
   private currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
+
   public currentUser$ = this.currentUserSubject.asObservable();
+
+  private userRole: UserRole | null = null;
 
   register(payload: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/register`, payload);
@@ -63,31 +69,53 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_role');
-  }
+  setRole(role: UserRole): void {
+    this.userRole = role;
 
-  // --- Manajemen Role ---
-
-  setRole(role: number | UserRole): void {
     localStorage.setItem('user_role', role.toString());
   }
 
-  getRole(): UserRole {
-    const role = localStorage.getItem('user_role');
-    return role !== null ? Number(role) : UserRole.Charterer;
+  getRole(): UserRole | null {
+    if (this.userRole !== null) {
+      return this.userRole;
+    }
+
+    const storedRole = localStorage.getItem('user_role');
+
+    if (storedRole === null) {
+      return null;
+    }
+
+    return Number(storedRole) as UserRole;
   }
 
   getRoleName(): string {
-    return EnumHelper.getRoleName(this.getRole());
+    const role = this.getRole();
+
+    if (role === null) {
+      return '';
+    }
+
+    return EnumHelper.getRoleName(role);
   }
 
   isOwner(): boolean {
-    return EnumHelper.isOwner(this.getRole());
+    const role = this.getRole();
+
+    return role !== null && EnumHelper.isOwner(role);
   }
 
   isCharterer(): boolean {
-    return EnumHelper.isCharterer(this.getRole());
+    const role = this.getRole();
+
+    return role !== null && EnumHelper.isCharterer(role);
+  }
+
+  logout(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user_role');
+
+    this.userRole = null;
+    this.currentUserSubject.next(null);
   }
 }

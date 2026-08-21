@@ -253,14 +253,19 @@ namespace tongkangku_be.Services
                 });
             }
 
-            var startDate = dto.StartDate.Date;
+            var startDate = dto.StartDate
+             .Date
+             .ToUniversalTime();
+
             var endDate = startDate.AddDays(dto.PlanDay);
 
-            var hasConflict = await _rentalRepository.HasActiveRentalConflictAsync(
-                dto.VesselId,
-                startDate,
-                endDate
-            );
+            var hasConflict =
+                await _rentalRepository.HasActiveRentalConflictAsync(
+                    dto.VesselId,
+                    startDate,
+                    endDate
+                );
+
 
             if (hasConflict)
             {

@@ -80,6 +80,11 @@ builder.Services.AddScoped<IVesselService, VesselService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
 builder.Services.AddScoped<IPortService, PortService>();
+// Tambahkan registrasi repository ini di Program.cs
+builder.Services.AddScoped<IRentalOfferRepository, RentalOfferRepository>();
+
+// Pastikan RentalContractService juga sudah terdaftar:
+builder.Services.AddScoped<IRentalContractService, RentalContractService>();
 builder.Services.AddScoped(
     typeof(IRepository<>),
     typeof(Repository<>)

@@ -77,11 +77,12 @@
       <div
         class="p-4 bg-gray-50 mt-auto border-t border-gray-100 flex items-center gap-2"
       >
-        <button
-          class="w-1/2 py-2.5 px-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition text-center"
+        <a
+          [routerLink]="['/vessel', vessel.id]"
+          class="w-1/2 py-2.5 px-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition text-center block cursor-pointer"
         >
           Detail Kapal
-        </button>
+        </a>
 
         @if (vessel.status === VesselStatus.Available) {
           <a

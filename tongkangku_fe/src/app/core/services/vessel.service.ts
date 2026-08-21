@@ -25,4 +25,10 @@ export class VesselService {
   CreateVessel(payload: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/vessels`, payload);
   }
+
+GetByid(id: string): Observable<any> {
+  // Gunakan this.apiUrl + id jika apiUrl sudah ada slash di belakang, 
+  // atau hapus slash di apiUrl.
+  return this.http.get<any>(`${this.apiUrl}/${id}`); 
+}
 }

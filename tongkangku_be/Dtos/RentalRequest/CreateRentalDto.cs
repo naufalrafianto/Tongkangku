@@ -9,7 +9,7 @@ namespace tongkangku_be.Dtos.RentalRequest
         public Guid LoadingPortId { get; set; }
         public Guid DischargingPortId { get; set; }
 
-        public DateTime StartDate{ get; set; }
+        public DateTimeOffset StartDate { get; set; }
         public int PlanDay{ get; set; }
         public string Notes { get; set; } = string.Empty;
 
