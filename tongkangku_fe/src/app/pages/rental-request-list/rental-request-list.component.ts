@@ -2,18 +2,20 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RentalRequestsService } from '../../core/services/rental-requests.service';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
+import { RentalStatus } from '../../shared/types/enum/rental-status.enum';
 
 @Component({
   selector: 'app-rental-request-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgClass],
   templateUrl: './rental-request-list.component.html',
   styleUrl: './rental-request-list.component.css',
 })
 export class RentalRequestListComponent implements OnInit {
   private readonly rentalService = inject(RentalRequestsService);
   private readonly router = inject(Router);
+  RentalStatus = RentalStatus;
 
   readonly requests = signal<any[]>([]);
   readonly loading = signal(false);

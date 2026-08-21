@@ -5,13 +5,21 @@ namespace tongkangku_be.Interfaces
     public interface IRentalService
     {
         Task<RentalResponseDto> GetByIdAsync(Guid id);
-        Task<List<RentalResponseDto>> GetAllAsync();
-        Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto, Guid chartererId);
-        Task<RentalStatusResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto);
-        Task<RentalStatusResponseDto> CancelAsync(Guid id, Guid chartererId);
-        Task<RentalStatusResponseDto> ApproveAsync(Guid id);
-        Task<RentalStatusResponseDto> RejectAsync(Guid id, RejectRentalDto dto);
-        Task<RentalEstimateResponseDto> EstimateAsync(EstimateRentalDto dto);
-
+        Task<List<RentalResponseDto>> GetAllAsync(Guid chartererId);
+        Task<RentalStatusResponseDto> CreateAsync(
+            CreateRentalDto dto,
+            Guid chartererId
+        );
+        Task<RentalStatusResponseDto> UpdateAsync(
+            Guid id,
+            UpdateRentalDto dto
+        );
+        Task<RentalStatusResponseDto> CancelAsync(
+            Guid id,
+            Guid chartererId
+        );
+        Task<RentalEstimateResponseDto> EstimateAsync(
+            EstimateRentalDto dto
+        );
     }
 }

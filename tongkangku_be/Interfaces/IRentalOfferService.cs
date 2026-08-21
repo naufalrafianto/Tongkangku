@@ -5,10 +5,8 @@ namespace tongkangku_be.Interfaces
     public interface IRentalOfferService
     {
         Task<RentalOfferResponseDto> GetByIdAsync(Guid id);
-        Task<List<RentalOfferResponseDto>> GetByRentalRequestIdAsync(
-          Guid rentalRequestId
-      );
         Task<List<RentalOfferResponseDto>> GetAllAsync();
+        Task<List<RentalOfferResponseDto>> GetByRentalRequestIdAsync(Guid rentalRequestId);
         Task<RentalOfferStatusResponseDto> CreateAsync(CreateRentalOfferDto dto, Guid ownerId);
         Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto);
         Task DeleteAsync(Guid id);

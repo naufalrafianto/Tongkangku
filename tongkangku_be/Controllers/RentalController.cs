@@ -9,14 +9,20 @@ namespace tongkangku_be.Controllers
 {
     [ApiController]
     [Route("api/rental-request")]
-    public class RentalController(IRentalService rentalService):ControllerBase
+    public class RentalController(
+        IRentalService rentalService
+    ) : ControllerBase
     {
-        private readonly IRentalService _rentalService = rentalService;
+        private readonly IRentalService _rentalService =
+            rentalService;
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<RentalResponseDto>>> GetById(Guid id)
+        public async Task<
+            ActionResult<ApiResponse<RentalResponseDto>>
+        > GetById(Guid id)
         {
-            var result = await _rentalService.GetByIdAsync(id);
+            var result =
+                await _rentalService.GetByIdAsync(id);
 
             return Ok(
                 ApiResponse<RentalResponseDto>.SuccessResult(
@@ -29,7 +35,9 @@ namespace tongkangku_be.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<RentalResponseDto>>>> GetAll()
         {
-            var result = await _rentalService.GetAllAsync();
+            var chartererId = User.GetUserId();
+
+            var result = await _rentalService.GetAllAsync(chartererId);
 
             return Ok(
                 ApiResponse<List<RentalResponseDto>>.SuccessResult(
@@ -41,48 +49,85 @@ namespace tongkangku_be.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Create([FromBody] CreateRentalDto dto)
+        public async Task<
+            ActionResult<ApiResponse<RentalStatusResponseDto>>
+        > Create(
+            [FromBody] CreateRentalDto dto
+        )
         {
-            var chartererId = User.GetUserId();
-            var result = await _rentalService.CreateAsync(dto, chartererId);
-            return StatusCode(StatusCodes.Status201Created, ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request created successfully"));
+            var chartererId =
+                User.GetUserId();
+
+            var result =
+                await _rentalService.CreateAsync(
+                    dto,
+                    chartererId
+                );
+
+            return StatusCode(
+                StatusCodes.Status201Created,
+                ApiResponse<RentalStatusResponseDto>
+                    .SuccessResult(
+                        result,
+                        "Rental request created successfully"
+                    )
+            );
         }
-        
+
+        [Authorize]
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Update(Guid id, UpdateRentalDto dto)
+        public async Task<
+            ActionResult<ApiResponse<RentalStatusResponseDto>>> Update(Guid id,[FromBody] UpdateRentalDto dto)
         {
-            var result = await _rentalService.UpdateAsync(id, dto);
+            var result =
+                await _rentalService.UpdateAsync(
+                    id,
+                    dto
+                );
 
-            return Ok( ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request updated successfully"));
+            return Ok(
+                ApiResponse<RentalStatusResponseDto>.SuccessResult(
+                    result,
+                    "Rental request updated successfully"
+                )
+            );
         }
-        
+
+        [Authorize]
         [HttpPatch("{id:guid}/cancel")]
-        public async Task<ActionResult<ApiResponse<object>>> Cancel(Guid id)
+        public async Task<
+            ActionResult<ApiResponse<object>>> Cancel(Guid id)
         {
-            var chartererId = User.GetUserId();
-            var result = await _rentalService.CancelAsync(id, chartererId);
-            return Ok( ApiResponse<object>.SuccessResult(null!, "Rental request cancelled successfully"));
-        }
+            var chartererId =
+                User.GetUserId();
 
-        [HttpPatch("{id:guid}/approve")]
-        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Approve(Guid id)
-        {
-            var result = await _rentalService.ApproveAsync(id);
-            return Ok(ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request approved successfully"));
-        }
+            await _rentalService.CancelAsync(
+                id,
+                chartererId
+            );
 
-        [HttpPatch("{id:guid}/reject")]
-        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Reject(Guid id, RejectRentalDto dto)
-        {
-            var result = await _rentalService.RejectAsync(id, dto);
-            return Ok(ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request rejected successfully"));
+            return Ok(
+                ApiResponse<object>.SuccessResult(
+                    null!,
+                    "Rental request cancelled successfully"
+                )
+            );
         }
 
         [HttpPost("estimate")]
-        public async Task<IActionResult> Estimate([FromBody] EstimateRentalDto dto)
+        public async Task<ActionResult<ApiResponse<RentalEstimateResponseDto>>> Estimate(
+            [FromBody] EstimateRentalDto dto
+        )
         {
-            var result = await _rentalService.EstimateAsync(dto);
-            return Ok(ApiResponse<RentalEstimateResponseDto>.SuccessResult(result, "Rental request rejected successfully"));
+            var result =
+                await _rentalService.EstimateAsync(dto);
+
+            return Ok(
+                ApiResponse<RentalEstimateResponseDto>.SuccessResult(
+                    result,
+                    "Rental estimate calculated successfully"
+                )
+            );
         }
     }
 }
