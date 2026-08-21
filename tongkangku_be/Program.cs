@@ -5,9 +5,7 @@ using tongkangku_be.Middlewares;
 using tongkangku_be.Middlewares.tongkangku_be.Middleware;
 using tongkangku_be.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using tongkangku_be.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,13 +48,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
 // Add services to the container.
-
+builder.Services.AddScoped<IRentalContractRepository, RentalContractRepository>();
+builder.Services.AddScoped<IRentalContractService, RentalContractService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-<<<<<<< HEAD
 builder.Services.AddScoped<IVesselService, VesselService>();
-=======
 builder.Services.AddScoped<IRentalService, RentalService>();
->>>>>>> 7516ffa5584811da900c40789c2bbeee6774f1ae
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
 builder.Services.AddScoped<IPortService, PortService>();
 builder.Services.AddScoped(

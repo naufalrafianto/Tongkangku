@@ -43,7 +43,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("cargo_types");
+                    b.ToTable("cargo_types", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.ContractCargo", b =>
@@ -85,7 +85,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("ContractId", "CargoTypeId")
                         .IsUnique();
 
-                    b.ToTable("contract_cargos");
+                    b.ToTable("contract_cargos", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.LaytimeRecord", b =>
@@ -147,7 +147,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("ContractId");
 
-                    b.ToTable("laytime_records");
+                    b.ToTable("laytime_records", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Port", b =>
@@ -174,7 +174,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ports");
+                    b.ToTable("ports", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalContract", b =>
@@ -236,7 +236,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("RentalRequestId")
                         .IsUnique();
 
-                    b.ToTable("rental_contracts");
+                    b.ToTable("rental_contracts", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalCostItem", b =>
@@ -270,7 +270,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("RentalRequestId");
 
-                    b.ToTable("rental_cost_items");
+                    b.ToTable("rental_cost_items", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalOffer", b =>
@@ -300,9 +300,6 @@ namespace tongkangku_be.Migrations
                     b.Property<decimal>("RatePerDay")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("RejectionReason")
-                        .HasColumnType("text");
-
                     b.Property<Guid>("RentalRequestId")
                         .HasColumnType("uuid");
 
@@ -324,7 +321,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("RentalRequestId");
 
-                    b.ToTable("rental_offers");
+                    b.ToTable("rental_offers", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalOperationalCost", b =>
@@ -470,7 +467,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("VesselId");
 
-                    b.ToTable("rental_requests");
+                    b.ToTable("rental_requests", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalRequestCargo", b =>
@@ -505,7 +502,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("RentalRequestId", "CargoTypeId")
                         .IsUnique();
 
-                    b.ToTable("rental_request_cargos");
+                    b.ToTable("rental_request_cargos", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.User", b =>
@@ -540,7 +537,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Vessel", b =>
@@ -590,7 +587,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("PortId");
 
-                    b.ToTable("vessels");
+                    b.ToTable("vessels", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.VesselCategory", b =>
@@ -614,7 +611,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("vessel_categories");
+                    b.ToTable("vessel_categories", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.VesselDocs", b =>
@@ -654,7 +651,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("VesselId");
 
-                    b.ToTable("vessel_docs");
+                    b.ToTable("vessel_docs", (string)null);
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.ContractCargo", b =>
