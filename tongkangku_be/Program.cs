@@ -50,6 +50,8 @@ builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 // Add services to the container.
 builder.Services.AddScoped<IRentalContractRepository, RentalContractRepository>();
 builder.Services.AddScoped<IRentalContractService, RentalContractService>();
+builder.Services.AddScoped<ILaytimeRecordRepository, LaytimeRecordRepository>();
+builder.Services.AddScoped<ILaytimeRecordService, LaytimeRecordService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVesselService, VesselService>();
 builder.Services.AddScoped<IRentalService, RentalService>();

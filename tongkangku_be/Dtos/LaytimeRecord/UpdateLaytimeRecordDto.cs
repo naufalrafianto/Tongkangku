@@ -4,7 +4,7 @@
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public decimal LaytimeHours { get; set; }
+        public int LaytimeHours { get; set; }
         public string? Notes { get; set; }
     }
 }
