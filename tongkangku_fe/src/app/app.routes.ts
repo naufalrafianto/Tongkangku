@@ -9,14 +9,5 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  {
-    path: 'vessels',
-    children: [
-      {
-        path: ':id/rental-request',
-        component: RentalRequestsComponent,
-      },
-    ],
-     canActivate: [authGuard]
-  },
-];
+ { path: 'vessel', component: VesselComponent, canActivate: [authGuard] }
+]

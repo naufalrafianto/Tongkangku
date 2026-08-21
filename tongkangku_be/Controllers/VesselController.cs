@@ -32,7 +32,20 @@ namespace tongkangku_be.Controllers
             var result = await _vesselService.GetAllVesselAsync();
             if (result == null)
             {
-                return BadRequest(new { message = "error", error = "Data kosong!" });
+                return NotFound(new { message = "error", error = "Data kosong!" });
+            }
+            return Ok(result);
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetVesselById(Guid id)
+        {
+            var result = await _vesselService.GetVesselById(id);
+
+            if(result == null)
+            {
+                return NotFound(new { message = $"Vessel dengan Id {id} tidak ditemukan" });
             }
             return Ok(result);
         }

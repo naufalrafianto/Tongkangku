@@ -110,5 +110,30 @@ namespace tongkangku_be.Services
                 status = (int)vessel.Status
             }).ToList();
         }
+
+        public async Task<VesselResponseDto?> GetVesselById(Guid id)
+        {
+            var vessel = await _vesselRepository.GetByIdAsync(id);
+
+            if (vessel == null)
+            {
+                return null;
+            }
+
+            return new VesselResponseDto
+            {
+                Id = vessel.Id,
+                name = vessel.Name,
+                categoryId = vessel.CategoryId,
+                ownerId = vessel.OwnerId,
+                portId = vessel.PortId,
+                capacityFeed = vessel.CapacityFeed,
+                dwtCapacity = vessel.DwtCapacity,
+                year = vessel.Year,
+                status = (int)vessel.Status
+            };
+           
+
+        }
     }
 }
