@@ -49,11 +49,11 @@
 
       <!-- Card Footer: Aksi Charterer -->
       <div class="p-4 bg-gray-50 mt-auto border-t border-gray-100 flex items-center gap-2">
-        <button 
-          /* [routerLink]="['/charterer/vessels', vessel.id]"  */
-          class="w-1/2 py-2.5 px-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition text-center">
-          Detail Kapal
-        </button>
+    <a 
+  [routerLink]="['/vessel', vessel.id]"
+  class="w-1/2 py-2.5 px-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition text-center block cursor-pointer">
+  Detail Kapal
+</a>
         
         @if (vessel.status === VesselStatus.Available) {
           <button class="w-1/2 py-2.5 px-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 active:bg-blue-800 transition shadow-sm text-center">

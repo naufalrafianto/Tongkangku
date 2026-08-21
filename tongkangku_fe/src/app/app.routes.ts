@@ -4,10 +4,18 @@ import { RegisterComponent } from './pages/register/register.component';
 import { VesselComponent } from './pages/vessel/vessel.component'; 
 import { authGuard } from './core/guards/auth.guard';
 import { RentalRequestsComponent } from './rental-requests/rental-requests.component';
+import { VesselDetailComponent } from './pages/vessel-detail/vessel-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
- { path: 'vessel', component: VesselComponent, canActivate: [authGuard] }
-]
+  {
+    path: 'vessel',
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: VesselComponent }, 
+      { path: ':id', component: VesselDetailComponent } 
+    ]
+  }
+];

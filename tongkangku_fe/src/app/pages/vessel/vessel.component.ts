@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { VesselService } from '../../core/services/vessel.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { VesselStatus } from '../../shared/interface/InterfaceVessel';
 import { CommonModule } from '@angular/common';
 import { VesselResponseDto } from '../../shared/interface/InterfaceVessel';
@@ -8,7 +8,7 @@ import { EnumHelper } from '../../core/helper/role.helper';
 @Component({
   selector: 'app-vessel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './vessel.component.html',
   styleUrl: './vessel.component.css'
 })

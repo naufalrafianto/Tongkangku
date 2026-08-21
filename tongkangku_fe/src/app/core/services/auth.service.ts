@@ -8,7 +8,8 @@ import { EnumHelper } from '../helper/role.helper';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:5168/api/auth'; // 1. Spasi sudah dihapus
+  private apiUrl = 'http://localhost:5168/api/auth'; 
+  private userRole: string = '';
 
   register(payload: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, payload);
@@ -17,14 +18,17 @@ export class AuthService {
   login(payload: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, payload).pipe(
       tap((res) => {
+        console.log('Response Asli Backend:', res);
         if (res.token) {
           localStorage.setItem('access_token', res.token);
         }
-        // 2. Simpan role otomatis jika dikirim dari backend (misal res.role = 1 atau 2)
-        if (res.role !== undefined) {
-          this.setRole(res.role);
-        }
-      })
+      if (res.user && res.user.role !== undefined) {
+        this.setRole(res.user.role);
+        
+      } else {
+        console.warn('Field user.role tidak ditemukan!');
+      }
+    })
     );
   }
 
@@ -41,26 +45,14 @@ export class AuthService {
     localStorage.removeItem('user_role');
   }
 
-  // --- Manajemen Role ---
 
-  setRole(role: number | UserRole): void {
-    localStorage.setItem('user_role', role.toString());
+  setRole(role: string){
+    this.userRole = role;
+    localStorage.setItem('role', role);
   }
 
-  getRole(): UserRole {
-    const role = localStorage.getItem('user_role');
-    return role !== null ? Number(role) : UserRole.Charterer;
+  getRole(): string {
+  return this.userRole || localStorage.getItem('role') || '';
   }
 
-  getRoleName(): string {
-    return EnumHelper.getRoleName(this.getRole());
-  }
-
-  isOwner(): boolean {
-    return EnumHelper.isOwner(this.getRole());
-  }
-
-  isCharterer(): boolean {
-    return EnumHelper.isCharterer(this.getRole());
-  }
 }
