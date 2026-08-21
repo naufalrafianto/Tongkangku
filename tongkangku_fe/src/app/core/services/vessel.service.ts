@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { VesselResponseDto } from '../../shared/interface/InterfaceVessel';
 
 @Injectable({
   providedIn: 'root'
@@ -24,4 +25,5 @@ GetByid(id: string): Observable<any> {
   // atau hapus slash di apiUrl.
   return this.http.get<any>(`${this.apiUrl}/${id}`); 
 }
+ 
 }

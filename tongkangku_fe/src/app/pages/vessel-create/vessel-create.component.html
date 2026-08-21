@@ -1,0 +1,144 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6">
+  <!-- Header -->
+  <div class="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Tambah Kapal Baru</h1>
+      <p class="text-sm text-gray-500 mt-1">Lengkapi data di bawah untuk menambahkan armada kapal baru.</p>
+    </div>
+    <a 
+      routerLink="/vessel" 
+      class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+      Kembali
+    </a>
+  </div>
+
+  <form [formGroup]="createVessel" (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Section 1: Informasi Utama -->
+    <div>
+      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Informasi Dasar</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Nama Kapal -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kapal</label>
+          <input 
+            type="text" 
+            formControlName="name"
+            placeholder="Contoh: Tongkang Perwira 01"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+        </div>
+
+        <!-- Kategori Kapal -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Kapal</label>
+          <select 
+            formControlName="categoryId"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+            <option value="" disabled selected>
+              {{ isLoadingCategory ? 'Memuat kategori...' : 'Pilih Kategori' }}
+            </option>
+            <option *ngFor="let item of vesselCategoryData" [value]="item.id">
+              {{ item.name && item.name.trim() !== '' ? item.name : (item.description || item.id) }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Pelabuhan (Port) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pelabuhan</label>
+          <select 
+            formControlName="portId"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+            <option value="" disabled selected>
+              {{ isLoadingPort ? 'Memuat pelabuhan...' : 'Pilih Pelabuhan' }}
+            </option>
+            <option *ngFor="let port of portData" [value]="port.id">
+              {{ port.name && port.name.trim() !== '' ? port.name : port.id }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="border-gray-100">
+
+    <!-- Section 2: Spesifikasi & Biaya -->
+    <div>
+      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Spesifikasi & Biaya</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Capacity Feed -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Capacity Feed</label>
+          <input 
+            type="number" 
+            formControlName="capacityFeed"
+            placeholder="0"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+        </div>
+
+        <!-- DWT Capacity -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">DWT Capacity (Ton)</label>
+          <input 
+            type="number" 
+            formControlName="dwtCapacity"
+            placeholder="0"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+        </div>
+
+        <!-- Tahun Pembuatan -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Pembuatan</label>
+          <input 
+            type="number" 
+            formControlName="year"
+            placeholder="2024"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+        </div>
+
+        <!-- Tarif per Hari -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Sewa / Hari (IDR)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-sm text-gray-400 font-semibold">Rp</span>
+            <input 
+              type="number" 
+              formControlName="ratePerDay"
+              placeholder="0"
+              class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Status Operational</label>
+          <select 
+            formControlName="status"
+            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+            <option [value]="1">Available (1)</option>
+            <option [value]="2">Unavailable (2)</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="pt-4 flex justify-end gap-3">
+      <button 
+        type="button" 
+        routerLink="/vessel" 
+        class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+        Batal
+      </button>
+      <button 
+        type="submit" 
+        [disabled]="createVessel.invalid"
+        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-200 transition">
+        Simpan Kapal
+      </button>
+    </div>
+  </form>
+</div>

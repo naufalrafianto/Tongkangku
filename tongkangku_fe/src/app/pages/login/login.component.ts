@@ -24,7 +24,7 @@ export class LoginComponent {
       console.log("role saat ini:", userRole);
 
       if (userRole === 'Owner') {
-        this.router.navigate(['/register']); 
+        this.router.navigate(['/vessel-create']); 
       } else if (userRole === 'Charterer') { 
         this.router.navigate(['/vessel']);
       } 
