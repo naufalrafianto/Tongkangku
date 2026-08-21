@@ -2,9 +2,7 @@
 {
     public class LoginResponseDto
     {
-        public string status { get; set; } = "success";
         public string Token { get; set; } = string.Empty;
-        public UserSummary User { get; set; } = new UserSummary();
     }
     public class UserSummary
     {

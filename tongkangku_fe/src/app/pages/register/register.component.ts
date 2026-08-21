@@ -8,13 +8,13 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  registerData = { name: '', email: '', password: '' };
+  registerData = { name: '', email: '', password: '', role: '' };
   errorMessage = '';
 
   onRegister() {
@@ -25,7 +25,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Registrasi gagal!';
-      }
+      },
     });
   }
 }

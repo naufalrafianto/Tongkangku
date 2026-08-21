@@ -78,9 +78,9 @@ namespace tongkangku_be.Services
 
             return setting.LongDurationMultiplier;
         }
-        public async Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto)
+        public async Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto, Guid chartererId)
         {
-            if(dto.PlanDay <= 0)
+            if (dto.PlanDay <= 0)
             {
                 throw new ValidationException(new
                 {
@@ -113,18 +113,18 @@ namespace tongkangku_be.Services
                 });
             }
 
-            var charterer = await _userRepository.GetByIdAsync(dto.ChartererId);
+             var charterer = await _userRepository.GetByIdAsync(chartererId);
 
             if (charterer == null)
             {
-                throw new NotFoundException($"Charterer request with id '{dto.ChartererId}' was not found.");
+                throw new NotFoundException($"Charterer with id '{chartererId}' was not found.");
             }
 
-            if (charterer.Role != (UserRole)(int)UserRole.Charterer)
+            if (charterer.Role != UserRole.Charterer)
             {
                 throw new ValidationException(new
                 {
-                    ChartererId = "The selected user is not a charterer."
+                    Charterer = "The current user is not registered as a charterer."
                 });
             }
 
@@ -269,7 +269,7 @@ namespace tongkangku_be.Services
                 {
                     Id = Guid.NewGuid(),
                     VesselId = dto.VesselId,
-                    ChartererId = dto.ChartererId,
+                    ChartererId = chartererId,
                     CharterType = dto.CharterType,
                     LoadingPortId = dto.LoadingPortId,
                     DischargingPortId = dto.DischargingPortId,
@@ -359,19 +359,38 @@ namespace tongkangku_be.Services
 
             return RentalMapper.ToStatusDto(rental);
         }
-        public async Task DeleteAsync(Guid id)
+        public async Task<RentalStatusResponseDto> CancelAsync(Guid id, Guid chartererId)
         {
             var rental = await _rentalRepository.GetByIdAsync(id);
+
             if (rental == null)
             {
-                throw new NotFoundException(
-                   $"Rental request with id '{id}' was not found."
-               );
+                throw new NotFoundException($"Rental request with id '{id}' was not found.");
             }
 
-            _rentalRepository.Delete(rental);
+            if (rental.ChartererId != chartererId)
+            {
+                throw new ValidationException(new
+                {
+                    Rental = "You can only cancel your own rental request."
+                });
+            }
 
+            if (rental.Status != RentalRequestStatus.Pending)
+            {
+                throw new AppException(
+                    "Only pending rental requests can be cancelled",
+                    HttpStatusCode.Conflict,
+                    "INVALID_STATUS");
+            }
+
+            rental.Status = RentalRequestStatus.Cancelled;
+            rental.UpdateAt = DateTime.UtcNow;
+
+            _rentalRepository.Update(rental);
             await _rentalRepository.SaveChangesAsync();
+
+            return RentalMapper.ToStatusDto(rental);
         }
         public async Task<RentalStatusResponseDto> ApproveAsync(Guid id)
         {

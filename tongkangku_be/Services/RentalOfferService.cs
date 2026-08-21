@@ -43,7 +43,7 @@ namespace tongkangku_be.Services
             return offers.Select(RentalOfferMapper.ToDto).ToList();
         }
 
-        public async Task<RentalOfferStatusResponseDto> CreateAsync(CreateRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> CreateAsync(CreateRentalOfferDto dto, Guid ownerId)
         {
             var rentalReq = await _rentalRepository.GetByIdAsync(dto.RentalRequestId);
 
@@ -60,34 +60,26 @@ namespace tongkangku_be.Services
                 });
             }
 
-            var owner = await _userRepository.GetByIdAsync(dto.OwnerId);
+            var rentalRequest = await _rentalRepository.GetByIdAsync(dto.RentalRequestId);
+            if (rentalRequest == null)
+                throw new NotFoundException($"Rental request with id '{dto.RentalRequestId}' was not found.");
 
+            if (rentalRequest.Status != RentalRequestStatus.Approved)
+                throw new ValidationException(new { RentalRequestId = "Offers can only be submitted for approved rental requests." });
+
+            var owner = await _userRepository.GetByIdAsync(ownerId);
             if (owner == null)
-            {
-                throw new NotFoundException($"Owner with id '{dto.OwnerId}' was not found.");
-            }
+                throw new NotFoundException($"Owner with id '{ownerId}' was not found.");
 
             if (owner.Role != UserRole.Owner)
-            {
-                throw new ValidationException(new
-                {
-                    OwnerId = "The selected user is not an owner."
-                });
-            }
-            var vessel = await _vesselRepository.GetByIdAsync(rentalReq.VesselId);
+                throw new ValidationException(new { Owner = "The current user is not registered as an owner." });
 
+            var vessel = await _vesselRepository.GetByIdAsync(rentalRequest.VesselId);
             if (vessel == null)
-            {
-                throw new NotFoundException($"Vessel with id '{rentalReq.VesselId}' was not found.");
-            }
+                throw new NotFoundException($"Vessel with id '{rentalRequest.VesselId}' was not found.");
 
-            if (vessel.OwnerId != dto.OwnerId)
-            {
-                throw new ValidationException(new
-                {
-                    OwnerId = "You can only submit an offer for a vessel you own."
-                });
-            }
+            if (vessel.OwnerId != ownerId)
+                throw new ValidationException(new { Owner = "You can only submit an offer for a vessel you own." });
 
             if (dto.RatePerDay <= 0)
             {
@@ -106,7 +98,7 @@ namespace tongkangku_be.Services
             }
 
             var hasActiveOffer = await _rentalOfferRepository
-                .HasActiveOfferAsync(dto.RentalRequestId, dto.OwnerId);
+                .HasActiveOfferAsync(dto.RentalRequestId, ownerId);
 
             if (hasActiveOffer)
             {
@@ -125,7 +117,7 @@ namespace tongkangku_be.Services
                 {
                     Id = Guid.NewGuid(),
                     RentalRequestId = dto.RentalRequestId,
-                    OwnerId = dto.OwnerId,
+                    OwnerId = ownerId,
                     RatePerDay = dto.RatePerDay,
                     ValidUntil = dto.ValidUntil,
                     HireAmount = hireAmount,

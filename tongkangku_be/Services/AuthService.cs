@@ -1,4 +1,3 @@
-using BCrypt.Net;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,7 +6,6 @@ using tongkangku_be.Dtos.AuthRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
-using System.Security.Claims;
 namespace tongkangku_be.Services
 {
     public class AuthService : IAuthService
@@ -94,15 +92,7 @@ namespace tongkangku_be.Services
 
             return new LoginResponseDto
             {
-                status = "success",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                User = new UserSummary
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Email = user.Email,
-                    Role = user.Role.ToString()
-                }
             };
 
 
@@ -126,9 +116,12 @@ namespace tongkangku_be.Services
 
             return new CurrentUserResponseDto
             {
-                id = user.Id,
-                email = user.Email,
-                name = user.Name
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
             };
         }
     }

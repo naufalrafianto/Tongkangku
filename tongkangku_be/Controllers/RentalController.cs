@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.RentalRequest;
+using tongkangku_be.Extensions;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Shared;
 
@@ -38,10 +39,10 @@ namespace tongkangku_be.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Create(CreateRentalDto dto)
+        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Create([FromBody] CreateRentalDto dto)
         {
-            var result = await _rentalService.CreateAsync(dto);
-
+            var chartererId = User.GetUserId();
+            var result = await _rentalService.CreateAsync(dto, chartererId);
             return StatusCode(StatusCodes.Status201Created, ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request created successfully"));
         }
         
@@ -56,8 +57,8 @@ namespace tongkangku_be.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete(Guid id)
         {
-            await _rentalService.DeleteAsync(id);
-
+            var chartererId = User.GetUserId();
+            var result = await _rentalService.CancelAsync(id, chartererId);
             return Ok( ApiResponse<object>.SuccessResult(null!, "Rental request deleted successfully"));
         }
 

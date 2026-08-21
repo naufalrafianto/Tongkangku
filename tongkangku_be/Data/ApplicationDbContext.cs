@@ -278,6 +278,17 @@ namespace tongkangku_be.Data
                 entity.Property(x => x.MediumDurationMultiplier).HasColumnType("decimal(5,2)");
                 entity.Property(x => x.LongDurationMultiplier).HasColumnType("decimal(5,2)");
             });
+
+            modelBuilder.Entity<RentalContract>(entity =>
+            {
+                entity.ToTable("rental_contracts");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.Id).HasDefaultValueSql("gen_random_uuid()"); 
+                entity.Property(x => x.TotalLaytimeAdjustment).HasColumnType("decimal(18,2)");
+                entity.Property(x => x.FinalSettlementAmount).HasColumnType("decimal(18,2)");
+            });
+
+
         }
 
         public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action)

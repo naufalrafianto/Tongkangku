@@ -8,7 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   private authService = inject(AuthService);
@@ -20,11 +20,11 @@ export class LoginComponent {
   onLogin() {
     this.authService.login(this.loginData).subscribe({
       next: () => {
-        this.router.navigate(['/vessel']);
+        this.router.navigate(['/vessels']);
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Email atau password salah!';
-      }
+      },
     });
   }
 }
