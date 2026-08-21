@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 using tongkangku_be.Data;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Middlewares;
 using tongkangku_be.Middlewares.tongkangku_be.Middleware;
 using tongkangku_be.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using tongkangku_be.Services;
 
 
@@ -27,23 +30,38 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(jwtKey)
-            )
-        };
+        options.TokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer =
+                    builder.Configuration["Jwt:Issuer"],
+
+                ValidAudience =
+                    builder.Configuration["Jwt:Audience"],
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtKey)
+                    ),
+
+                NameClaimType =
+                    ClaimTypes.NameIdentifier,
+
+                RoleClaimType =
+                    ClaimTypes.Role
+            };
     });
+
+
 
 builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
@@ -57,6 +75,7 @@ builder.Services.AddScoped<IRentalContractService, RentalContractService>();
 builder.Services.AddScoped<ILaytimeRecordRepository, LaytimeRecordRepository>();
 builder.Services.AddScoped<ILaytimeRecordService, LaytimeRecordService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICargoTypeService, CargoTypeService>();
 builder.Services.AddScoped<IVesselService, VesselService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
 builder.Services.AddScoped<IVesselCategoryService, VesselCategoryService>();
@@ -69,7 +88,13 @@ builder.Services.AddScoped(
 builder.Services.AddHttpContextAccessor();
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.NumberHandling =
+            System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString;
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -88,7 +113,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

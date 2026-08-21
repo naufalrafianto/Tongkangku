@@ -1,6 +1,6 @@
 import { ApiResponse } from '../api/response.type';
 
-export interface CurrentUserResponse {
+export interface CurrentUser {
   id: string;
   name: string;
   email: string;
@@ -9,4 +9,4 @@ export interface CurrentUserResponse {
   updatedAt: string;
 }
 
-export type CurrentUserApiResponse = ApiResponse<CurrentUserResponse>;
+export type CurrentUserResponse = ApiResponse<CurrentUser>;

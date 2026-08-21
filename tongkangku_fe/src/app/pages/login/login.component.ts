@@ -17,13 +17,21 @@ export class LoginComponent {
   loginData = { email: '', password: '' };
   errorMessage = '';
 
-  onLogin() {
+  onLogin(): void {
+    this.errorMessage = '';
+
     this.authService.login(this.loginData).subscribe({
-      next: () => {
-        this.router.navigate(['/vessels']);
+      next: (res) => {
+        if (res.success) {
+          this.router.navigate(['/vessels']);
+        } else {
+          this.errorMessage = res.message || 'Login gagal.';
+        }
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Email atau password salah!';
+        console.error('Login error:', err);
+
+        this.errorMessage = err?.error?.message || 'Email atau password salah.';
       },
     });
   }

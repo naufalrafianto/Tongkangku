@@ -72,9 +72,12 @@ namespace tongkangku_be.Services
 
             Claim[] claims = new Claim[]
             {
-                new Claim("id",user.Id.ToString()),
-                new Claim("email",user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
+
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
@@ -94,24 +97,32 @@ namespace tongkangku_be.Services
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
             };
-
-
         }
 
         public async Task<CurrentUserResponseDto> CurrentUserAsync()
         {
-            var userIdClaim = _contextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
-                              ?? _contextAccessor.HttpContext?.User?.FindFirst("id");
+            var userIdClaim = _contextAccessor
+                .HttpContext?
+                .User?
+                .FindFirst(ClaimTypes.NameIdentifier);
 
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            if (
+                userIdClaim == null ||
+                !Guid.TryParse(userIdClaim.Value, out var userId)
+            )
             {
-                throw new UnauthorizedAccessException("Token tidak valid atau belum login!");
+                throw new UnauthorizedAccessException(
+                    "Token tidak valid atau belum login!"
+                );
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
+
             if (user == null)
             {
-                throw new KeyNotFoundException("User tidak ditemukan!");
+                throw new KeyNotFoundException(
+                    "User tidak ditemukan!"
+                );
             }
 
             return new CurrentUserResponseDto
@@ -124,6 +135,7 @@ namespace tongkangku_be.Services
                 UpdatedAt = user.UpdatedAt
             };
         }
+
     }
 }
  

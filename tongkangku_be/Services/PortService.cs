@@ -19,7 +19,7 @@ namespace tongkangku_be.Services
             {
                 if (port == null)
                 {
-                    return null;
+                    throw new KeyNotFoundException("Port tidak ditemukan.");
                 }
 
                 return new PortResponseDto
@@ -80,7 +80,7 @@ namespace tongkangku_be.Services
 
             if(ports == null )
             {
-                return null;
+                throw new KeyNotFoundException("Port tidak ditemukan.");
             }
 
             return ports.Select(port => new PortResponseDto

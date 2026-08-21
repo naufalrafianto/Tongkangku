@@ -1,16 +1,15 @@
-<div class="form-field">
-  <label>
+<div class="flex flex-col gap-1.5">
+  <label class="text-sm font-medium text-slate-700">
     {{ label() }}
-
     @if (required()) {
-      <span>*</span>
+      <span class="text-red-500">*</span>
     }
   </label>
 
   <ng-content />
 
   @if (error()) {
-    <small class="error">
+    <small class="text-xs text-red-600">
       {{ error() }}
     </small>
   }

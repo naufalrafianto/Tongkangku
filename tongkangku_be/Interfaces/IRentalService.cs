@@ -11,5 +11,7 @@ namespace tongkangku_be.Interfaces
         Task<RentalStatusResponseDto> CancelAsync(Guid id, Guid chartererId);
         Task<RentalStatusResponseDto> ApproveAsync(Guid id);
         Task<RentalStatusResponseDto> RejectAsync(Guid id, RejectRentalDto dto);
+        Task<RentalEstimateResponseDto> EstimateAsync(EstimateRentalDto dto);
+
     }
 }

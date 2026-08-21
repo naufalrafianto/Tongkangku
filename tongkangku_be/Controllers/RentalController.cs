@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Extensions;
 using tongkangku_be.Interfaces;
@@ -38,6 +39,7 @@ namespace tongkangku_be.Controllers
             );
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Create([FromBody] CreateRentalDto dto)
         {
@@ -74,6 +76,13 @@ namespace tongkangku_be.Controllers
         {
             var result = await _rentalService.RejectAsync(id, dto);
             return Ok(ApiResponse<RentalStatusResponseDto>.SuccessResult(result, "Rental request rejected successfully"));
+        }
+
+        [HttpPost("estimate")]
+        public async Task<IActionResult> Estimate([FromBody] EstimateRentalDto dto)
+        {
+            var result = await _rentalService.EstimateAsync(dto);
+            return Ok(ApiResponse<RentalEstimateResponseDto>.SuccessResult(result, "Rental request rejected successfully"));
         }
     }
 }

@@ -92,10 +92,7 @@ namespace tongkangku_be.Services
         public async Task<List<VesselResponseDto>> GetAllVesselAsync()
         {
             var vessel = await _vesselRepository.GetAllAsync();
-            if (vessel == null)
-            {
-                return null;
-            }
+            
             return vessel.Select(vessel => new VesselResponseDto
             {
                 Id = vessel.Id,
@@ -111,13 +108,12 @@ namespace tongkangku_be.Services
             }).ToList();
         }
 
-        public async Task<VesselResponseDto?> GetVesselById(Guid id)
+        public async Task<VesselResponseDto> GetVesselById(Guid id)
         {
             var vessel = await _vesselRepository.GetByIdAsync(id);
-
             if (vessel == null)
             {
-                return null;
+                throw new KeyNotFoundException("Vessel tidak ditemukan.");
             }
 
             return new VesselResponseDto
@@ -129,6 +125,7 @@ namespace tongkangku_be.Services
                 portId = vessel.PortId,
                 capacityFeed = vessel.CapacityFeed,
                 dwtCapacity = vessel.DwtCapacity,
+                ratePerDay = vessel.RatePerDay,
                 year = vessel.Year,
                 status = (int)vessel.Status
             };

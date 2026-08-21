@@ -13,12 +13,9 @@ namespace tongkangku_be.Services
 {
     public class RentalService(IRentalRepository rentalRepository, IRepository<Vessel> vesselRepository, IRepository<User> userRepository, ApplicationDbContext context) : IRentalService
     {
-        private readonly IRentalRepository _rentalRepository =
-        rentalRepository;
-        private readonly IRepository<Vessel> _vesselRepository =
-        vesselRepository;
-        private readonly IRepository<User> _userRepository =
-        userRepository;
+        private readonly IRentalRepository _rentalRepository = rentalRepository;
+        private readonly IRepository<Vessel> _vesselRepository = vesselRepository;
+        private readonly IRepository<User> _userRepository = userRepository;
         private readonly ApplicationDbContext _context = context;
 
         public async Task<RentalResponseDto> GetByIdAsync(Guid id)
@@ -31,6 +28,7 @@ namespace tongkangku_be.Services
 
             return rental == null ? throw new NotFoundException($"Rental request with id '{id}' was not found.") : RentalMapper.ToDto(rental);
         }
+
         public async Task<List<RentalResponseDto>> GetAllAsync()
         {
             var rentals = await _rentalRepository.GetAllAsync(
@@ -46,6 +44,7 @@ namespace tongkangku_be.Services
                 .Select(RentalMapper.ToDto)
                 .ToList();
         }
+
         private async Task<RentalPricingSetting> GetActivePricingSettingAsync()
         {
             var setting = await _context.RentalPricingSettings
@@ -68,6 +67,7 @@ namespace tongkangku_be.Services
                 .Where(x => x.IsActive)
                 .ToDictionaryAsync(x => x.CostType, x => x.Amount);
         }
+
         private static decimal GetDurationMultiplier(int planDay, RentalPricingSetting setting)
         {
             if (planDay < setting.ShortDurationMaxDays)
@@ -78,6 +78,41 @@ namespace tongkangku_be.Services
 
             return setting.LongDurationMultiplier;
         }
+
+        private record PricingBreakdown(
+            decimal DurationMultiplier,
+            decimal BaseHirePrice,
+            decimal AdjustedHirePrice,
+            decimal OperationalCost,
+            decimal ContingencyCost,
+            decimal EstimatedCost
+        );
+
+        private static PricingBreakdown CalculatePricing(
+            decimal ratePerDay,
+            int planDay,
+            RentalPricingSetting setting,
+            Dictionary<CostType, decimal> operationalCosts)
+        {
+            var durationMultiplier = GetDurationMultiplier(planDay, setting);
+
+            var baseHirePrice = ratePerDay * planDay;
+            var adjustedHirePrice = baseHirePrice * durationMultiplier;
+
+            var operationalCost =
+                operationalCosts[CostType.Agency] +
+                operationalCosts[CostType.Loading] +
+                operationalCosts[CostType.Discharging] +
+                operationalCosts[CostType.Other];
+
+            var contingencyCost = operationalCost * setting.ContingencyRate;
+            var estimatedCost = adjustedHirePrice + operationalCost + contingencyCost;
+
+            return new PricingBreakdown(
+                durationMultiplier, baseHirePrice, adjustedHirePrice,
+                operationalCost, contingencyCost, estimatedCost);
+        }
+
         public async Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto, Guid chartererId)
         {
             if (dto.PlanDay <= 0)
@@ -87,6 +122,7 @@ namespace tongkangku_be.Services
                     PlanDay = "Plan day must be greater than 0."
                 });
             }
+
             var today = DateTime.UtcNow.Date;
 
             if (dto.StartDate.Date < today)
@@ -95,14 +131,15 @@ namespace tongkangku_be.Services
                 {
                     StartDate = "Start date cannot be in the past."
                 });
-
             }
 
             var vessel = await _vesselRepository.GetByIdAsync(dto.VesselId);
 
             if (vessel == null)
             {
-                throw new NotFoundException($"Vessel with id '{dto.VesselId}' was not found.");
+                throw new NotFoundException(
+                    $"Vessel with id '{dto.VesselId}' was not found."
+                );
             }
 
             if (vessel.Status != VesselStatus.Available)
@@ -113,11 +150,21 @@ namespace tongkangku_be.Services
                 });
             }
 
-             var charterer = await _userRepository.GetByIdAsync(chartererId);
+            if (vessel.RatePerDay <= 0)
+            {
+                throw new ValidationException(new
+                {
+                    VesselId = "Vessel rate per day is not configured."
+                });
+            }
+
+            var charterer = await _userRepository.GetByIdAsync(chartererId);
 
             if (charterer == null)
             {
-                throw new NotFoundException($"Charterer with id '{chartererId}' was not found.");
+                throw new NotFoundException(
+                    $"Charterer with id '{chartererId}' was not found."
+                );
             }
 
             if (charterer.Role != UserRole.Charterer)
@@ -152,17 +199,17 @@ namespace tongkangku_be.Services
             {
                 throw new ValidationException(new
                 {
-                    DischargingPortId = "Loading port and discharging port cannot be the same."
+                    DischargingPortId =
+                        "Loading port and discharging port cannot be the same."
                 });
             }
 
             if (dto.Cargos == null || dto.Cargos.Count == 0)
             {
-                throw new ValidationException(
-                    new
-                    {
-                        Cargos = "At least one cargo is required"
-                    });
+                throw new ValidationException(new
+                {
+                    Cargos = "At least one cargo is required."
+                });
             }
 
             foreach (var cargo in dto.Cargos)
@@ -171,8 +218,7 @@ namespace tongkangku_be.Services
                 {
                     throw new ValidationException(new
                     {
-                        Cargos =
-                            "Cargo quantity must be greater than 0."
+                        Cargos = "Cargo quantity must be greater than 0."
                     });
                 }
 
@@ -180,14 +226,12 @@ namespace tongkangku_be.Services
                 {
                     throw new ValidationException(new
                     {
-                        Cargos =
-                            "Cargo unit is required."
+                        Cargos = "Cargo unit is required."
                     });
                 }
 
-                var cargoTypeExists =
-                    await _context.CargoTypes
-                        .AnyAsync(x => x.Id == cargo.CargoTypeId);
+                var cargoTypeExists = await _context.CargoTypes
+                    .AnyAsync(x => x.Id == cargo.CargoTypeId);
 
                 if (!cargoTypeExists)
                 {
@@ -197,24 +241,26 @@ namespace tongkangku_be.Services
                 }
             }
 
-            var duplicateCargo =dto.Cargos
-                  .GroupBy(x => x.CargoTypeId)
-                  .Any(x => x.Count() > 1);
+            var duplicateCargo = dto.Cargos
+                .GroupBy(x => x.CargoTypeId)
+                .Any(x => x.Count() > 1);
 
             if (duplicateCargo)
             {
                 throw new ValidationException(new
                 {
-                    Cargos =
-                        "The same cargo type cannot be added more than once."
+                    Cargos = "The same cargo type cannot be added more than once."
                 });
             }
 
-            var  startDate = dto.StartDate.Date;
+            var startDate = dto.StartDate.Date;
             var endDate = startDate.AddDays(dto.PlanDay);
 
-            var hasConflict = await _rentalRepository
-                .HasActiveRentalConflictAsync(dto.VesselId, dto.StartDate.Date, endDate);
+            var hasConflict = await _rentalRepository.HasActiveRentalConflictAsync(
+                dto.VesselId,
+                startDate,
+                endDate
+            );
 
             if (hasConflict)
             {
@@ -225,12 +271,26 @@ namespace tongkangku_be.Services
             }
 
             var pricingSetting = await GetActivePricingSettingAsync();
-            var operationalCosts = await GetActiveOperationalCostsAsync();
+
+            if (pricingSetting.ContingencyRate < 0)
+            {
+                throw new AppException(
+                    "Contingency rate cannot be negative.",
+                    HttpStatusCode.InternalServerError,
+                    "INVALID_CONTINGENCY_RATE"
+                );
+            }
+
+            var operationalCosts = await GetActiveOperationalCostsAsync()
+                ?? new Dictionary<CostType, decimal>();
 
             var requiredCostTypes = new[]
             {
-            CostType.Agency, CostType.Loading, CostType.Discharging, CostType.Other
-        };
+                CostType.Agency,
+                CostType.Loading,
+                CostType.Discharging,
+                CostType.Other
+            };
 
             var missingCostTypes = requiredCostTypes
                 .Where(x => !operationalCosts.ContainsKey(x))
@@ -241,27 +301,25 @@ namespace tongkangku_be.Services
                 throw new AppException(
                     $"Operational cost rate not configured for: {string.Join(", ", missingCostTypes)}",
                     HttpStatusCode.InternalServerError,
-                    "COST_RATE_NOT_CONFIGURED");
+                    "COST_RATE_NOT_CONFIGURED"
+                );
             }
 
-            var durationMultiplier = GetDurationMultiplier(dto.PlanDay, pricingSetting);
+            var breakdown = CalculatePricing(vessel.RatePerDay, dto.PlanDay, pricingSetting, operationalCosts);
 
-            var baseHirePrice = vessel.RatePerDay * dto.PlanDay;
-            var adjustedHirePrice = baseHirePrice * durationMultiplier;
+            if (breakdown.DurationMultiplier <= 0)
+            {
+                throw new AppException(
+                    "Invalid duration multiplier.",
+                    HttpStatusCode.InternalServerError,
+                    "INVALID_DURATION_MULTIPLIER"
+                );
+            }
 
             var agencyCost = operationalCosts[CostType.Agency];
             var loadingCost = operationalCosts[CostType.Loading];
             var dischargingCost = operationalCosts[CostType.Discharging];
             var otherOperationalCost = operationalCosts[CostType.Other];
-
-            var operationalCost =
-                agencyCost + loadingCost + dischargingCost + otherOperationalCost;
-
-            var contingencyCost = operationalCost * pricingSetting.ContingencyRate;
-
-            var estimatedCost = adjustedHirePrice + operationalCost + contingencyCost;
-
-            var totalEstimatedPrice = estimatedCost / (1 - pricingSetting.TargetMargin);
 
             return await _context.ExecuteInTransactionAsync(async () =>
             {
@@ -273,20 +331,19 @@ namespace tongkangku_be.Services
                     CharterType = dto.CharterType,
                     LoadingPortId = dto.LoadingPortId,
                     DischargingPortId = dto.DischargingPortId,
-                    StartDate = dto.StartDate,
+                    StartDate = startDate,
                     PlanDay = dto.PlanDay,
-                    BaseHirePrice = baseHirePrice,
-                    DurationMultiplier = durationMultiplier,
-                    EstimatedCost = estimatedCost,
-                    TargetMargin = pricingSetting.TargetMargin,
-                    TotalEstimatedPrice = totalEstimatedPrice,
+                    BaseHirePrice = breakdown.BaseHirePrice,
+                    DurationMultiplier = breakdown.DurationMultiplier,
+                    EstimatedCost = breakdown.EstimatedCost,
+                    TargetMargin = 0m,
+                    TotalEstimatedPrice = breakdown.EstimatedCost,
                     Status = RentalRequestStatus.Pending,
                     Notes = dto.Notes,
                     CreatedAt = DateTime.UtcNow,
-                    UpdateAt = DateTime.UtcNow
+                    UpdateAt = DateTime.UtcNow,
+                    Cargos = new List<RentalRequestCargo>()
                 };
-
-                await _rentalRepository.AddAsync(rental);
 
                 foreach (var cargoDto in dto.Cargos)
                 {
@@ -305,25 +362,88 @@ namespace tongkangku_be.Services
                 var now = DateTime.UtcNow;
 
                 rental.CostItems = new List<RentalCostItem>
-            {
-                new() { Id = Guid.NewGuid(), RentalRequestId = rental.Id, CostType = CostType.Agency, Bearer = CostBearer.Charterer, Amount = agencyCost, Notes = "Agency cost", CreatedAt = now, UpdatedAt = now },
-                new() { Id = Guid.NewGuid(), RentalRequestId = rental.Id, CostType = CostType.Loading, Bearer = CostBearer.Charterer, Amount = loadingCost, Notes = "Loading operational cost", CreatedAt = now, UpdatedAt = now },
-                new() { Id = Guid.NewGuid(), RentalRequestId = rental.Id, CostType = CostType.Discharging, Bearer = CostBearer.Charterer, Amount = dischargingCost, Notes = "Discharging operational cost", CreatedAt = now, UpdatedAt = now },
-                new() { Id = Guid.NewGuid(), RentalRequestId = rental.Id, CostType = CostType.Other, Bearer = CostBearer.Charterer, Amount = otherOperationalCost, Notes = "Other operational cost", CreatedAt = now, UpdatedAt = now },
-                new() { Id = Guid.NewGuid(), RentalRequestId = rental.Id, CostType = CostType.Contingency, Bearer = CostBearer.Charterer, Amount = contingencyCost, Notes = $"{pricingSetting.ContingencyRate:P0} operational cost contingency", CreatedAt = now, UpdatedAt = now }
-            };
+                {
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RentalRequestId = rental.Id,
+                        CostType = CostType.Agency,
+                        Bearer = CostBearer.Charterer,
+                        Amount = agencyCost,
+                        Notes = "Agency cost",
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RentalRequestId = rental.Id,
+                        CostType = CostType.Loading,
+                        Bearer = CostBearer.Charterer,
+                        Amount = loadingCost,
+                        Notes = "Loading operational cost",
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RentalRequestId = rental.Id,
+                        CostType = CostType.Discharging,
+                        Bearer = CostBearer.Charterer,
+                        Amount = dischargingCost,
+                        Notes = "Discharging operational cost",
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RentalRequestId = rental.Id,
+                        CostType = CostType.Other,
+                        Bearer = CostBearer.Charterer,
+                        Amount = otherOperationalCost,
+                        Notes = "Other operational cost",
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RentalRequestId = rental.Id,
+                        CostType = CostType.Contingency,
+                        Bearer = CostBearer.Charterer,
+                        Amount = breakdown.ContingencyCost,
+                        Notes = $"{pricingSetting.ContingencyRate:P0} operational cost contingency",
+                        CreatedAt = now,
+                        UpdatedAt = now
+                    }
+                };
 
+                await _rentalRepository.AddAsync(rental);
                 await _rentalRepository.SaveChangesAsync();
 
                 var createdRental = await _rentalRepository.GetByIdAsync(
-                    rental.Id, "Vessel", "Charterer", "LoadingPort", "DischargingPort", "Cargos", "CostItems");
+                    rental.Id,
+                    "Vessel",
+                    "Charterer",
+                    "LoadingPort",
+                    "DischargingPort",
+                    "Cargos",
+                    "CostItems"
+                );
 
                 if (createdRental == null)
-                    throw new NotFoundException($"Rental request with id '{rental.Id}' was not found.");
+                {
+                    throw new NotFoundException(
+                        $"Rental request with id '{rental.Id}' was not found."
+                    );
+                }
 
                 return RentalMapper.ToStatusDto(createdRental);
             });
         }
+
         public async Task<RentalStatusResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto)
         {
             if (dto.PlanDay <= 0)
@@ -340,9 +460,9 @@ namespace tongkangku_be.Services
                 throw new NotFoundException($"Vessel with id '{dto.VesselId}' was not found.");
 
             var pricingSetting = await GetActivePricingSettingAsync();
-            var durationMultiplier = GetDurationMultiplier(dto.PlanDay, pricingSetting);
+            var operationalCosts = await GetActiveOperationalCostsAsync();
 
-            var totalEstimatedPrice = vessel.RatePerDay * dto.PlanDay * durationMultiplier;
+            var breakdown = CalculatePricing(vessel.RatePerDay, dto.PlanDay, pricingSetting, operationalCosts);
 
             await _context.ExecuteInTransactionAsync(async () =>
             {
@@ -350,7 +470,10 @@ namespace tongkangku_be.Services
                 rental.StartDate = dto.StartDate;
                 rental.PlanDay = dto.PlanDay;
                 rental.Notes = dto.Notes;
-                rental.TotalEstimatedPrice = totalEstimatedPrice;
+                rental.BaseHirePrice = breakdown.BaseHirePrice;
+                rental.DurationMultiplier = breakdown.DurationMultiplier;
+                rental.EstimatedCost = breakdown.EstimatedCost;
+                rental.TotalEstimatedPrice = breakdown.EstimatedCost;
                 rental.UpdateAt = DateTime.UtcNow;
 
                 _rentalRepository.Update(rental);
@@ -359,6 +482,7 @@ namespace tongkangku_be.Services
 
             return RentalMapper.ToStatusDto(rental);
         }
+
         public async Task<RentalStatusResponseDto> CancelAsync(Guid id, Guid chartererId)
         {
             var rental = await _rentalRepository.GetByIdAsync(id);
@@ -392,6 +516,7 @@ namespace tongkangku_be.Services
 
             return RentalMapper.ToStatusDto(rental);
         }
+
         public async Task<RentalStatusResponseDto> ApproveAsync(Guid id)
         {
             var rental = await _rentalRepository.GetByIdAsync(id);
@@ -414,6 +539,58 @@ namespace tongkangku_be.Services
             await _rentalRepository.SaveChangesAsync();
 
             return RentalMapper.ToStatusDto(rental);
+        }
+
+        public async Task<RentalEstimateResponseDto> EstimateAsync(EstimateRentalDto dto)
+        {
+            if (dto.PlanDay <= 0)
+            {
+                throw new ValidationException(new { PlanDay = "Plan day must be greater than 0." });
+            }
+
+            if (dto.StartDate.Date < DateTime.UtcNow.Date)
+            {
+                throw new ValidationException(new { StartDate = "Start date cannot be in the past." });
+            }
+
+            var vessel = await _vesselRepository.GetByIdAsync(dto.VesselId);
+
+            if (vessel == null)
+            {
+                throw new NotFoundException($"Vessel with id '{dto.VesselId}' was not found.");
+            }
+
+            var pricingSetting = await GetActivePricingSettingAsync();
+            var operationalCosts = await GetActiveOperationalCostsAsync();
+
+            var breakdown = CalculatePricing(vessel.RatePerDay, dto.PlanDay, pricingSetting, operationalCosts);
+
+            var taxRate = 0.012m;
+            var taxAmount = breakdown.EstimatedCost * taxRate;
+            var grandTotal = breakdown.EstimatedCost + taxAmount;
+
+            return new RentalEstimateResponseDto
+            {
+                VesselId = vessel.Id,
+                VesselName = vessel.Name ?? string.Empty,
+                IsVesselAvailable = vessel.Status == VesselStatus.Available,
+
+                RatePerDay = vessel.RatePerDay,
+                PlanDay = dto.PlanDay,
+                DurationMultiplier = breakdown.DurationMultiplier,
+
+                BaseHirePrice = breakdown.BaseHirePrice,
+                AdjustedHirePrice = breakdown.AdjustedHirePrice,
+                OperationalCost = breakdown.OperationalCost,
+                ContingencyCost = breakdown.ContingencyCost,
+                EstimatedCost = breakdown.EstimatedCost,
+                TotalEstimatedPrice = breakdown.EstimatedCost,
+
+                TaxRate = taxRate,
+                TaxAmount = taxAmount,
+
+                GrandTotal = grandTotal
+            };
         }
 
         public async Task<RentalStatusResponseDto> RejectAsync(Guid id, RejectRentalDto dto)
