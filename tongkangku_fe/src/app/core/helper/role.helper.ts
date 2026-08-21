@@ -1,13 +1,15 @@
-import { UserRole,VesselStatus } from "../../shared/interface/InterfaceVessel";
+import { UserRole } from '../../shared/types/enum/user.enum';
+import { VesselStatus } from '../../shared/types/enum/vessel.enum';
 
 export class EnumHelper {
-
   static getRoleName(role: number | UserRole): string {
     return Number(role) === UserRole.Owner ? 'Owner' : 'Charterer';
   }
 
   static getVesselStatusLabel(status: number | VesselStatus): string {
-    return Number(status) === VesselStatus.Available ? 'Tersedia' : 'Tidak Tersedia';
+    return Number(status) === VesselStatus.Available
+      ? 'Tersedia'
+      : 'Tidak Tersedia';
   }
 
   static isOwner(role: number | UserRole): boolean {

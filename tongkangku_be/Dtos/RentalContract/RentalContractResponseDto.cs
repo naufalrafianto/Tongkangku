@@ -22,7 +22,9 @@ namespace tongkangku_be.Dtos.RentalContract
         public decimal AgreedBunkerAmount { get; set; }
         public decimal AgreedOtherCharges { get; set; }
         public decimal? AgreedTotalPrice { get; set; }
-
+        public decimal TotalLaytimeAdjustment { get; set; }
+        public decimal? FinalSettlementAmount { get; set; }
+        public DateTime? CompletedAt { get; set; }
         public RentalContractStatus Status { get; set; }
 
         public List<ContractCargoResponseDto> Cargos { get; set; } = [];

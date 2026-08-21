@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Dtos.VesselRequest;
 using tongkangku_be.Interfaces;
+using tongkangku_be.Shared;
 
 namespace tongkangku_be.Controllers
 {
     [ApiController]
-    [Route("api/vessel")]
+    [Route("api/vessels")]
     public class VesselController : ControllerBase
     {
         private readonly IVesselService _vesselService;
@@ -15,7 +17,7 @@ namespace tongkangku_be.Controllers
             _vesselService = vesselService;
         }
 
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateVesselAsync(VesselRequestDto request)
         {
             var result = await _vesselService.CreateVesselAsync(request);
@@ -26,28 +28,41 @@ namespace tongkangku_be.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllVesselAsync()
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetAllVesselAsync()
         {
             var result = await _vesselService.GetAllVesselAsync();
-            if (result == null)
+            if (result == null || result.Count == 0)
             {
-                return NotFound(new { message = "error", error = "Data kosong!" });
+                return NotFound(
+                    ApiResponse<List<VesselResponseDto>>.ErrorResult(
+                        "Vessel data not found.",
+                        "VESSEL_NOT_FOUND"
+                    )
+                );
             }
-            return Ok(result);
+
+            return Ok(
+                   ApiResponse<List<VesselResponseDto>>.SuccessResult(
+                       result,
+                       "Vessel data retrieved successfully."
+                   )
+               );
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetVesselById(Guid id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<ApiResponse<VesselResponseDto>>> GetVesselById(Guid id)
         {
             var result = await _vesselService.GetVesselById(id);
 
-            if(result == null)
-            {
-                return NotFound(new { message = $"Vessel dengan Id {id} tidak ditemukan" });
-            }
-            return Ok(result);
+            return Ok(
+                ApiResponse<VesselResponseDto>.SuccessResult(
+                    result,
+                    "Vessel data retrieved successfully."
+                )
+            );
         }
+
     }
 }

@@ -6,7 +6,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './form-date.component.html',
-  styleUrl: './form-date.component.css',
 })
 export class FormDateComponent {
   control = input.required<FormControl>();

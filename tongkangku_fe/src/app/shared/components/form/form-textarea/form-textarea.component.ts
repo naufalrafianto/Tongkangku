@@ -6,7 +6,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './form-textarea.component.html',
-  styleUrl: './form-textarea.component.css',
 })
 export class FormTextareaComponent {
   control = input.required<FormControl>();

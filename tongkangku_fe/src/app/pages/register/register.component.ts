@@ -1,6 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { UserRole } from '../../shared/interface/InterfaceVessel';
@@ -9,19 +14,19 @@ import { UserRole } from '../../shared/interface/InterfaceVessel';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, ReactiveFormsModule],
-  templateUrl: './register.component.html'
+  templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  fb = inject(FormBuilder)
+  fb = inject(FormBuilder);
 
-  registerData =this.fb.group({
-    name:['', [Validators.required]],
-    email:['', [Validators.required,Validators.email]],
-    password:['', [Validators.required, Validators.minLength(8)]],
-    role:[null as number | null, [Validators.required]]
-  }) ;
+  registerData = this.fb.group({
+    name: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    role: [null as number | null, [Validators.required]],
+  });
 
   errorMessage = '';
 
@@ -33,8 +38,8 @@ export class RegisterComponent {
 
     const payload = {
       ...this.registerData.value,
-      role: Number(this.registerData.value.role)
-    }
+      role: Number(this.registerData.value.role),
+    };
     this.authService.register(payload).subscribe({
       next: () => {
         alert('Registrasi berhasil! Silakan login.');
@@ -42,7 +47,7 @@ export class RegisterComponent {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Registrasi gagal!';
-      }
+      },
     });
   }
 }
