@@ -11,6 +11,9 @@ export enum UserRole {
 export interface VesselResponseDto {
   id: string;
   name: string;
+  portId: number,
+  ownerId: number,
+  categoryId : number,
   dwtCapacity: number;
   capacityFeed: number;
   year: number;

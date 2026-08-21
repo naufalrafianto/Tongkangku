@@ -16,15 +16,22 @@ export class LoginComponent {
 
   loginData = { email: '', password: '' };
   errorMessage = '';
+  
+ onLogin() {
+  this.authService.login(this.loginData).subscribe({
+    next: () => {
+      const userRole = this.authService.getRole();
+      console.log("role saat ini:", userRole);
 
-  onLogin() {
-    this.authService.login(this.loginData).subscribe({
-      next: () => {
+      if (userRole === 'Owner') {
+        this.router.navigate(['/register']); 
+      } else if (userRole === 'Charterer') { 
         this.router.navigate(['/vessel']);
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Email atau password salah!';
-      }
-    });
-  }
+      } 
+    },
+    error: (err) => {
+      this.errorMessage = err.error?.message || 'Email atau password salah!';
+    }
+  });
+}
 }
