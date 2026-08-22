@@ -6,14 +6,16 @@ import { AuthService } from '../../core/services/auth.service';
 import { RentalResponse } from '../../shared/types/rental-request/rental-request.type';
 import { RentalOfferService } from '../../core/services/rental-offer.service';
 import { RentalOffer, RentalOfferStatus } from '../../shared/types/rental-offer/rental-offer.type';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { RentalContractService } from '../../core/services/rental-contract.service';
 import { RentalStatus } from '../../shared/types/enum/rental-status.enum';
+import { RentalContract } from '../../shared/types/rental-contract/rentral-contract.type';
+import { ContractDetailComponent } from '../rental-contract/contract-detail/contract-detail.component';
 
 @Component({
   selector: 'app-rental-request-detail',
   standalone: true,
-  imports: [CurrencyPipe, DatePipe],
+  imports: [CurrencyPipe, DatePipe, DecimalPipe, ContractDetailComponent],
   templateUrl: './rental-request-detail.component.html',
 })
 export class RentalRequestDetailComponent implements OnInit {
@@ -25,16 +27,25 @@ export class RentalRequestDetailComponent implements OnInit {
   private contractService = inject(RentalContractService);
   readonly RentalStatus = RentalStatus;
   readonly RentalOfferStatus = RentalOfferStatus;
-
+  showContractModal = signal(false);
   private id = this.route.snapshot.paramMap.get('id')!;
 
+  openContractModal(): void {
+    this.showContractModal.set(true);
+  }
+  closeContractModal(): void {
+    this.showContractModal.set(false);
+  }
+  printContract(): void {
+    window.print();
+  }
   acceptingOfferId = signal<string | null>(null);
   offerActionError = signal<string | null>(null);
 
   detail = signal<RentalResponse | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
-
+  contract = signal<RentalContract | null>(null);
   offers = signal<RentalOffer[]>([]);
   offersLoading = signal(false);
   contractLoading = signal(false);
@@ -42,6 +53,7 @@ export class RentalRequestDetailComponent implements OnInit {
   cancelLoading = signal(false);
   actionLoading = signal<string | null>(null);
   currentUser = computed(() => this.authService.getCurrentUserValue());
+  contractError = signal<string | null>(null);
 
   isOwnerOfRequest = computed(() => {
     const user = this.authService.getCurrentUserValue();
@@ -71,6 +83,25 @@ export class RentalRequestDetailComponent implements OnInit {
     this.router.navigate(['/rental-requests', this.id, 'offer']);
   }
 
+  fetchContract(rentalRequestId: string): void {
+    this.contractLoading.set(true);
+    this.contractError.set(null);
+
+    this.contractService.getByRentalRequestId(rentalRequestId).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.contract.set(res.data);
+        }
+        this.contractLoading.set(false);
+      },
+      error: (err) => {
+        this.contractError.set('Gagal memuat detail kontrak.');
+        this.contractLoading.set(false);
+      }
+    });
+  }
+
+
   private loadDetail(): void {
     this.loading.set(true);
     this.rentalService.getById(this.id).subscribe({
@@ -80,6 +111,8 @@ export class RentalRequestDetailComponent implements OnInit {
 
         if (res.data?.status === 1) {
           this.loadOffers();
+        } else if (res.data?.status === 3) {
+          this.fetchContract(this.id);
         }
       },
       error: (err) => {
@@ -117,19 +150,10 @@ export class RentalRequestDetailComponent implements OnInit {
 
     this.offerService
       .acceptOffer(offerId)
-      .pipe(finalize(() => this.actionLoading.set(null)))
+      .pipe(finalize(() => this.acceptingOfferId.set(null)))
       .subscribe({
         next: () => {
-          this.contractService.getByRentalRequestId(this.id).subscribe({
-            next: (res) => {
-              if (res.success && res.data) {
-                this.router.navigate(['/rental-contracts', res.data.id]);
-              } else {
-                this.loadDetail();
-              }
-            },
-            error: () => this.loadDetail(),
-          });
+          this.loadDetail();
         },
         error: (err) => {
           this.offerActionError.set(
@@ -138,7 +162,6 @@ export class RentalRequestDetailComponent implements OnInit {
         },
       });
   }
-
   rejectingOfferId = signal<string | null>(null);
 
   rejectOffer(offerId: string, reason: string): void {
@@ -166,16 +189,7 @@ export class RentalRequestDetailComponent implements OnInit {
   }
 
   viewContract(): void {
-    this.contractLoading.set(true);
-    this.contractService.getByRentalRequestId(this.id).subscribe({
-      next: (res) => {
-        this.contractLoading.set(false);
-        if (res.success && res.data) {
-          this.router.navigate(['/rental-contracts', res.data.id]);
-        }
-      },
-      error: () => this.contractLoading.set(false),
-    });
+    this.fetchContract(this.id);
   }
 
   refresh(): void {

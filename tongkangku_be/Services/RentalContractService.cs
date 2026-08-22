@@ -40,7 +40,7 @@ namespace tongkangku_be.Services
             var contract = await _rentalContractRepository.GetByIdAsync(
                 id,
                 "Owner",
-                "Cargos"
+                "ContractCargos"
             );
 
             return contract == null
@@ -53,7 +53,7 @@ namespace tongkangku_be.Services
         {
             var contracts = await _rentalContractRepository.GetAllAsync(
                 "Owner",
-                "Cargos"
+                "ContractCargos"
             );
 
             if (contracts.Count == 0)
@@ -73,7 +73,7 @@ namespace tongkangku_be.Services
                 .GetByRentalRequestIdAsync(
                     rentalRequestId,
                     "Owner",
-                    "Cargos"
+                    "ContractCargos"
                 );
 
             return contract == null

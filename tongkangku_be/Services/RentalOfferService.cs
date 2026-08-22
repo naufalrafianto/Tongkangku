@@ -280,9 +280,7 @@ namespace tongkangku_be.Services
                 .ToList();
         }
 
-        public async Task<RentalOfferStatusResponseDto> UpdateAsync(
-            Guid id,
-            UpdateRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(
@@ -413,8 +411,7 @@ namespace tongkangku_be.Services
             await _rentalOfferRepository.SaveChangesAsync();
         }
 
-        public async Task<RentalOfferStatusResponseDto> WithdrawAsync(
-            Guid id)
+        public async Task<RentalOfferStatusResponseDto> WithdrawAsync(Guid id)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(id);
@@ -449,8 +446,7 @@ namespace tongkangku_be.Services
                 .ToStatusDto(offer);
         }
 
-        public async Task<RentalOfferStatusResponseDto> AcceptAsync(
-            Guid id)
+        public async Task<RentalOfferStatusResponseDto> AcceptAsync(Guid id)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(id);
@@ -550,9 +546,7 @@ namespace tongkangku_be.Services
             );
         }
 
-        public async Task<RentalOfferStatusResponseDto> RejectAsync(
-            Guid id,
-            RejectRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> RejectAsync(Guid id,RejectRentalOfferDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Reason))
             {

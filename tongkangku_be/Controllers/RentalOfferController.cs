@@ -24,7 +24,7 @@ namespace tongkangku_be.Controllers
         {
             var result = await _rentalOfferService.GetByIdAsync(id);
 
-            return Ok(ApiResponse<RentalOfferResponseDto>.SuccessResult(result, "Rental request updated successfully"));
+            return Ok(ApiResponse<RentalOfferResponseDto>.SuccessResult(result, "Rental offer retrieved successfully"));
 
         }
         [HttpGet("rental-request/{rentalRequestId:guid}")]

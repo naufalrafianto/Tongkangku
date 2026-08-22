@@ -29,8 +29,8 @@ namespace tongkangku_be.Services
                 id,
                 "Vessel",
                 "Charterer",
-                "Contract.Cargos",            
-                "Contract.Cargos.CargoType"
+                "Cargos",
+                "Cargos.CargoType"
             );
 
             return rental == null

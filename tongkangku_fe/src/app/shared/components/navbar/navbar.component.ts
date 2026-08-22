@@ -60,10 +60,10 @@ export class NavbarComponent implements OnInit {
         return 'Admin';
 
       case 1:
-        return 'Owner';
+        return 'Charterer';
 
       case 2:
-        return 'Charterer';
+        return 'Owner';
 
       default:
         return 'User';

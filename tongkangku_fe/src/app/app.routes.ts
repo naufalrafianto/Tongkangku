@@ -71,7 +71,7 @@ export const routes: Routes = [
     ],
   },
 
-  
+
   // =========================
   // Rental Requests
   // =========================
@@ -96,6 +96,6 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'auth/login',
   },
 ];

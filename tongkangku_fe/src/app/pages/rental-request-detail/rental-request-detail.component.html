@@ -43,7 +43,6 @@
     </div>
   } @else {
     @if (detail(); as d) {
-      <!-- HEADER & ACTIONS -->
       <div
         class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
@@ -52,27 +51,6 @@
             <h1 class="text-2xl font-bold tracking-tight text-slate-900">
               Rental Request
             </h1>
-
-            <span
-              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold"
-              [class.bg-amber-100]="d.status === RentalStatus.Pending"
-              [class.text-amber-800]="d.status === RentalStatus.Pending"
-              [class.border-amber-200]="d.status === RentalStatus.Pending"
-              [class.bg-blue-100]="d.status === RentalStatus.Offered"
-              [class.text-blue-800]="d.status === RentalStatus.Offered"
-              [class.border-blue-200]="d.status === RentalStatus.Offered"
-              [class.bg-emerald-100]="d.status === RentalStatus.Contracted"
-              [class.text-emerald-800]="d.status === RentalStatus.Contracted"
-              [class.border-emerald-200]="d.status === RentalStatus.Contracted"
-              [class.bg-red-100]="d.status === RentalStatus.Rejected"
-              [class.text-red-800]="d.status === RentalStatus.Rejected"
-              [class.border-red-200]="d.status === RentalStatus.Rejected"
-              [class.bg-slate-100]="d.status === RentalStatus.Cancelled"
-              [class.text-slate-700]="d.status === RentalStatus.Cancelled"
-              [class.border-slate-200]="d.status === RentalStatus.Cancelled"
-            >
-              {{ d.status }}
-            </span>
           </div>
           <p class="mt-1 text-xs text-slate-500">ID: {{ d.id }}</p>
         </div>
@@ -102,39 +80,6 @@
                 />
               </svg>
               Create Offer
-            </button>
-          }
-
-          <!-- Action Contracted -->
-          @if (d.status === RentalStatus.Contracted) {
-            <button
-              type="button"
-              (click)="viewContract()"
-              [disabled]="contractLoading()"
-              class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
-            >
-              @if (contractLoading()) {
-                <svg
-                  class="mr-2 h-4 w-4 animate-spin text-white"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  ></path>
-                </svg>
-              }
-              View Contract
             </button>
           }
 
@@ -175,7 +120,7 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div class="space-y-6 lg:col-span-2">
           <div
             class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
@@ -258,6 +203,45 @@
                 </div>
               }
             </dl>
+          </div>
+
+          <!-- CARGO SECTION -->
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-base font-semibold text-slate-900">
+                Daftar Kargo
+              </h2>
+              <span
+                class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600"
+              >
+                {{ d.cargos.length }} Item
+              </span>
+            </div>
+
+            @if (d.cargos.length > 0) {
+              <div class="space-y-2">
+                @for (cargo of d.cargos; track cargo.id) {
+                  <div
+                    class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3"
+                  >
+                    <p class="text-sm font-semibold text-slate-900">
+                      {{ cargo.cargoTypeName }}
+                    </p>
+                    <p class="text-sm font-semibold text-slate-700">
+                      {{ cargo.quantity | number: "1.0-2" }} {{ cargo.unit }}
+                    </p>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div
+                class="rounded-lg border border-dashed border-slate-200 py-6 text-center text-xs text-slate-400"
+              >
+                Tidak ada data kargo.
+              </div>
+            }
           </div>
 
           <!-- OFFERS SECTION -->
@@ -449,6 +433,19 @@
             }
           </div>
         </div>
+
+        <!-- KARTU DETAIL KONTRAK -->
+        @if (d.status === RentalStatus.Contracted) {
+          <div class="col-span-2">
+            <app-contract-detail
+              [contract]="contract()"
+              [loading]="contractLoading()"
+              [error]="contractError()"
+              [chartererName]="d.chartererName"
+              (retry)="fetchContract(d.id)"
+            />
+          </div>
+        }
       </div>
     } @else {
       <div class="rounded-xl border border-slate-200 bg-white p-12 text-center">

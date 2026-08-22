@@ -1,0 +1,787 @@
+<div class="mx-auto max-w-4xl py-8">
+  @if (loading) {
+    <!-- LOADING -->
+
+    <div
+      class="flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white p-12 text-sm text-slate-500 shadow-sm"
+    >
+      <svg
+        class="h-5 w-5 animate-spin text-slate-700"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+        ></path>
+      </svg>
+
+      <span>Memuat dokumen kontrak...</span>
+    </div>
+  } @else if (error) {
+    <!-- ERROR -->
+
+    <div class="rounded-xl border border-red-200 bg-red-50 p-6 shadow-sm">
+      <div class="flex items-center justify-between text-sm text-red-700">
+        <div class="flex items-center gap-2">
+          <svg
+            class="h-5 w-5 text-red-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+
+          <span>{{ error }}</span>
+        </div>
+
+        <button
+          type="button"
+          (click)="onRetry()"
+          class="font-semibold text-red-800 underline"
+        >
+          Coba lagi
+        </button>
+      </div>
+    </div>
+  } @else {
+    @if (contract) {
+      <!-- ====================================================== -->
+      <!-- DOKUMEN -->
+      <!-- ====================================================== -->
+
+      <div
+        class="relative overflow-hidden border border-slate-300 bg-white px-8 py-10 text-slate-800 shadow-xl md:px-14 md:py-14"
+      >
+        <!-- WATERMARK -->
+
+        <div
+          class="pointer-events-none absolute right-8 top-28 select-none opacity-[0.035]"
+        >
+          <span
+            class="text-7xl font-black uppercase tracking-widest text-slate-900 md:text-9xl"
+          >
+            {{ contract.status }}
+          </span>
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- KOP SURAT -->
+        <!-- ==================================================== -->
+
+        <header class="border-b-2 border-slate-900 pb-6">
+          <div
+            class="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left"
+          >
+            <div class="flex-1">
+              <p
+                class="text-xs font-bold uppercase tracking-[0.3em] text-slate-500"
+              >
+                TONGKANGKU
+              </p>
+
+              <h1
+                class="mt-2 text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl"
+              >
+                Perjanjian Sewa Kapal
+              </h1>
+
+              <p class="mt-2 text-xs text-slate-500">
+                Dokumen Perjanjian Sewa / Vessel Rental Agreement
+              </p>
+            </div>
+
+            <div class="text-center sm:text-right">
+              <p
+                class="text-[10px] font-bold uppercase tracking-widest text-slate-400"
+              >
+                Nomor Kontrak
+              </p>
+
+              <p class="mt-1 font-mono text-sm font-bold text-slate-900">
+                {{ contract.contractNum }}
+              </p>
+
+              <div class="mt-2 inline-flex border border-slate-700 px-3 py-1">
+                <span
+                  class="font-mono text-[10px] font-bold uppercase tracking-widest"
+                >
+                  {{ contract.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ==================================================== -->
+        <!-- PEMBUKAAN -->
+        <!-- ==================================================== -->
+
+        <section class="mt-8">
+          <p class="text-justify text-sm leading-7">
+            Pada tanggal
+            <strong> {{ contract.createdAt | date: "dd MMMM yyyy" }} </strong>,
+            telah dibuat dan disepakati Perjanjian Sewa Kapal dengan nomor
+            <strong>{{ contract.contractNum }}</strong>
+            oleh dan antara para pihak sebagaimana disebutkan dalam perjanjian
+            ini.
+          </p>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Para pihak sepakat untuk mengikatkan diri dalam perjanjian penyewaan
+            kapal berdasarkan ketentuan, persyaratan komersial, periode sewa,
+            jenis muatan, serta nilai kontrak sebagaimana tercantum dalam
+            dokumen ini.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL I - PARA PIHAK -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 1
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Para Pihak
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Perjanjian ini dibuat oleh dan antara:
+          </p>
+
+          <!-- PIHAK PERTAMA -->
+
+          <div class="mt-5">
+            <p class="text-sm leading-7">
+              <strong>1. PIHAK PERTAMA (CHARTERER)</strong>
+            </p>
+
+            <div class="ml-5 mt-2 border-l-2 border-slate-300 pl-4">
+              <p class="text-sm font-bold">
+                {{ chartererName }}
+              </p>
+
+              <p class="mt-1 text-xs text-slate-500">
+                Selanjutnya disebut sebagai
+                <strong>"PIHAK PERTAMA"</strong>
+                atau <strong>"CHARTERER"</strong>.
+              </p>
+            </div>
+          </div>
+
+          <!-- PIHAK KEDUA -->
+
+          <div class="mt-5">
+            <p class="text-sm leading-7">
+              <strong>2. PIHAK KEDUA (OWNER)</strong>
+            </p>
+
+            <div class="ml-5 mt-2 border-l-2 border-slate-300 pl-4">
+              <p class="text-sm font-bold">
+                {{ contract.ownerName }}
+              </p>
+
+              <p class="mt-1 text-xs text-slate-500">
+                Selanjutnya disebut sebagai
+                <strong>"PIHAK KEDUA"</strong>
+                atau <strong>"OWNER"</strong>.
+              </p>
+            </div>
+          </div>
+
+          <p class="mt-5 text-justify text-sm leading-7">
+            PIHAK PERTAMA dan PIHAK KEDUA secara bersama-sama selanjutnya
+            disebut sebagai <strong>"Para Pihak"</strong>.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL II - OBJEK -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 2
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Objek Perjanjian
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            PIHAK KEDUA sepakat untuk menyewakan kapal kepada PIHAK PERTAMA dan
+            PIHAK PERTAMA sepakat untuk menyewa kapal tersebut berdasarkan
+            ketentuan dan nilai komersial yang tercantum dalam Perjanjian ini.
+          </p>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Objek penyewaan digunakan untuk kegiatan pengangkutan muatan
+            sebagaimana tercantum pada Pasal 4 Perjanjian ini.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL III - PERIODE -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 3
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Jangka Waktu Sewa
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Jangka waktu penyewaan kapal berdasarkan Perjanjian ini adalah
+            sebagai berikut:
+          </p>
+
+          <table
+            class="mt-5 w-full border-collapse border border-slate-300 text-sm"
+          >
+            <tbody>
+              <tr>
+                <td
+                  class="w-1/2 border border-slate-300 bg-slate-50 px-4 py-3 font-semibold"
+                >
+                  Tanggal Mulai Sewa
+                </td>
+
+                <td class="border border-slate-300 px-4 py-3 font-mono">
+                  {{ contract.startDate | date: "dd MMMM yyyy" }}
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  class="border border-slate-300 bg-slate-50 px-4 py-3 font-semibold"
+                >
+                  Tanggal Selesai Sewa
+                </td>
+
+                <td class="border border-slate-300 px-4 py-3 font-mono">
+                  {{ contract.endDate | date: "dd MMMM yyyy" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Selama periode tersebut, Para Pihak wajib melaksanakan hak dan
+            kewajibannya sesuai dengan ketentuan Perjanjian ini.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL IV - CARGO -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 4
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Muatan
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Jenis dan jumlah muatan yang menjadi bagian dari pelaksanaan
+            Perjanjian ini adalah sebagai berikut:
+          </p>
+
+          @if (contract.cargos.length > 0) {
+            <table
+              class="mt-5 w-full border-collapse border border-slate-300 text-xs"
+            >
+              <thead>
+                <tr class="bg-slate-100">
+                  <th class="border border-slate-300 px-3 py-3 text-left">
+                    No.
+                  </th>
+
+                  <th class="border border-slate-300 px-3 py-3 text-left">
+                    Jenis Muatan
+                  </th>
+
+                  <th class="border border-slate-300 px-3 py-3 text-right">
+                    Quantity
+                  </th>
+
+                  <th class="border border-slate-300 px-3 py-3 text-right">
+                    Satuan
+                  </th>
+
+                  <th class="border border-slate-300 px-3 py-3 text-right">
+                    Freight Rate
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (
+                  cargo of contract.cargos;
+                  track cargo.id;
+                  let i = $index
+                ) {
+                  <tr>
+                    <td class="border border-slate-300 px-3 py-3 text-center">
+                      {{ i + 1 }}
+                    </td>
+
+                    <td class="border border-slate-300 px-3 py-3 font-semibold">
+                      {{ cargo.cargoName }}
+
+                      @if (cargo.cargoName) {
+                        <span
+                          class="block text-[10px] font-normal text-slate-500"
+                        >
+                          {{ cargo.cargoName }}
+                        </span>
+                      }
+                    </td>
+
+                    <td
+                      class="border border-slate-300 px-3 py-3 text-right font-mono"
+                    >
+                      {{ cargo.quantity | number }}
+                    </td>
+
+                    <td
+                      class="border border-slate-300 px-3 py-3 text-right font-mono"
+                    >
+                      {{ cargo.unit }}
+                    </td>
+
+                    <td
+                      class="border border-slate-300 px-3 py-3 text-right font-mono"
+                    >
+                      @if (cargo.freightRatePerTon !== null) {
+                        {{
+                          cargo.freightRatePerTon
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      } @else {
+                        -
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          } @else {
+            <p class="mt-5 text-center text-xs italic text-slate-500">
+              Tidak terdapat rincian muatan.
+            </p>
+          }
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL V - NILAI KONTRAK -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 5
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Nilai dan Ketentuan Pembayaran
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Para Pihak menyepakati nilai dan komponen biaya penyewaan kapal
+            sebagai berikut:
+          </p>
+
+          <table
+            class="mt-5 w-full border-collapse border border-slate-300 text-xs"
+          >
+            <tbody>
+              <tr>
+                <td class="border border-slate-300 px-4 py-3">
+                  Hire Rate per Hari
+                </td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono font-semibold"
+                >
+                  {{
+                    contract.agreedRatePerDay
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+
+              <tr>
+                <td class="border border-slate-300 px-4 py-3">
+                  Total Hire Amount
+                </td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono font-semibold"
+                >
+                  {{
+                    contract.agreedHireAmount
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+
+              <tr>
+                <td class="border border-slate-300 px-4 py-3">Bunker Amount</td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono font-semibold"
+                >
+                  {{
+                    contract.agreedBunkerAmount
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+
+              <tr>
+                <td class="border border-slate-300 px-4 py-3">Other Charges</td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono font-semibold"
+                >
+                  {{
+                    contract.agreedOtherCharges
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+
+              <tr class="bg-slate-100">
+                <td
+                  class="border-2 border-slate-900 px-4 py-4 font-bold uppercase"
+                >
+                  Total Nilai Kontrak
+                </td>
+
+                <td
+                  class="border-2 border-slate-900 px-4 py-4 text-right font-mono text-base font-black"
+                >
+                  {{
+                    contract.agreedTotalPrice
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Nilai kontrak tersebut merupakan nilai yang telah disepakati oleh
+            Para Pihak berdasarkan ketentuan komersial yang berlaku pada saat
+            Perjanjian ini dibuat.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL VI - LAYTIME -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 6
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Laytime, Demurrage dan Despatch
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Ketentuan mengenai kompensasi atas penggunaan waktu operasi kapal
+            ditetapkan berdasarkan tarif berikut:
+          </p>
+
+          <table
+            class="mt-5 w-full border-collapse border border-slate-300 text-xs"
+          >
+            <tbody>
+              <tr>
+                <td
+                  class="border border-slate-300 bg-slate-50 px-4 py-3 font-semibold"
+                >
+                  Demurrage Rate
+                </td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono"
+                >
+                  {{
+                    contract.demurrageRate
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                  / hari
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  class="border border-slate-300 bg-slate-50 px-4 py-3 font-semibold"
+                >
+                  Despatch Rate
+                </td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono"
+                >
+                  {{
+                    contract.despatchRate | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                  / hari
+                </td>
+              </tr>
+
+              <tr>
+                <td
+                  class="border border-slate-300 bg-slate-50 px-4 py-3 font-semibold"
+                >
+                  Total Laytime Adjustment
+                </td>
+
+                <td
+                  class="border border-slate-300 px-4 py-3 text-right font-mono"
+                >
+                  {{
+                    contract.totalLaytimeAdjustment
+                      | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL VII - SETTLEMENT -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 7
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Penyelesaian Akhir
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Setelah seluruh kewajiban berdasarkan Perjanjian ini selesai
+            dilaksanakan, Para Pihak akan melakukan perhitungan dan penyelesaian
+            akhir terhadap seluruh nilai yang masih menjadi kewajiban
+            masing-masing pihak.
+          </p>
+
+          <div class="mt-5 border-2 border-slate-900 p-5">
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider">
+                  Final Settlement Amount
+                </p>
+
+                @if (contract.finalSettlementAmount !== null) {
+                  <p class="mt-2 font-mono text-xl font-black">
+                    {{
+                      contract.finalSettlementAmount
+                        | currency: "IDR" : "symbol" : "1.0-0"
+                    }}
+                  </p>
+                } @else {
+                  <p class="mt-2 text-sm italic text-slate-500">
+                    Belum diselesaikan
+                  </p>
+                }
+              </div>
+
+              @if (contract.completedAt) {
+                <div class="sm:text-right">
+                  <p class="text-xs text-slate-500">Tanggal Penyelesaian</p>
+
+                  <p class="mt-1 font-mono text-sm font-semibold">
+                    {{ contract.completedAt | date: "dd MMMM yyyy, HH:mm" }}
+                  </p>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- PASAL VIII -->
+        <!-- ==================================================== -->
+
+        <section class="mt-10">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900">
+            Pasal 8
+          </h2>
+
+          <h3
+            class="mt-1 text-sm font-bold uppercase tracking-wider text-slate-900"
+          >
+            Ketentuan Penutup
+          </h3>
+
+          <div class="mt-2 h-px bg-slate-300"></div>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Perjanjian ini merupakan dokumen yang memuat kesepakatan Para Pihak
+            mengenai penyewaan kapal sebagaimana tercantum dalam dokumen ini.
+          </p>
+
+          <p class="mt-4 text-justify text-sm leading-7">
+            Dengan menyetujui Perjanjian ini, Para Pihak menyatakan telah
+            membaca, memahami, dan menyepakati seluruh ketentuan yang tercantum
+            di dalamnya.
+          </p>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- SIGNATURE -->
+        <!-- ==================================================== -->
+
+        <section class="mt-16">
+          <p class="text-center text-sm leading-7">
+            Demikian Perjanjian Sewa Kapal ini dibuat untuk dipergunakan
+            sebagaimana mestinya.
+          </p>
+
+          <div class="mt-12 grid grid-cols-1 gap-12 sm:grid-cols-2">
+            <!-- CHARTERER -->
+
+            <div class="text-center">
+              <p class="text-sm font-semibold">PIHAK PERTAMA</p>
+
+              <p class="mt-1 text-xs text-slate-500">CHARTERER</p>
+
+              <div class="h-28"></div>
+
+              <div class="mx-auto w-48 border-b border-slate-900"></div>
+
+              <p class="mt-2 text-sm font-bold">
+                {{ chartererName }}
+              </p>
+            </div>
+
+            <!-- OWNER -->
+
+            <div class="text-center">
+              <p class="text-sm font-semibold">PIHAK KEDUA</p>
+
+              <p class="mt-1 text-xs text-slate-500">OWNER</p>
+
+              <div class="h-28"></div>
+
+              <div class="mx-auto w-48 border-b border-slate-900"></div>
+
+              <p class="mt-2 text-sm font-bold">
+                {{ contract.ownerName }}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- FOOTER -->
+        <!-- ==================================================== -->
+
+        <footer class="mt-16 border-t border-slate-300 pt-5">
+          <div
+            class="flex flex-col justify-between gap-3 text-[10px] text-slate-500 sm:flex-row"
+          >
+            <div>
+              <p>
+                Contract ID:
+                <span class="font-mono text-slate-700">
+                  {{ contract.id }}
+                </span>
+              </p>
+
+              <p class="mt-1">
+                Rental Request ID:
+                <span class="font-mono text-slate-700">
+                  {{ contract.rentalRequestId }}
+                </span>
+              </p>
+            </div>
+
+            <div class="sm:text-right">
+              <p>
+                Dibuat:
+                <span class="font-mono text-slate-700">
+                  {{ contract.createdAt | date: "dd/MM/yyyy HH:mm" }}
+                </span>
+              </p>
+
+              <p class="mt-1">
+                Diperbarui:
+                <span class="font-mono text-slate-700">
+                  {{ contract.updatedAt | date: "dd/MM/yyyy HH:mm" }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <p class="mt-5 text-center text-[10px] italic text-slate-400">
+            Dokumen ini dihasilkan secara elektronik oleh Sistem Tongkangku.
+          </p>
+        </footer>
+      </div>
+    }
+  }
+</div>

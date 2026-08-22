@@ -32,7 +32,17 @@ namespace tongkangku_be.Mappers
                 CompletedAt = contract.CompletedAt,
                 Status = contract.Status,
                 CreatedAt = contract.CreatedAt,
-                UpdatedAt = contract.UpdatedAt
+                UpdatedAt = contract.UpdatedAt,
+                Cargos = contract.ContractCargos?
+                    .Select(c => new ContractCargoResponseDto
+                    {
+                        Id = c.Id,
+                        CargoTypeId = c.CargoTypeId,
+                        CargoName = c.CargoName,
+                        Quantity = (decimal)c.Quantity,
+                        Unit = c.Unit
+                    })
+                    .ToList() ?? new List<ContractCargoResponseDto>()
             };
         }
 

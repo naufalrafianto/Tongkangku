@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.RentalContract;
+using tongkangku_be.Dtos.RentalOffer;
+using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Interfaces;
+using tongkangku_be.Shared;
 
 namespace tongkangku_be.Controllers
 {
@@ -26,10 +30,15 @@ namespace tongkangku_be.Controllers
         }
 
         [HttpGet("rental-request/{rentalRequestId:guid}")]
-        public async Task<IActionResult> GetByRentalRequestId(Guid rentalRequestId)
+        public async Task<ActionResult<ApiResponse<RentalContractResponseDto>>> GetByRentalRequestId(Guid rentalRequestId)
         {
-            var contract = await _rentalContractService.GetByRentalRequestIdAsync(rentalRequestId);
-            return Ok(contract);
+            var result = await _rentalContractService.GetByRentalRequestIdAsync(rentalRequestId);
+            return Ok(
+                ApiResponse<RentalContractResponseDto>.SuccessResult(
+                    result,
+                    "Rental requests retrieved successfully"
+                )
+             );
         }
 
         [HttpPost]
