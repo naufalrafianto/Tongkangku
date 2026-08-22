@@ -1,4 +1,5 @@
-export type Port = {
+export type Port =
+ {
   id: string;
   name: string;
   city: string;

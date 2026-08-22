@@ -1,9 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { VesselService } from '../../core/services/vessel.service';
-import { VesselResponseDto } from '../../shared/interface/InterfaceVessel';
-import { VesselStatus } from '../../shared/interface/InterfaceVessel';
 import { DecimalPipe } from '@angular/common';
+
+import { VesselService } from '../../core/services/vessel.service';
+import {
+  VesselResponseDto,
+  VesselStatus
+} from '../../shared/interface/InterfaceVessel';
+
 @Component({
   selector: 'app-vessel-detail',
   standalone: true,
@@ -12,37 +16,51 @@ import { DecimalPipe } from '@angular/common';
   styleUrl: './vessel-detail.component.css'
 })
 export class VesselDetailComponent implements OnInit {
-  private rouet = inject(ActivatedRoute)
-  private vesselSvc = inject(VesselService)
+
+  private route = inject(ActivatedRoute);
+  private vesselSvc = inject(VesselService);
+
   vesselStatus = VesselStatus;
+
   id: string | null = null;
-  vesselDetail : VesselResponseDto | null = null;
-  errorMessage = "";
+  vesselDetail: VesselResponseDto | null = null;
+  errorMessage = '';
 
-  ngOnInit()
-  {
-    
+  ngOnInit(): void {
     this.getDetail();
-
   }
 
   getDetail(): void {
-    this.id = this.rouet.snapshot.paramMap.get('id');
-    console.log(this.id);
+
+    this.id = this.route.snapshot.paramMap.get('id');
+
+    console.log('ID:', this.id);
+
     if (!this.id) {
       this.errorMessage = 'ID Kapal tidak ditemukan';
       return;
     }
-  this.vesselSvc.GetByid(this.id).subscribe({
-    next: (response: any) => {
-      console.log('Response dari Backend:', response); 
-      this.vesselDetail = response.data ? response.data : response; 
-    },
-    error: (err) => {
-      console.error('Error dari Backend:', err);
-      this.errorMessage = err.error?.message || 'Gagal memuat detail kapal';
-    }
-  });
-}
 
+    this.vesselSvc.GetByid(this.id).subscribe({
+
+      next: (response: any) => {
+
+        console.log('Response dari Backend:', response);
+
+        this.vesselDetail = response.data ?? response;
+
+        console.log('Detail Vessel:', this.vesselDetail);
+        console.log('Status:', this.vesselDetail?.status);
+      },
+
+      error: (err) => {
+
+        console.error('Error dari Backend:', err);
+
+        this.errorMessage =
+          err.error?.message || 'Gagal memuat detail kapal';
+      }
+
+    });
+  }
 }

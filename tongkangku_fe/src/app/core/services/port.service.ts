@@ -12,7 +12,7 @@ export class PortService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  getAll(): Observable<ApiResponse<Port[]>> {
-    return this.http.get<ApiResponse<Port[]>>(`${this.apiUrl}/ports`);
+  getAll(): Observable<Port[]> {
+    return this.http.get<Port[]>(`${this.apiUrl}/ports`);
   }
 }

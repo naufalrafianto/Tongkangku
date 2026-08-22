@@ -29,9 +29,9 @@ namespace tongkangku_be.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetAllVesselAsync()
+        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetAllVesselAsync(string? search, int limit, int page)
         {
-            var result = await _vesselService.GetAllVesselAsync();
+            var result = await _vesselService.GetAllVesselAsync(search,limit, page);
             if (result == null || result.Count == 0)
             {
                 return NotFound(

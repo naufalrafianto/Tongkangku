@@ -1,42 +1,68 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { VesselService } from '../../core/services/vessel.service';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { EnumHelper } from '../../core/helper/role.helper';
-import { Vessel } from '../../shared/types/vessel/vessel.type';
-import { VesselStatus } from '../../shared/types/enum/vessel.enum';
+import { RouterLink } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { VesselResponseDto, VesselStatus } from '../../shared/interface/InterfaceVessel';
+
 @Component({
   selector: 'app-vessel',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink, DecimalPipe, FormsModule],
   templateUrl: './vessel.component.html',
   styleUrl: './vessel.component.css',
 })
 export class VesselComponent implements OnInit {
   private vesselService = inject(VesselService);
-  vesselData: Vessel[] | null = null;
+
+  vesselData: VesselResponseDto[] = [];
   errorMessage = '';
   isLoading: boolean = true;
-  VesselStatus = VesselStatus;
-  EnumHelper = EnumHelper;
+  
+  vesselStatus = VesselStatus; // Menyambungkan enum ke template
+
+  page: number = 1;
+  limit: number = 6; 
+  search: string = '';
+  hasMoreData: boolean = true;
 
   ngOnInit(): void {
     this.fetchVessel();
   }
+
   fetchVessel(): void {
     this.isLoading = true;
 
-    this.vesselService.getAll().subscribe({
-      next: (response) => {
+    this.vesselService.getAll(this.search, this.limit, this.page).subscribe({
+      next: (response: any) => {
         this.vesselData = response.data ?? [];
+        this.hasMoreData = this.vesselData.length === this.limit;
         this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Gagal Mengambil Data';
-
         this.vesselData = [];
         this.isLoading = false;
       },
     });
+  }
+
+  onSearch(): void {
+    this.page = 1; 
+    this.fetchVessel();
+  }
+
+  nextPage(): void {
+    if (this.hasMoreData) {
+      this.page++;
+      this.fetchVessel();
+    }
+  }
+
+  prevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+      this.fetchVessel();
+    }
   }
 }

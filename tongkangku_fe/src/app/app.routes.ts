@@ -6,6 +6,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { VesselComponent } from './pages/vessel/vessel.component';
 import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
 import { VesselDetailComponent } from './pages/vessel-detail/vessel-detail.component';
+import { VesselCreateComponent } from './pages/vessel-create/vessel-create.component';
 
 import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './shared/components/main-layout/main-layout.component';
@@ -55,10 +56,20 @@ export const routes: Routes = [
             path: ':id/rental-requests',
             component: RentalRequestsComponent,
           },
+          {
+            path: ':id/detail',
+            component: VesselDetailComponent
+          },
+          {
+            path: 'create',
+            component: VesselCreateComponent
+          }
         ],
       },
     ],
   },
+
+  
   // =========================
   // Rental Requests
   // =========================

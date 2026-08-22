@@ -38,7 +38,7 @@ export class LoginComponent {
         } else if (userRole === 1) {
           this.router.navigate(['/vessels']);
         } else if (userRole === 0) {
-          this.router.navigate(['/vessels']);
+          this.router.navigate(['/vessels/create']);
         } else {
           this.errorMessage = 'Role user tidak dikenali.';
         }
