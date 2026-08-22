@@ -89,23 +89,36 @@ namespace tongkangku_be.Services
 
         }
 
-        public async Task<List<VesselResponseDto>> GetAllVesselAsync()
+        public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search,int limit, int page)
         {
             var vessel = await _vesselRepository.GetAllAsync();
-            
-            return vessel.Select(vessel => new VesselResponseDto
+
+            if (!string.IsNullOrEmpty(search))
             {
-                Id = vessel.Id,
-                name = vessel.Name,
-                categoryId = vessel.CategoryId,
-                ownerId = vessel.OwnerId,
-                portId = vessel.PortId,
-                capacityFeed = vessel.CapacityFeed,
-                dwtCapacity = vessel.DwtCapacity,
-                year = vessel.Year,
-                ratePerDay = vessel.RatePerDay,
-                status = (int)vessel.Status
-            }).ToList();
+                vessel = vessel
+                    .Where(v => v.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            var vesselPages = vessel
+                 .Skip((page - 1) * limit)
+                 .Take(limit)
+                .Select(v => new VesselResponseDto
+                {
+                    Id = v.Id,
+                    name = v.Name,
+                    ownerId = v.OwnerId,
+                    categoryId = v.CategoryId,
+                    portId = v.PortId,
+                    capacityFeed = v.CapacityFeed,
+                    dwtCapacity = v.DwtCapacity,
+                    status = (int)v.Status,
+                    year = v.Year,
+                    ratePerDay = v.RatePerDay,
+                    createdAt = v.CreatedAt,
+                }).ToList();
+
+            return vesselPages ?? new List<VesselResponseDto>();
         }
 
         public async Task<VesselResponseDto> GetVesselById(Guid id)

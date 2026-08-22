@@ -20,3 +20,15 @@ export interface VesselResponseDto {
   status: VesselStatus; 
   ratePerDay?: number;
 }
+
+export interface vesselcreate{
+   name: string;
+  portId: number,
+  ownerId: number,
+  categoryId : number,
+  dwtCapacity: number;
+  capacityFeed: number;
+  year: number;
+  status: VesselStatus; 
+  ratePerDay?: number;
+}

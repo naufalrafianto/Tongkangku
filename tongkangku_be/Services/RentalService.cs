@@ -41,8 +41,7 @@ namespace tongkangku_be.Services
 
         public async Task<List<RentalResponseDto>> GetAllAsync(Guid userId)
         {
-            var rentals = await _rentalRepository.GetAllByUserAsync(userId, "Contract.Cargos",
-                "Contract.Cargos.CargoType");
+            var rentals = await _rentalRepository.GetAllByUserAsync(userId);
 
             if (rentals.Count == 0)
             {

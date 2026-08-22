@@ -64,6 +64,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('access_token');
   }
+  getUserId(): string | null {
+    return localStorage.getItem('id');
+  }
 
   isLoggedIn(): boolean {
     return !!this.getToken();
@@ -74,6 +77,7 @@ export class AuthService {
 
     localStorage.setItem('user_role', role.toString());
   }
+  
 
   getRole(): UserRole | null {
     if (this.userRole !== null) {

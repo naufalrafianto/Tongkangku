@@ -35,10 +35,20 @@
             <h1 class="text-2xl md:text-3xl font-bold">{{ vesselDetail.name }}</h1>
             
             <!-- Badge Status -->
-            <span [class]="vesselDetail.status === 0 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border-rose-500/30'"
-                  class="px-3 py-1 text-xs font-semibold rounded-full border backdrop-blur-sm">
-              {{ vesselDetail.status === 0 ? 'Tersedia' : 'Tidak Tersedia' }}
-            </span>
+           <span
+  [class]="
+    vesselDetail.status === vesselStatus.Available
+      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+      : 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+  "
+  class="px-3 py-1 text-xs font-semibold rounded-full border backdrop-blur-sm"
+>
+  {{
+    vesselDetail.status === vesselStatus.Available
+      ? 'Tersedia'
+      : 'Tidak Tersedia'
+  }}
+</span>
           </div>
           <p class="text-slate-400 text-sm mt-1">ID Kapal: {{ vesselDetail.id }}</p>
         </div>

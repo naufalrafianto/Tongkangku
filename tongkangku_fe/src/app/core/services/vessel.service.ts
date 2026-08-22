@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api/response.type';
@@ -12,8 +12,15 @@ export class VesselService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  getAll(): Observable<ApiResponse<Vessel[]>> {
-    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels`);
+  getAll(search: string = '', limit: number = 10, page: number = 1): Observable<ApiResponse<Vessel[]>> {
+    let params = new HttpParams()
+    .set('search', search)
+    .set('limit', limit)
+    .set('page', page)
+
+
+
+    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels`, {params});
   }
 
   getById(vesselId: string): Observable<ApiResponse<Vessel>> {
@@ -27,8 +34,9 @@ export class VesselService {
   }
 
 GetByid(id: string): Observable<any> {
-  // Gunakan this.apiUrl + id jika apiUrl sudah ada slash di belakang, 
-  // atau hapus slash di apiUrl.
-  return this.http.get<any>(`${this.apiUrl}/${id}`); 
+  return this.http.get<any>(`${this.apiUrl}/vessels/${id}`); 
 }
+
+
+ 
 }

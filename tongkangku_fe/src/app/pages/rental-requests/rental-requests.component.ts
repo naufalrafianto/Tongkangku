@@ -140,9 +140,9 @@ export class RentalRequestsComponent implements OnInit {
       cargoTypes: this.cargoTypeService.getAll(),
     }).subscribe({
       next: ({ ports, cargoTypes }) => {
-        if (ports.success && ports.data) {
+        if (ports && ports) {
           this.portOptions.set(
-            ports.data.map((port) => ({
+            ports.map((port) => ({
               value: port.id,
               label: port.city ? `${port.name} — ${port.city}` : port.name,
             })),
