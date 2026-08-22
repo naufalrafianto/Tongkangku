@@ -5,8 +5,7 @@ namespace tongkangku_be.Interfaces
 {
     public interface IRentalRepository: IRepository<RentalRequest>
     {
-        Task<List<RentalRequest>> GetAllByChartererIdAsync(Guid chartererId);
-
+        Task<List<RentalRequest>> GetAllByUserAsync(Guid userId);
         Task<bool> HasActiveRentalConflictAsync(
             Guid vesselId,
             DateTime startDate,

@@ -81,12 +81,13 @@ namespace tongkangku_be.Services
                     $"Rental request with id '{dto.RentalRequestId}' was not found.");
             }
 
-            if (rentalRequest.Status != RentalRequestStatus.Offered)
+            if (rentalRequest.Status != RentalRequestStatus.Pending &&
+                rentalRequest.Status != RentalRequestStatus.Offered)
             {
                 throw new ValidationException(new
                 {
                     RentalRequestId =
-                        "Offers can only be submitted for rental requests with Offered status."
+                        "Offers can only be submitted for rental requests with Pending or Offered status."
                 });
             }
 
@@ -198,6 +199,10 @@ namespace tongkangku_be.Services
                 dto.BunkerAmount +
                 dto.OtherCharges;
 
+            var validUntilUtc = dto.ValidUntil.Kind == DateTimeKind.Utc
+                ? dto.ValidUntil
+                : DateTime.SpecifyKind(dto.ValidUntil, DateTimeKind.Utc);
+
             return await _context.ExecuteInTransactionAsync(
                 async () =>
                 {
@@ -215,7 +220,7 @@ namespace tongkangku_be.Services
                             dto.RatePerDay,
 
                         ValidUntil =
-                            dto.ValidUntil,
+                            validUntilUtc,
 
                         HireAmount =
                             hireAmount,
@@ -244,6 +249,13 @@ namespace tongkangku_be.Services
 
                     await _rentalOfferRepository
                         .AddAsync(offer);
+
+                    if (rentalRequest.Status == RentalRequestStatus.Pending)
+                    {
+                        rentalRequest.Status = RentalRequestStatus.Offered;
+                        _rentalRepository.Update(rentalRequest);
+                        await _rentalRepository.SaveChangesAsync();
+                    }
 
                     await _rentalOfferRepository
                         .SaveChangesAsync();

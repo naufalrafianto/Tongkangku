@@ -45,15 +45,18 @@ namespace tongkangku_be.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Owner")]
-        public async Task<IActionResult> Create([FromBody] CreateRentalOfferDto dto)
+        public async Task<ActionResult<ApiResponse<RentalOfferStatusResponseDto>>> Create([FromBody] CreateRentalOfferDto dto)
 
         {
             var ownerId = User.GetUserId();
             var result = await _rentalOfferService.CreateAsync(dto, ownerId);
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = result.Id },
-                result
+            return StatusCode(
+               StatusCodes.Status201Created,
+               ApiResponse<RentalOfferStatusResponseDto>
+                   .SuccessResult(
+                       result,
+                       "Rental request created successfully"
+                   )
             );
         }
 

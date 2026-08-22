@@ -5,8 +5,10 @@ import { RentalRequestsService } from '../../core/services/rental-requests.servi
 import { AuthService } from '../../core/services/auth.service';
 import { RentalResponse } from '../../shared/types/rental-request/rental-request.type';
 import { RentalOfferService } from '../../core/services/rental-offer.service';
-import { RentalOffer } from '../../shared/types/rental-offer/rental-offer.type';
+import { RentalOffer, RentalOfferStatus } from '../../shared/types/rental-offer/rental-offer.type';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { RentalContractService } from '../../core/services/rental-contract.service';
+import { RentalStatus } from '../../shared/types/enum/rental-status.enum';
 
 @Component({
   selector: 'app-rental-request-detail',
@@ -16,11 +18,18 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 })
 export class RentalRequestDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private rentalService = inject(RentalRequestsService);
   private offerService = inject(RentalOfferService);
   private authService = inject(AuthService);
+  private contractService = inject(RentalContractService);
+  readonly RentalStatus = RentalStatus;
+  readonly RentalOfferStatus = RentalOfferStatus;
 
   private id = this.route.snapshot.paramMap.get('id')!;
+
+  acceptingOfferId = signal<string | null>(null);
+  offerActionError = signal<string | null>(null);
 
   detail = signal<RentalResponse | null>(null);
   loading = signal(true);
@@ -28,13 +37,26 @@ export class RentalRequestDetailComponent implements OnInit {
 
   offers = signal<RentalOffer[]>([]);
   offersLoading = signal(false);
+  contractLoading = signal(false);
 
   cancelLoading = signal(false);
-  actionLoading = signal<string | null>(null); // Menyimpan ID offer yang sedang diproses
+  actionLoading = signal<string | null>(null);
+  currentUser = computed(() => this.authService.getCurrentUserValue());
 
   isOwnerOfRequest = computed(() => {
     const user = this.authService.getCurrentUserValue();
     return user?.id === this.detail()?.chartererId;
+  });
+
+  isOwner = computed(() => {
+    const user = this.currentUser();
+    return user?.role === 2;
+  });
+
+  isCharterer = computed(() => {
+    const user = this.currentUser();
+    const rental = this.detail();
+    return !!user && !!rental && user.id === rental.chartererId;
   });
 
   canCancel = computed(
@@ -43,6 +65,10 @@ export class RentalRequestDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDetail();
+  }
+
+  createOffer(): void {
+    this.router.navigate(['/rental-requests', this.id, 'offer']);
   }
 
   private loadDetail(): void {
@@ -86,44 +112,74 @@ export class RentalRequestDetailComponent implements OnInit {
   acceptOffer(offerId: string): void {
     if (!confirm('Apakah Anda yakin ingin menerima penawaran ini?')) return;
 
-    this.actionLoading.set(offerId);
+    this.acceptingOfferId.set(offerId);
+    this.offerActionError.set(null);
+
     this.offerService
       .acceptOffer(offerId)
       .pipe(finalize(() => this.actionLoading.set(null)))
       .subscribe({
         next: () => {
-          this.loadDetail();
+          this.contractService.getByRentalRequestId(this.id).subscribe({
+            next: (res) => {
+              if (res.success && res.data) {
+                this.router.navigate(['/rental-contracts', res.data.id]);
+              } else {
+                this.loadDetail();
+              }
+            },
+            error: () => this.loadDetail(),
+          });
         },
         error: (err) => {
-          alert(err?.error?.message ?? 'Gagal menerima penawaran.');
+          this.offerActionError.set(
+            err?.error?.message ?? 'Failed to accept offer.',
+          );
         },
       });
   }
 
-  rejectOffer(offerId: string): void {
-    const reason = prompt('Masukkan alasan penolakan penawaran:');
-    if (reason === null) return; // User membatalkan prompt
+  rejectingOfferId = signal<string | null>(null);
 
-    if (!reason.trim()) {
-      alert('Alasan penolakan harus diisi.');
-      return;
-    }
+  rejectOffer(offerId: string, reason: string): void {
+    this.rejectingOfferId.set(offerId);
+    this.offerActionError.set(null);
 
-    this.actionLoading.set(offerId);
     this.offerService
-      .rejectOffer(offerId, reason.trim())
-      .pipe(finalize(() => this.actionLoading.set(null)))
+      .rejectOffer(offerId, reason)
+      .pipe(finalize(() => this.rejectingOfferId.set(null)))
       .subscribe({
-        next: () => {
-          this.loadOffers();
-        },
+        next: () => this.loadOffers(),
         error: (err) => {
-          alert(err?.error?.message ?? 'Gagal menolak penawaran.');
+          this.offerActionError.set(
+            err?.error?.message ?? 'Failed to reject offer.',
+          );
         },
       });
+  }
+
+  rejectOfferWithPrompt(offerId: string): void {
+    const reason = window.prompt('Masukkan alasan penolakan penawaran:');
+    if (reason !== null && reason.trim() !== '') {
+      this.rejectOffer(offerId, reason);
+    }
+  }
+
+  viewContract(): void {
+    this.contractLoading.set(true);
+    this.contractService.getByRentalRequestId(this.id).subscribe({
+      next: (res) => {
+        this.contractLoading.set(false);
+        if (res.success && res.data) {
+          this.router.navigate(['/rental-contracts', res.data.id]);
+        }
+      },
+      error: () => this.contractLoading.set(false),
+    });
   }
 
   refresh(): void {
     this.loadDetail();
   }
+
 }

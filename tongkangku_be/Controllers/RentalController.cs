@@ -49,9 +49,7 @@ namespace tongkangku_be.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<
-            ActionResult<ApiResponse<RentalStatusResponseDto>>
-        > Create(
+        public async Task<ActionResult<ApiResponse<RentalStatusResponseDto>>> Create(
             [FromBody] CreateRentalDto dto
         )
         {

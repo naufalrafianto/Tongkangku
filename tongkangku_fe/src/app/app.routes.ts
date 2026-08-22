@@ -11,6 +11,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { MainLayoutComponent } from './shared/components/main-layout/main-layout.component';
 import { RentalRequestDetailComponent } from './pages/rental-request-detail/rental-request-detail.component';
 import { RentalRequestListComponent } from './pages/rental-request-list/rental-request-list.component';
+import { CreateRentalOfferComponent } from './pages/rental-offers/create-rental-offer/create-rental-offer.component';
+import { ownerGuard } from './core/guards/owner.guard';
 
 export const routes: Routes = [
   {
@@ -73,11 +75,16 @@ export const routes: Routes = [
         path: ':id',
         component: RentalRequestDetailComponent,
       },
+      {
+        path: ':id/offer',
+        component: CreateRentalOfferComponent,
+        canActivate: [ownerGuard],
+      },
     ],
   },
 
   {
     path: '**',
-    redirectTo: 'vessels',
+    redirectTo: 'login',
   },
 ];

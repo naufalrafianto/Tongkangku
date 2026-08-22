@@ -34,7 +34,7 @@ export class LoginComponent {
         const userRole = this.authService.getRole();
 
         if (userRole === 2) {
-          this.router.navigate(['/register']);
+          this.router.navigate(['/vessels']);
         } else if (userRole === 1) {
           this.router.navigate(['/vessels']);
         } else if (userRole === 0) {

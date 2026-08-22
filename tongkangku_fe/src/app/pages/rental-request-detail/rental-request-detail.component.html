@@ -43,7 +43,7 @@
     </div>
   } @else {
     @if (detail(); as d) {
-      <!-- HEADER -->
+      <!-- HEADER & ACTIONS -->
       <div
         class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
@@ -54,41 +54,94 @@
             </h1>
 
             <span
-              class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-              [class]="{
-                'bg-amber-100 text-amber-800 border border-amber-200':
-                  d.status === 0,
-                'bg-emerald-100 text-emerald-800 border border-emerald-200':
-                  d.status === 1,
-                'bg-red-100 text-red-800 border border-red-200': d.status === 2,
-                'bg-slate-100 text-slate-700 border border-slate-200':
-                  d.status === 3,
-              }"
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold"
+              [class.bg-amber-100]="d.status === RentalStatus.Pending"
+              [class.text-amber-800]="d.status === RentalStatus.Pending"
+              [class.border-amber-200]="d.status === RentalStatus.Pending"
+              [class.bg-blue-100]="d.status === RentalStatus.Offered"
+              [class.text-blue-800]="d.status === RentalStatus.Offered"
+              [class.border-blue-200]="d.status === RentalStatus.Offered"
+              [class.bg-emerald-100]="d.status === RentalStatus.Contracted"
+              [class.text-emerald-800]="d.status === RentalStatus.Contracted"
+              [class.border-emerald-200]="d.status === RentalStatus.Contracted"
+              [class.bg-red-100]="d.status === RentalStatus.Rejected"
+              [class.text-red-800]="d.status === RentalStatus.Rejected"
+              [class.border-red-200]="d.status === RentalStatus.Rejected"
+              [class.bg-slate-100]="d.status === RentalStatus.Cancelled"
+              [class.text-slate-700]="d.status === RentalStatus.Cancelled"
+              [class.border-slate-200]="d.status === RentalStatus.Cancelled"
             >
-              @switch (d.status) {
-                @case (0) {
-                  Pending
-                }
-                @case (1) {
-                  Approved
-                }
-                @case (2) {
-                  Rejected
-                }
-                @case (3) {
-                  Cancelled
-                }
-                @default {
-                  Status: {{ d.status }}
-                }
-              }
+              {{ d.status }}
             </span>
           </div>
+          <p class="mt-1 text-xs text-slate-500">ID: {{ d.id }}</p>
         </div>
 
-        @if (canCancel()) {
-          <div>
+        <div class="flex items-center gap-2">
+          @if (
+            isOwner() &&
+            (d.status === RentalStatus.Pending ||
+              d.status === RentalStatus.Offered)
+          ) {
             <button
+              type="button"
+              (click)="createOffer()"
+              class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700"
+            >
+              <svg
+                class="mr-1.5 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Create Offer
+            </button>
+          }
+
+          <!-- Action Contracted -->
+          @if (d.status === RentalStatus.Contracted) {
+            <button
+              type="button"
+              (click)="viewContract()"
+              [disabled]="contractLoading()"
+              class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
+            >
+              @if (contractLoading()) {
+                <svg
+                  class="mr-2 h-4 w-4 animate-spin text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+              }
+              View Contract
+            </button>
+          }
+
+          <!-- Action Charterer: Cancel Request -->
+          @if (canCancel()) {
+            <button
+              type="button"
               (click)="cancel()"
               [disabled]="cancelLoading()"
               class="inline-flex items-center justify-center rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50"
@@ -118,343 +171,284 @@
                 Cancel Request
               }
             </button>
-          </div>
-        }
+          }
+        </div>
       </div>
 
-      <!-- MAIN CONTENT GRID -->
-      <div class="space-y-6">
-        <!-- Rental Info Card -->
-        <section
-          class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
-        >
-          <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-            <h2
-              class="text-xs font-bold uppercase tracking-wider text-slate-500"
-            >
-              Rental Information
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <h2 class="mb-4 text-base font-semibold text-slate-900">
+              Informasi Permintaan
             </h2>
-          </div>
 
-          <div class="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 md:grid-cols-4">
-            <div>
-              <p class="text-xs font-medium text-slate-400">Vessel</p>
-              <p class="mt-1 font-semibold text-slate-900">
-                {{ d.vesselName }}
-              </p>
-            </div>
-
-            <div>
-              <p class="text-xs font-medium text-slate-400">Charterer</p>
-              <p class="mt-1 font-semibold text-slate-900">
-                {{ d.chartererName }}
-              </p>
-            </div>
-
-            <div>
-              <p class="text-xs font-medium text-slate-400">Start Date</p>
-              <p class="mt-1 font-medium text-slate-900">
-                {{ d.startDate | date: "dd MMM yyyy, HH:mm" }}
-              </p>
-            </div>
-
-            <div>
-              <p class="text-xs font-medium text-slate-400">Plan Duration</p>
-              <p class="mt-1 font-medium text-slate-900">
-                {{ d.planDay }} Days
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Cost & Notes Container -->
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <!-- Cost Breakdown Card -->
-          <section
-            class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm md:col-span-2"
-          >
-            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-              <h2
-                class="text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Cost Summary
-              </h2>
-            </div>
-
-            <div class="p-6 space-y-4">
-              <div
-                class="space-y-2 text-sm text-slate-600 border-b border-slate-100 pb-4"
-              >
-                <div class="flex justify-between">
-                  <span>Base Hire Rate</span>
-                  <span class="font-medium text-slate-800">
-                    {{
-                      (d.totalEstimatedPrice > 225000000
-                        ? d.totalEstimatedPrice - 225000000
-                        : d.totalEstimatedPrice
-                      ) | currency: "IDR" : "symbol-narrow"
-                    }}
-                  </span>
-                </div>
-                <div class="flex justify-between text-xs text-slate-400">
-                  <span>Estimated Operational & Contingency Costs</span>
-                  <span>
-                    {{
-                      (d.totalEstimatedPrice > 225000000 ? 225000000 : 0)
-                        | currency: "IDR" : "symbol-narrow"
-                    }}
-                  </span>
-                </div>
-              </div>
-
-              <div
-                class="flex items-center justify-between rounded-lg bg-slate-50 p-4 border border-slate-100"
-              >
-                <div>
-                  <p class="text-xs font-semibold text-slate-700">
-                    Total Estimated Price
-                  </p>
-                  <p class="text-xs text-slate-400">
-                    Estimasi kalkulasi total biaya rental
-                  </p>
-                </div>
-                <span class="text-2xl font-bold text-slate-900">
-                  {{
-                    d.totalEstimatedPrice | currency: "IDR" : "symbol-narrow"
-                  }}
-                </span>
-              </div>
-            </div>
-          </section>
-
-          <!-- Notes Card -->
-          <section
-            class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
-          >
-            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-              <h2
-                class="text-xs font-bold uppercase tracking-wider text-slate-500"
-              >
-                Notes
-              </h2>
-            </div>
-            <div class="p-6">
-              <p class="text-sm leading-relaxed text-slate-600">
-                {{ d.notes || "Tidak ada catatan tambahan." }}
-              </p>
-            </div>
-          </section>
-        </div>
-
-        <!-- Rejection Reason Card -->
-        @if (d.rejectionReason) {
-          <section
-            class="overflow-hidden rounded-xl border border-red-200 bg-red-50/50 p-6 shadow-sm"
-          >
-            <div class="flex items-start space-x-3">
-              <div class="mt-0.5 rounded-full bg-red-100 p-1 text-red-600">
-                <svg
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
               <div>
-                <h3 class="text-sm font-semibold text-red-900">
-                  Rejection Reason
-                </h3>
-                <p class="mt-1 text-sm text-red-700 leading-relaxed">
-                  {{ d.rejectionReason }}
-                </p>
+                <dt class="text-xs font-medium text-slate-500">
+                  Kapal (Vessel)
+                </dt>
+                <dd class="mt-1 text-sm font-semibold text-slate-900">
+                  {{ d.vesselName }}
+                </dd>
               </div>
-            </div>
-          </section>
-        }
 
-        <!-- OFFERS SECTION -->
-        @if (d.status === 1) {
-          <section class="mt-10 space-y-4">
-            <div class="flex items-center justify-between">
-              <h2 class="text-lg font-bold text-slate-900">Offers</h2>
-              @if (!offersLoading() && offers().length > 0) {
-                <span
-                  class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600"
-                >
-                  {{ offers().length }} Available
-                </span>
+              <div>
+                <dt class="text-xs font-medium text-slate-500">
+                  Penyewa (Charterer)
+                </dt>
+                <dd class="mt-1 text-sm font-semibold text-slate-900">
+                  {{ d.chartererName }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium text-slate-500">
+                  Tanggal Mulai
+                </dt>
+                <dd class="mt-1 text-sm font-medium text-slate-900">
+                  {{ d.startDate | date: "dd MMMM yyyy" }}
+                </dd>
+              </div>
+
+              <div>
+                <dt class="text-xs font-medium text-slate-500">
+                  Durasi Perencanaan
+                </dt>
+                <dd class="mt-1 text-sm font-medium text-slate-900">
+                  {{ d.planDay }} Hari
+                </dd>
+              </div>
+
+              <div class="sm:col-span-2">
+                <dt class="text-xs font-medium text-slate-500">
+                  Estimasi Total Biaya
+                </dt>
+                <dd class="mt-1 text-lg font-bold text-emerald-600">
+                  {{
+                    d.totalEstimatedPrice | currency: "IDR" : "symbol" : "1.0-0"
+                  }}
+                </dd>
+              </div>
+
+              @if (d.notes) {
+                <div class="sm:col-span-2">
+                  <dt class="text-xs font-medium text-slate-500">
+                    Catatan Tambahan
+                  </dt>
+                  <dd
+                    class="mt-1 rounded-lg bg-slate-50 p-3 text-sm text-slate-700"
+                  >
+                    {{ d.notes }}
+                  </dd>
+                </div>
               }
+
+              @if (d.rejectionReason) {
+                <div class="sm:col-span-2">
+                  <dt class="text-xs font-medium text-red-600">
+                    Alasan Penolakan
+                  </dt>
+                  <dd
+                    class="mt-1 rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-700"
+                  >
+                    {{ d.rejectionReason }}
+                  </dd>
+                </div>
+              }
+            </dl>
+          </div>
+
+          <!-- OFFERS SECTION -->
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <div class="mb-4 flex items-center justify-between">
+              <h2 class="text-base font-semibold text-slate-900">
+                Daftar Penawaran (Offers)
+              </h2>
+              <span
+                class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600"
+              >
+                {{ offers().length }} Offers
+              </span>
             </div>
+
+            @if (offerActionError()) {
+              <div
+                class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600"
+              >
+                {{ offerActionError() }}
+              </div>
+            }
 
             @if (offersLoading()) {
-              <div
-                class="rounded-xl border border-slate-200 bg-white p-6 text-center"
-              >
-                <p class="text-sm text-slate-500">Memuat penawaran...</p>
-              </div>
-            } @else if (offers().length === 0) {
-              <div
-                class="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center"
-              >
-                <p class="text-sm font-medium text-slate-500">
-                  Belum ada penawaran untuk rental ini.
-                </p>
+              <div class="py-8 text-center text-xs text-slate-500">
+                Memuat penawaran...
               </div>
             } @else {
-              <div class="grid grid-cols-1 gap-4">
-                @for (offer of offers(); track offer.id) {
-                  <div
-                    class="overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-slate-300"
-                  >
-                    <div
-                      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4"
-                    >
-                      <div>
-                        <span
-                          class="text-xs font-semibold uppercase tracking-wider text-slate-400"
-                          >Owner</span
-                        >
-                        <h3 class="text-base font-bold text-slate-900">
-                          {{ offer.ownerName }}
-                        </h3>
-                      </div>
-
-                      <div class="text-left sm:text-right">
-                        <span class="text-xs font-medium text-slate-400"
-                          >Owner Total Price</span
-                        >
-                        <p class="text-xl font-bold text-emerald-600">
-                          {{
-                            offer.totalPrice | currency: "IDR" : "symbol-narrow"
-                          }}
-                        </p>
-                      </div>
-                    </div>
-
-                    <!-- Breakdown Detail Offer -->
-                    <div class="mt-4 space-y-3">
-                      <p
-                        class="text-xs font-bold uppercase tracking-wider text-slate-400"
-                      >
-                        Calculation Breakdown
+              @for (offer of offers(); track offer.id) {
+                <div
+                  class="mb-4 rounded-lg border border-slate-200 p-4 transition hover:border-slate-300 last:mb-0"
+                >
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <p class="text-xs font-medium text-slate-500">
+                        Ditawarkan oleh
                       </p>
-
-                      <div
-                        class="grid grid-cols-2 gap-4 sm:grid-cols-4 bg-slate-50 p-3 rounded-lg text-xs"
-                      >
-                        <div>
-                          <span class="text-slate-400">Rate / Day:</span>
-                          <p class="font-semibold text-slate-700">
-                            {{
-                              offer.ratePerDay
-                                | currency: "IDR" : "symbol-narrow"
-                            }}
-                          </p>
-                        </div>
-                        <div>
-                          <span class="text-slate-400"
-                            >Hire Amount (Rate x {{ d.planDay }}d):</span
-                          >
-                          <p class="font-semibold text-slate-700">
-                            {{
-                              offer.hireAmount
-                                | currency: "IDR" : "symbol-narrow"
-                            }}
-                          </p>
-                        </div>
-                        <div>
-                          <span class="text-slate-400">Bunker Amount:</span>
-                          <p class="font-semibold text-slate-700">
-                            {{
-                              offer.bunkerAmount
-                                | currency: "IDR" : "symbol-narrow"
-                            }}
-                          </p>
-                        </div>
-                        <div>
-                          <span class="text-slate-400">Other Charges:</span>
-                          <p class="font-semibold text-slate-700">
-                            {{
-                              offer.otherCharges
-                                | currency: "IDR" : "symbol-narrow"
-                            }}
-                          </p>
-                        </div>
-                      </div>
+                      <p class="text-sm font-semibold text-slate-900">
+                        {{ offer.ownerName }}
+                      </p>
                     </div>
 
-                    <!-- Footnote & Action Buttons -->
-                    <div
-                      class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-slate-100 pt-3 text-xs text-slate-500"
-                    >
-                      <div class="space-y-1">
-                        <div>
-                          <span>Berlaku hingga: </span>
-                          <strong class="text-slate-700">{{
-                            offer.validUntil | date: "dd MMM yyyy, HH:mm"
-                          }}</strong>
-                        </div>
-                        @if (offer.notes) {
-                          <p class="italic text-slate-500">
-                            "{{ offer.notes }}"
-                          </p>
-                        }
-                      </div>
+                    <div class="text-right">
+                      <p class="text-xs font-medium text-slate-500">
+                        Total Harga
+                      </p>
+                      <p class="text-base font-bold text-emerald-600">
+                        {{
+                          offer.totalPrice
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      </p>
+                    </div>
+                  </div>
 
-                      <!-- Action Buttons (Accept & Reject) -->
-                      <div class="flex items-center gap-2 w-full sm:w-auto">
+                  <!-- BREAKDOWN HARGA -->
+                  <dl
+                    class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 rounded-lg bg-slate-50 p-3 sm:grid-cols-4"
+                  >
+                    <div>
+                      <dt class="text-[11px] font-medium text-slate-500">
+                        Rate / Hari
+                      </dt>
+                      <dd class="text-xs font-semibold text-slate-900">
+                        {{
+                          offer.ratePerDay
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt class="text-[11px] font-medium text-slate-500">
+                        Hire Amount
+                      </dt>
+                      <dd class="text-xs font-semibold text-slate-900">
+                        {{
+                          offer.hireAmount
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt class="text-[11px] font-medium text-slate-500">
+                        Bunker
+                      </dt>
+                      <dd class="text-xs font-semibold text-slate-900">
+                        {{
+                          offer.bunkerAmount
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt class="text-[11px] font-medium text-slate-500">
+                        Biaya Lain
+                      </dt>
+                      <dd class="text-xs font-semibold text-slate-900">
+                        {{
+                          offer.otherCharges
+                            | currency: "IDR" : "symbol" : "1.0-0"
+                        }}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  @if (offer.rejectionReason) {
+                    <div
+                      class="mt-3 rounded-lg border border-red-100 bg-red-50 p-2.5 text-xs text-red-700"
+                    >
+                      <span class="font-semibold">Alasan ditolak: </span>
+                      {{ offer.rejectionReason }}
+                    </div>
+                  }
+
+                  <!-- FOOTNOTE & ACTIONS -->
+                  <div
+                    class="mt-4 flex flex-col items-start justify-between gap-4 border-t border-slate-100 pt-3 text-xs text-slate-500 sm:flex-row sm:items-center"
+                  >
+                    <div class="space-y-1">
+                      <div>
+                        <span>Berlaku hingga: </span>
+                        <strong class="text-slate-700">
+                          {{ offer.validUntil | date: "dd MMM yyyy, HH:mm" }}
+                        </strong>
+                      </div>
+                      <div class="text-[11px] text-slate-400">
+                        Dibuat:
+                        {{ offer.createdAt | date: "dd MMM yyyy, HH:mm" }}
+                      </div>
+                      @if (offer.notes) {
+                        <p class="italic text-slate-500">"{{ offer.notes }}"</p>
+                      }
+                    </div>
+
+                    <!-- Action Accept/Reject untuk Charterer -->
+                    @if (
+                      isCharterer() &&
+                      d.status === RentalStatus.Offered &&
+                      offer.status === RentalOfferStatus.Pending
+                    ) {
+                      <div class="flex items-center gap-2">
                         <button
                           type="button"
-                          (click)="rejectOffer(offer.id)"
-                          [disabled]="actionLoading() === offer.id"
-                          class="flex-1 sm:flex-none inline-flex items-center justify-center rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 disabled:opacity-50"
+                          (click)="rejectOfferWithPrompt(offer.id)"
+                          [disabled]="
+                            rejectingOfferId() === offer.id ||
+                            acceptingOfferId() === offer.id
+                          "
+                          class="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
                         >
-                          Reject
+                          @if (rejectingOfferId() === offer.id) {
+                            Rejecting...
+                          } @else {
+                            Reject
+                          }
                         </button>
+
                         <button
                           type="button"
                           (click)="acceptOffer(offer.id)"
-                          [disabled]="actionLoading() === offer.id"
-                          class="flex-1 sm:flex-none inline-flex items-center justify-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 disabled:opacity-50"
+                          [disabled]="
+                            acceptingOfferId() === offer.id ||
+                            rejectingOfferId() === offer.id
+                          "
+                          class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50"
                         >
-                          @if (actionLoading() === offer.id) {
-                            <svg
-                              class="mr-1.5 h-3.5 w-3.5 animate-spin text-white"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                              ></circle>
-                              <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                              ></path>
-                            </svg>
+                          @if (acceptingOfferId() === offer.id) {
+                            Accepting...
+                          } @else {
+                            Accept Offer
                           }
-                          Accept Offer
                         </button>
                       </div>
-                    </div>
+                    }
                   </div>
-                }
-              </div>
+                </div>
+              } @empty {
+                <div
+                  class="rounded-lg border border-dashed border-slate-200 py-8 text-center text-xs text-slate-400"
+                >
+                  Belum ada penawaran untuk permintaan ini.
+                </div>
+              }
             }
-          </section>
-        }
+          </div>
+        </div>
       </div>
     } @else {
       <div class="rounded-xl border border-slate-200 bg-white p-12 text-center">

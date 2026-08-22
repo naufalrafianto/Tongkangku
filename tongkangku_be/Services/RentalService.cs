@@ -37,18 +37,17 @@ namespace tongkangku_be.Services
                 : RentalMapper.ToDto(rental);
         }
 
-        public async Task<List<RentalResponseDto>> GetAllAsync(Guid chartererId)
+        public async Task<List<RentalResponseDto>> GetAllAsync(Guid userId)
         {
-            var rentals = await _rentalRepository      .GetAllByChartererIdAsync(chartererId);
-
+            var rentals = await _rentalRepository.GetAllByUserAsync(userId);
 
             if (rentals.Count == 0)
             {
-                throw new NotFoundException("Rental requests not found.");
+                throw new NotFoundException("Re ntal requests not found.");
             }
 
             return rentals
-                .Select(RentalMapper.ToDto)
+                .Select(r => RentalMapper.ToDto(r))
                 .ToList();
         }
 
