@@ -1,29 +1,42 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { VesselResponseDto } from '../../shared/interface/InterfaceVessel';
+import { ApiResponse } from '../../shared/types/api/response.type';
+import { Vessel } from '../../shared/types/vessel/vessel.type';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VesselService {
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
-  private http = inject(HttpClient)
-  private apiUrl = 'http://localhost:5168/api/vessel'
+  getAll(search: string = '', limit: number = 10, page: number = 1): Observable<ApiResponse<Vessel[]>> {
+    let params = new HttpParams()
+    .set('search', search)
+    .set('limit', limit)
+    .set('page', page)
 
- getAll(): Observable<any> { 
-    return this.http.get<any>(`${this.apiUrl}/get-all`);
+
+
+    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels`, {params});
   }
 
-  CreateVessel(payload: any): Observable<any>
-  {
-    return this.http.post<any>(`${this.apiUrl}/create`,payload);
+  getById(vesselId: string): Observable<ApiResponse<Vessel>> {
+    return this.http.get<ApiResponse<Vessel>>(
+      `${this.apiUrl}/vessels/${vesselId}`,
+    );
+  }
+
+  CreateVessel(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/vessels`, payload);
   }
 
 GetByid(id: string): Observable<any> {
-  // Gunakan this.apiUrl + id jika apiUrl sudah ada slash di belakang, 
-  // atau hapus slash di apiUrl.
-  return this.http.get<any>(`${this.apiUrl}/${id}`); 
+  return this.http.get<any>(`${this.apiUrl}/vessels/${id}`); 
 }
+
+
  
 }

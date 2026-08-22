@@ -5,7 +5,6 @@ import { Component, input } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './form-field.component.html',
-  styleUrl: './form-field.component.css',
 })
 export class FormFieldComponent {
   label = input.required<string>();

@@ -2,9 +2,9 @@
 {
     public enum RentalRequestStatus
     {
-        Pending,
-        Approved,
-        Rejected,
-        Cancelled
+        Pending = 0,
+        Offered = 1,
+        Cancelled = 2,
+        Contracted = 3
     }
 }

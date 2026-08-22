@@ -89,35 +89,44 @@ namespace tongkangku_be.Services
 
         }
 
-        public async Task<List<VesselResponseDto>> GetAllVesselAsync()
+        public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search,int limit, int page)
         {
             var vessel = await _vesselRepository.GetAllAsync();
-            if (vessel == null)
+
+            if (!string.IsNullOrEmpty(search))
             {
-                return null;
+                vessel = vessel
+                    .Where(v => v.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
             }
-            return vessel.Select(vessel => new VesselResponseDto
-            {
-                Id = vessel.Id,
-                name = vessel.Name,
-                categoryId = vessel.CategoryId,
-                ownerId = vessel.OwnerId,
-                portId = vessel.PortId,
-                capacityFeed = vessel.CapacityFeed,
-                dwtCapacity = vessel.DwtCapacity,
-                year = vessel.Year,
-                ratePerDay = vessel.RatePerDay,
-                status = (int)vessel.Status
-            }).ToList();
+
+            var vesselPages = vessel
+                 .Skip((page - 1) * limit)
+                 .Take(limit)
+                .Select(v => new VesselResponseDto
+                {
+                    Id = v.Id,
+                    name = v.Name,
+                    ownerId = v.OwnerId,
+                    categoryId = v.CategoryId,
+                    portId = v.PortId,
+                    capacityFeed = v.CapacityFeed,
+                    dwtCapacity = v.DwtCapacity,
+                    status = (int)v.Status,
+                    year = v.Year,
+                    ratePerDay = v.RatePerDay,
+                    createdAt = v.CreatedAt,
+                }).ToList();
+
+            return vesselPages ?? new List<VesselResponseDto>();
         }
 
-        public async Task<VesselResponseDto?> GetVesselById(Guid id)
+        public async Task<VesselResponseDto> GetVesselById(Guid id)
         {
             var vessel = await _vesselRepository.GetByIdAsync(id);
-
             if (vessel == null)
             {
-                return null;
+                throw new KeyNotFoundException("Vessel tidak ditemukan.");
             }
 
             return new VesselResponseDto
@@ -129,6 +138,7 @@ namespace tongkangku_be.Services
                 portId = vessel.PortId,
                 capacityFeed = vessel.CapacityFeed,
                 dwtCapacity = vessel.DwtCapacity,
+                ratePerDay = vessel.RatePerDay,
                 year = vessel.Year,
                 status = (int)vessel.Status
             };

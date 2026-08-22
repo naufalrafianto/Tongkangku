@@ -19,7 +19,7 @@ namespace tongkangku_be.Services
             {
                 if (port == null)
                 {
-                    return null;
+                    throw new KeyNotFoundException("Port tidak ditemukan.");
                 }
 
                 return new PortResponseDto
@@ -69,9 +69,7 @@ namespace tongkangku_be.Services
                 throw new Exception("Port not found");
             }
             _PortRepository.Delete(port);
-            await _PortRepository.SaveChangesAsync();
-
-           
+            await _PortRepository.SaveChangesAsync(); 
         }
 
         public async Task<List<PortResponseDto>> GetAllPortAsync()
@@ -80,7 +78,7 @@ namespace tongkangku_be.Services
 
             if(ports == null )
             {
-                return null;
+                throw new KeyNotFoundException("Port tidak ditemukan.");
             }
 
             return ports.Select(port => new PortResponseDto

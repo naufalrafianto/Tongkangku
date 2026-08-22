@@ -12,6 +12,17 @@ namespace tongkangku_be.Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
+        public async Task<List<RentalRequest>> GetAllByChartererIdAsync(Guid chartererId)
+        {
+            return await _context.RentalRequests
+                .AsNoTracking()
+                .Include(x => x.Vessel)
+                .Include(x => x.Charterer)
+                .Where(x => x.ChartererId == chartererId)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<bool> HasActiveRentalConflictAsync(
             Guid vesselId,
             DateTime startDate,
@@ -22,7 +33,7 @@ namespace tongkangku_be.Repositories
                 .AsNoTracking()
                 .AnyAsync(r =>
                     r.VesselId == vesselId &&
-                    r.Status == RentalRequestStatus.Approved &&
+                    r.Status == RentalRequestStatus.Offered &&
                     r.StartDate < endDate &&
                     r.StartDate.AddDays(r.PlanDay) > startDate
                 );

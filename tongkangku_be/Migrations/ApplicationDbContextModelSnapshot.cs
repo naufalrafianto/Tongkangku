@@ -43,7 +43,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("cargo_types", (string)null);
+                    b.ToTable("cargo_types");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.ContractCargo", b =>
@@ -85,7 +85,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("ContractId", "CargoTypeId")
                         .IsUnique();
 
-                    b.ToTable("contract_cargos", (string)null);
+                    b.ToTable("contract_cargos");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.LaytimeRecord", b =>
@@ -147,7 +147,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("ContractId");
 
-                    b.ToTable("laytime_records", (string)null);
+                    b.ToTable("laytime_records");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Port", b =>
@@ -174,14 +174,15 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ports", (string)null);
+                    b.ToTable("ports");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalContract", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<decimal>("AgreedBunkerAmount")
                         .HasColumnType("numeric");
@@ -197,6 +198,9 @@ namespace tongkangku_be.Migrations
 
                     b.Property<decimal?>("AgreedTotalPrice")
                         .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ContractNum")
                         .IsRequired()
@@ -214,6 +218,9 @@ namespace tongkangku_be.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<decimal?>("FinalSettlementAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
@@ -225,6 +232,9 @@ namespace tongkangku_be.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalLaytimeAdjustment")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -270,7 +280,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("RentalRequestId");
 
-                    b.ToTable("rental_cost_items", (string)null);
+                    b.ToTable("rental_cost_items");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalOffer", b =>
@@ -300,6 +310,9 @@ namespace tongkangku_be.Migrations
                     b.Property<decimal>("RatePerDay")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("RentalRequestId")
                         .HasColumnType("uuid");
 
@@ -321,7 +334,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("RentalRequestId");
 
-                    b.ToTable("rental_offers", (string)null);
+                    b.ToTable("rental_offers");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalOperationalCost", b =>
@@ -467,7 +480,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("VesselId");
 
-                    b.ToTable("rental_requests", (string)null);
+                    b.ToTable("rental_requests");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.RentalRequestCargo", b =>
@@ -502,7 +515,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("RentalRequestId", "CargoTypeId")
                         .IsUnique();
 
-                    b.ToTable("rental_request_cargos", (string)null);
+                    b.ToTable("rental_request_cargos");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.User", b =>
@@ -537,7 +550,7 @@ namespace tongkangku_be.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.Vessel", b =>
@@ -587,7 +600,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("PortId");
 
-                    b.ToTable("vessels", (string)null);
+                    b.ToTable("vessels");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.VesselCategory", b =>
@@ -611,7 +624,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("vessel_categories", (string)null);
+                    b.ToTable("vessel_categories");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.VesselDocs", b =>
@@ -651,7 +664,7 @@ namespace tongkangku_be.Migrations
 
                     b.HasIndex("VesselId");
 
-                    b.ToTable("vessel_docs", (string)null);
+                    b.ToTable("vessel_docs");
                 });
 
             modelBuilder.Entity("tongkangku_be.Models.ContractCargo", b =>

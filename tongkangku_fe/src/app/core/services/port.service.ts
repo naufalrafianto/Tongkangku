@@ -1,15 +1,18 @@
-import { inject, Injectable } from '@angular/core';
-import { portInterface } from '../../shared/interface/port';
 import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { Port } from '../../shared/types/port/port.types';
+import { ApiResponse } from '../../shared/types/api/response.type';
 import { Observable } from 'rxjs';
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PortService {
-   private http = inject(HttpClient);
-   private apiUrl = ' http://localhost:5168/api/port';
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
-   GetAllPort(): Observable<portInterface[]>{
-    return this.http.get<portInterface[]>(`${this.apiUrl}/port`);
-   }
+  getAll(): Observable<Port[]> {
+    return this.http.get<Port[]>(`${this.apiUrl}/ports`);
+  }
 }

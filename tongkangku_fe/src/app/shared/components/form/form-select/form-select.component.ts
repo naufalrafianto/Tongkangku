@@ -1,8 +1,9 @@
 import { Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import '@angular/compiler';
 
-export interface SelectOption {
-  value: string | number;
+export interface SelectOption<T = string | number> {
+  value: T;
   label: string;
 }
 @Component({
@@ -10,7 +11,6 @@ export interface SelectOption {
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './form-select.component.html',
-  styleUrl: './form-select.component.css',
 })
 export class FormSelectComponent {
   control = input.required<FormControl>();

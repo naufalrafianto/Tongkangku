@@ -7,6 +7,7 @@ import { categoryVessel } from '../../shared/interface/category-vessel';
 import { portInterface } from '../../shared/interface/port';
 import { PortService } from '../../core/services/port.service';
 import { AuthService } from '../../core/services/auth.service';
+import { VesselService } from '../../core/services/vessel.service';
 
 @Component({
   selector: 'app-vessel-create',
@@ -24,6 +25,7 @@ export class VesselCreateComponent implements OnInit {
   private portSvc = inject(PortService);
   private fb = inject(FormBuilder);
   private authSvc = inject(AuthService)
+  private vesselSvc = inject(VesselService);
 
   vesselCategoryData: categoryVessel[] | null = null;
   portData: portInterface[] | null = null;
@@ -31,6 +33,7 @@ export class VesselCreateComponent implements OnInit {
   isLoadingCategory: boolean = true;
   isLoadingPort: boolean = true;
   isSubmitting: boolean = false;
+  errorMessage = "";
 
   createVessel = this.fb.group({
     name: ['', [Validators.required]],
@@ -46,13 +49,17 @@ export class VesselCreateComponent implements OnInit {
   ngOnInit(): void {
     this.fetchCategoryVessel();
     this.fetchPort();
+  
   }
 
   fetchPort(): void {
     this.isLoadingPort = true;
-    this.portSvc.GetAllPort().subscribe({
-      next: (response) => {
-        this.portData = response;
+    this.portSvc.getAll().subscribe({
+      next: (response: any) => {
+        this.portData = response.data;
+        
+        console.log(this.portData);
+        
         this.isLoadingPort = false;
       },
       error: (err) => {
@@ -67,6 +74,7 @@ export class VesselCreateComponent implements OnInit {
     this.vesselCategorySvc.GetAllCategory().subscribe({
       next: (response) => {
         this.vesselCategoryData = response;
+        console.log("data kapal lawut",response);
         this.isLoadingCategory = false;
       },
       error: (err) => {
@@ -81,9 +89,19 @@ export class VesselCreateComponent implements OnInit {
       this.createVessel.markAllAsTouched();
       return;
     }
-    const UserId = this.authSvc.getUserId();
-      
     const payload = this.createVessel.value;
-    console.log('Payload data kapal:', payload,UserId);
+    console.log('Payload data kapal:', payload);
+    this.vesselSvc.CreateVessel(payload).
+    subscribe({
+      next: () => {
+        alert("data vessel berhasil ditambahkan!");
+        
+      },
+      error : (err) => {
+        this.errorMessage = err.error?.
+        message || 'Gagal Membuat Vessel!'
+      }
+    })
+
   }
 }

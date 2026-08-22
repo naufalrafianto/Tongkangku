@@ -27,7 +27,9 @@ namespace tongkangku_be.Mappers
                 AgreedBunkerAmount = contract.AgreedBunkerAmount,
                 AgreedOtherCharges = contract.AgreedOtherCharges,
                 AgreedTotalPrice = contract.AgreedTotalPrice,
-
+                TotalLaytimeAdjustment = contract.TotalLaytimeAdjustment,
+                FinalSettlementAmount = contract.FinalSettlementAmount,
+                CompletedAt = contract.CompletedAt,
                 Status = contract.Status,
 
                 Cargos = contract.ContractCargos?.Select(c => new ContractCargoResponseDto
