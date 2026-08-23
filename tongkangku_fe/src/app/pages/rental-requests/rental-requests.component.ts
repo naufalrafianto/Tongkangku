@@ -78,9 +78,7 @@ export class RentalRequestsComponent implements OnInit {
   // Options untuk dropdown
   // =========================
 
-
   readonly portOptions = signal<SelectOption<string>[]>([]);
-
 
   readonly cargoTypeOptions = signal<SelectOption<string>[]>([]);
   readonly referenceDataLoading = signal(true);
@@ -96,7 +94,6 @@ export class RentalRequestsComponent implements OnInit {
   ngOnInit(): void {
     this.loadVessel();
     this.loadReferenceData();
-    console.log(this.portOptions);
   }
 
   readonly estimateLoading = signal(false);
@@ -106,25 +103,28 @@ export class RentalRequestsComponent implements OnInit {
     initialValue: this.authService.getCurrentUserValue(),
   });
 
-  readonly form = this.fb.group({
-    loadingPortId: this.fb.control<string | null>(null, Validators.required),
+  readonly form = this.fb.group(
+    {
+      loadingPortId: this.fb.control<string | null>(null, Validators.required),
 
-    dischargingPortId: this.fb.control<string | null>(
-      null,
-      Validators.required,
-    ),
+      dischargingPortId: this.fb.control<string | null>(
+        null,
+        Validators.required,
+      ),
 
-    startDate: this.fb.control<string | null>(null, Validators.required),
+      startDate: this.fb.control<string | null>(null, Validators.required),
 
-    planDay: this.fb.control<number | null>(null, [
-      Validators.required,
-      Validators.min(1),
-    ]),
+      planDay: this.fb.control<number | null>(null, [
+        Validators.required,
+        Validators.min(1),
+      ]),
 
-    notes: this.fb.control(''),
+      notes: this.fb.control(''),
 
-    cargos: this.fb.array([this.createCargoGroup()]),
-  }, { validators: [distinctPortsValidator()] });
+      cargos: this.fb.array([this.createCargoGroup()]),
+    },
+    { validators: [distinctPortsValidator()] },
+  );
 
   // =========================
   // Reference data (ports & cargo types)
@@ -137,7 +137,6 @@ export class RentalRequestsComponent implements OnInit {
     forkJoin({
       ports: this.portService.getAll(),
       cargoTypes: this.cargoTypeService.getAll(),
-
     }).subscribe({
       next: ({ ports, cargoTypes }) => {
         if (ports.success && ports.data) {
@@ -148,7 +147,6 @@ export class RentalRequestsComponent implements OnInit {
             })),
           );
         }
-
 
         if (cargoTypes.success && cargoTypes.data) {
           this.cargoTypeOptions.set(
@@ -334,7 +332,15 @@ export class RentalRequestsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
-            this.router.navigate(['/rental-request', response.data.id]);
+            // response.data.id di sini adalah rentalRequestId (bukan contractId),
+            // karena kontrak belum tentu langsung terbentuk saat rental request dibuat.
+            // ContractDetailComponent akan memuat kontrak lewat endpoint
+            // GET /api/rental-contracts/rental-request/{rentalRequestId}
+            this.router.navigate([
+              '/rental-contracts',
+              'rental-request',
+              response.data.id,
+            ]);
           } else {
             this.submitError.set(
               response.message || 'Failed to create rental request.',

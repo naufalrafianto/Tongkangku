@@ -37,7 +37,19 @@ export enum RentalOfferStatus {
   Withdrawn = 3,
   Expired = 4
 }
-
+export interface RentalOfferPreview {
+  ratePerDay: number;
+  planDay: number;
+  durationMultiplier: number;
+  baseHirePrice: number;
+  hireAmount: number;
+  operationalCost: number;
+  contingencyCost: number;
+  taxAmount: number;
+  bunkerAmount: number;
+  otherCharges: number;
+  totalPrice: number;
+}
 export interface RentalOfferStatusResponse {
   id: string;
   status: RentalOfferStatus;

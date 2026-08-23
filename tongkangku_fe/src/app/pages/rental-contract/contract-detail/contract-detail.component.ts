@@ -50,6 +50,7 @@ export class ContractDetailComponent implements OnInit {
 
   // Input properties
   @Input() contractIdInput: string | null = null;
+  @Input() rentalRequestIdInput: string | null = null;
   @Input() contract: RentalContract | null = null;
   @Input() loading = false;
   @Input() error: string | null = null;
@@ -75,11 +76,20 @@ export class ContractDetailComponent implements OnInit {
   private readonly gracePeriodMinutes = 30;
   private readonly maxOvertimeHoursCap = 720;
 
-  // Mendapatkan contractId dari Input atau dari Route parameter jika diakses via URL
+  // contractId dipakai untuk operasi yang butuh id kontrak asli (laytime, complete)
   get effectiveContractId(): string {
     return (
-      this.contractIdInput ||
       this.contract?.id ||
+      this.contractIdInput ||
+      this.route.snapshot.paramMap.get('id') ||
+      ''
+    );
+  }
+
+  // rentalRequestId dipakai untuk memuat kontrak lewat endpoint rental-request
+  get effectiveRentalRequestId(): string {
+    return (
+      this.rentalRequestIdInput ||
       this.route.snapshot.paramMap.get('id') ||
       ''
     );
@@ -87,7 +97,7 @@ export class ContractDetailComponent implements OnInit {
 
   ngOnInit(): void {
     // Jika komponen dipakai via Router (bukan dipassing contract dari parent), muat data kontrak
-    if (!this.contract && this.effectiveContractId) {
+    if (!this.contract && (this.effectiveRentalRequestId || this.effectiveContractId)) {
       this.loadContract();
     }
   }
@@ -101,12 +111,17 @@ export class ContractDetailComponent implements OnInit {
   }
 
   private loadContract(): void {
-    if (!this.effectiveContractId) return;
+    const id = this.effectiveRentalRequestId;
+    const contractId = this.effectiveContractId;
+
+    if (!id && !contractId) return;
 
     this.loading = true;
     this.error = null;
 
-    this.contractService.getById(this.effectiveContractId).subscribe({
+    const request$ = this.contractService.getByRentalRequestId(id)
+
+    request$.subscribe({
       next: (res: any) => {
         if (res?.success && res.data) {
           this.contract = res.data;

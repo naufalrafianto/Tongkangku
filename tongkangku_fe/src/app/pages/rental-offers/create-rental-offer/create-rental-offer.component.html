@@ -26,6 +26,55 @@
           (ngSubmit)="submit()"
           class="space-y-6 lg:col-span-2"
         >
+          <!-- Rental Request Detail -->
+          <section
+            class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          >
+            <h2
+              class="mb-5 text-sm font-semibold uppercase tracking-wide text-slate-500"
+            >
+              Rental Request Detail
+            </h2>
+
+            <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+              <div>
+                <p class="text-xs text-slate-400">Vessel</p>
+                <p class="text-sm font-medium text-slate-800">
+                  {{ request.vesselName }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400">Charterer</p>
+                <p class="text-sm font-medium text-slate-800">
+                  {{ request.chartererName }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400">Start Date</p>
+                <p class="text-sm font-medium text-slate-800">
+                  {{ request.startDate | date: "d MMM y" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400">Plan Duration</p>
+                <p class="text-sm font-medium text-slate-800">
+                  {{ request.planDay }} days
+                </p>
+              </div>
+              @if (vessel(); as v) {
+                <div>
+                  <p class="text-xs text-slate-400">Vessel Base Price</p>
+                  <p class="text-sm font-medium text-slate-800">
+                    {{
+                      v.ratePerDay | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                    }}
+                    / day
+                  </p>
+                </div>
+              }
+            </div>
+          </section>
+
           <!-- Offer Details -->
           <section
             class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
@@ -37,11 +86,11 @@
             </h2>
 
             <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-              <app-form-field label="Rate / Day" [required]="true">
+              <app-form-field label="Rate / Day (Base Price)" [required]="true">
                 <app-form-input
                   type="number"
                   [control]="form.controls.ratePerDay"
-                  placeholder="e.g. 85000000"
+                  placeholder="Diambil otomatis dari data kapal"
                 />
               </app-form-field>
 
@@ -112,86 +161,129 @@
         <!-- PREVIEW: 1 kolom, sticky -->
         <aside class="lg:col-span-1">
           <div class="sticky top-6 space-y-4">
-            <!-- Rental Request Summary -->
+            <!-- Offer Preview -->
             <div
               class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
             >
               <h3
                 class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400"
               >
-                Rental Request
+                Offer Preview
               </h3>
 
-              <p class="text-base font-semibold text-slate-900">
-                {{ request.vesselName }}
-              </p>
-              <p class="text-sm text-slate-500">{{ request.chartererName }}</p>
-
-              <div class="mt-3 flex items-center justify-between text-sm">
-                <span class="text-slate-500">Start Date</span>
-                <span class="font-medium text-slate-700">
-                  {{ request.startDate | date: "d MMM y" }}
-                </span>
-              </div>
-              <div class="mt-1 flex items-center justify-between text-sm">
-                <span class="text-slate-500">Plan Duration</span>
-                <span class="font-medium text-slate-700">
-                  {{ request.planDay }} days
-                </span>
-              </div>
-            </div>
-
-            <!-- Live Offer Calculation -->
-            <div
-              class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-            >
-              <h3
-                class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400"
-              >
-                Offer Calculation
-              </h3>
-
-              <div class="space-y-2 text-sm">
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-500">Hire Amount</span>
-                  <span class="text-slate-700">
-                    {{
-                      hireAmount() | currency: "IDR" : "symbol-narrow" : "1.0-0"
-                    }}
-                  </span>
+              @if (previewLoading()) {
+                <div class="space-y-2">
+                  <div
+                    class="h-4 w-full animate-pulse rounded bg-slate-100"
+                  ></div>
+                  <div
+                    class="h-4 w-3/4 animate-pulse rounded bg-slate-100"
+                  ></div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-500">Bunker Amount</span>
-                  <span class="text-slate-700">
-                    {{
-                      form.controls.bunkerAmount.value ?? 0
-                        | currency: "IDR" : "symbol-narrow" : "1.0-0"
-                    }}
-                  </span>
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-slate-500">Other Charges</span>
-                  <span class="text-slate-700">
-                    {{
-                      form.controls.otherCharges.value ?? 0
-                        | currency: "IDR" : "symbol-narrow" : "1.0-0"
-                    }}
-                  </span>
-                </div>
+              } @else if (previewError()) {
+                <p class="text-xs text-red-600">{{ previewError() }}</p>
+              } @else {
+                @if (preview(); as p) {
+                  <div class="space-y-2 text-sm">
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Base Hire Price</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.baseHirePrice
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Duration Multiplier</span>
+                      <span class="text-slate-700"
+                        >x{{ p.durationMultiplier }}</span
+                      >
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Hire Amount (adjusted)</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.hireAmount
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Operational Cost</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.operationalCost
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Contingency</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.contingencyCost
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Bunker Amount</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.bunkerAmount
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Other Charges</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.otherCharges
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-slate-500">Tax</span>
+                      <span class="text-slate-700">
+                        {{
+                          p.taxAmount
+                            | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                        }}
+                      </span>
+                    </div>
 
-                <div class="my-2 border-t border-slate-100"></div>
+                    <div class="my-2 border-t border-slate-100"></div>
 
+                    <div
+                      class="flex items-center justify-between text-base font-semibold text-slate-900"
+                    >
+                      <span>Total Price</span>
+                      <span>{{
+                        p.totalPrice
+                          | currency: "IDR" : "symbol-narrow" : "1.0-0"
+                      }}</span>
+                    </div>
+                  </div>
+                } @else {
+                  <p class="text-sm text-slate-400">
+                    Isi rate per day untuk melihat estimasi.
+                  </p>
+                }
+              }
+
+              @if (form.controls.validUntil.value) {
                 <div
-                  class="flex items-center justify-between text-base font-semibold text-slate-900"
+                  class="mt-4 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500"
                 >
-                  <span>Total Price</span>
-                  <span>
-                    {{
-                      totalPrice() | currency: "IDR" : "symbol-narrow" : "1.0-0"
-                    }}
+                  Offer ini akan berlaku sampai
+                  <span class="font-medium text-slate-700">
+                    {{ form.controls.validUntil.value | date: "d MMM y" }}
                   </span>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </aside>
