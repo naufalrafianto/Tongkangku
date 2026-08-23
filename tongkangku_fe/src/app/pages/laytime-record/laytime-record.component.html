@@ -1,0 +1,276 @@
+<section class="p-6">
+  <div class="mb-5 flex items-center justify-between">
+    <div>
+      <h3 class="text-sm font-bold text-slate-900">Catatan Laytime</h3>
+      <p class="mt-1 text-xs text-slate-500">
+        Waktu operasi bongkar/muat aktual untuk menghitung demurrage & despatch.
+      </p>
+    </div>
+
+    @if (isActive) {
+      <button
+        type="button"
+        (click)="toggleForm()"
+        class="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800"
+      >
+        @if (showForm()) {
+          Batal
+        } @else {
+          + Tambah Laytime
+        }
+      </button>
+    }
+  </div>
+
+  <!-- FORM TAMBAH -->
+  @if (showForm()) {
+    <div class="mb-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+      @if (formError()) {
+        <div
+          class="mb-3 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-600"
+        >
+          {{ formError() }}
+        </div>
+      }
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label class="text-xs font-medium text-slate-600">
+            Jenis Operasi
+          </label>
+          <select
+            [(ngModel)]="form.operationType"
+            class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          >
+            <option [ngValue]="LaytimeOperationType.Loading">Loading</option>
+            <option [ngValue]="LaytimeOperationType.Discharging">
+              Discharging
+            </option>
+            <option [ngValue]="LaytimeOperationType.Other">Lainnya</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-slate-600">
+            Jam Laytime (disepakati)
+          </label>
+          <input
+            type="number"
+            min="1"
+            [(ngModel)]="form.laytimeHours"
+            placeholder="mis. 48"
+            class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-slate-600">
+            Waktu Mulai
+          </label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="form.startTime"
+            class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-slate-600">
+            Waktu Selesai
+          </label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="form.endTime"
+            class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="text-xs font-medium text-slate-600">
+            Catatan (opsional)
+          </label>
+          <textarea
+            [(ngModel)]="form.notes"
+            rows="2"
+            placeholder="Kondisi cuaca, kendala operasional, dll."
+            class="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button
+          type="button"
+          (click)="submitForm()"
+          [disabled]="saving()"
+          class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50"
+        >
+          @if (saving()) {
+            Menyimpan...
+          } @else {
+            Simpan Laytime
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- LIST -->
+  @if (loading()) {
+    <div class="py-6 text-center text-xs text-slate-500">
+      Memuat catatan laytime...
+    </div>
+  } @else if (error()) {
+    <div
+      class="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600"
+    >
+      {{ error() }}
+    </div>
+  } @else if (records().length === 0) {
+    <div
+      class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center"
+    >
+      <p class="text-sm text-slate-500">Belum ada catatan laytime.</p>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (record of records(); track record.id) {
+        <div class="rounded-xl border border-slate-200 p-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">
+                {{ record.startTime | date: "dd MMM yyyy, HH:mm" }} &rarr;
+                {{ record.endTime | date: "dd MMM yyyy, HH:mm" }}
+              </p>
+              <p class="mt-1 text-xs text-slate-500">
+                Disepakati {{ record.laytimeHours }} jam &middot; Aktual
+                {{ record.actualDurationHours }} jam
+              </p>
+            </div>
+
+            @if (isActive) {
+              <button
+                type="button"
+                (click)="deleteRecord(record.id)"
+                [disabled]="deletingId() === record.id"
+                class="text-xs font-semibold text-red-600 hover:underline disabled:opacity-50"
+              >
+                @if (deletingId() === record.id) {
+                  Menghapus...
+                } @else {
+                  Hapus
+                }
+              </button>
+            }
+          </div>
+
+          <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div>
+              <p class="text-[11px] text-slate-500">Overtime</p>
+              <p class="text-xs font-semibold text-red-600">
+                {{ record.overtimeHours }} jam
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500">Saved</p>
+              <p class="text-xs font-semibold text-blue-600">
+                {{ record.savedHours }} jam
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500">Demurrage</p>
+              <p class="text-xs font-semibold text-slate-800">
+                {{
+                  record.demurrageAmount | currency: "IDR" : "symbol" : "1.0-0"
+                }}
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] text-slate-500">Despatch</p>
+              <p class="text-xs font-semibold text-slate-800">
+                {{
+                  record.despatchAmount | currency: "IDR" : "symbol" : "1.0-0"
+                }}
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="mt-3 flex items-center justify-between border-t border-slate-100 pt-2"
+          >
+            <span class="text-xs text-slate-500">Net Laytime Amount</span>
+            <span
+              class="text-sm font-bold"
+              [class.text-red-600]="record.netLaytimeAmount > 0"
+              [class.text-blue-600]="record.netLaytimeAmount < 0"
+              [class.text-slate-700]="record.netLaytimeAmount === 0"
+            >
+              {{
+                record.netLaytimeAmount | currency: "IDR" : "symbol" : "1.0-0"
+              }}
+            </span>
+          </div>
+
+          @if (record.notes) {
+            <p class="mt-2 text-xs italic text-slate-500">
+              "{{ record.notes }}"
+            </p>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- COMPLETE CONTRACT ACTION -->
+  @if (isActive) {
+    <div class="mt-6 border-t border-slate-200 pt-5">
+      @if (completeError()) {
+        <div
+          class="mb-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600"
+        >
+          {{ completeError() }}
+        </div>
+      }
+
+      <div
+        class="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div>
+          <p class="text-sm font-semibold text-amber-800">Selesaikan Kontrak</p>
+          <p class="mt-1 text-xs text-amber-700">
+            Total laytime adjustment & final settlement akan dihitung otomatis
+            dari catatan di atas.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="completeContract()"
+          [disabled]="completing()"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-700 disabled:opacity-50"
+        >
+          @if (completing()) {
+            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+            Menyelesaikan...
+          } @else {
+            Complete Contract
+          }
+        </button>
+      </div>
+    </div>
+  }
+</section>

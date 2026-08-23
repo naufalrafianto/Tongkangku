@@ -4,7 +4,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 
 import { VesselComponent } from './pages/vessel/vessel.component';
-import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
 import { VesselDetailComponent } from './pages/vessel-detail/vessel-detail.component';
 import { VesselCreateComponent } from './pages/vessel-create/vessel-create.component';
 
@@ -14,6 +13,7 @@ import { RentalRequestDetailComponent } from './pages/rental-request-detail/rent
 import { RentalRequestListComponent } from './pages/rental-request-list/rental-request-list.component';
 import { CreateRentalOfferComponent } from './pages/rental-offers/create-rental-offer/create-rental-offer.component';
 import { ownerGuard } from './core/guards/owner.guard';
+import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
 
 export const routes: Routes = [
   {
@@ -40,7 +40,7 @@ export const routes: Routes = [
   },
 
   // =========================
-  // Authenticated Routes
+  // Authenticated Routes (With Navbar)
   // =========================
   {
     path: '',
@@ -55,41 +55,36 @@ export const routes: Routes = [
             component: VesselComponent,
           },
           {
-            path: ':id/rental-requests',
+            path: ':id/rental-request',
             component: RentalRequestsComponent,
           },
           {
             path: ':id/detail',
-            component: VesselDetailComponent
+            component: VesselDetailComponent,
           },
           {
             path: 'create',
-            component: VesselCreateComponent
-          }
+            component: VesselCreateComponent,
+          },
         ],
       },
-    ],
-  },
-
-
-  // =========================
-  // Rental Requests
-  // =========================
-  {
-    path: 'rental-requests',
-    children: [
       {
-        path: '',
-        component: RentalRequestListComponent,
-      },
-      {
-        path: ':id',
-        component: RentalRequestDetailComponent,
-      },
-      {
-        path: ':id/offer',
-        component: CreateRentalOfferComponent,
-        canActivate: [ownerGuard],
+        path: 'rental-request',
+        children: [
+          {
+            path: '',
+            component: RentalRequestListComponent,
+          },
+          {
+            path: ':id',
+            component: RentalRequestDetailComponent,
+          },
+          {
+            path: ':id/offer',
+            component: CreateRentalOfferComponent,
+            canActivate: [ownerGuard],
+          },
+        ],
       },
     ],
   },

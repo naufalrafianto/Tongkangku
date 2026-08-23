@@ -443,6 +443,7 @@
               [error]="contractError()"
               [chartererName]="d.chartererName"
               (retry)="fetchContract(d.id)"
+              (completed)="fetchContract(d.id)"
             />
           </div>
         }

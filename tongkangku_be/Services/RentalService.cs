@@ -23,6 +23,8 @@ namespace tongkangku_be.Services
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly ApplicationDbContext _context = context;
 
+        private const decimal TaxRate = 0.012m;
+
         public async Task<RentalResponseDto> GetByIdAsync(Guid id)
         {
             var rental = await _rentalRepository.GetByIdAsync(
@@ -45,7 +47,7 @@ namespace tongkangku_be.Services
 
             if (rentals.Count == 0)
             {
-                throw new NotFoundException("Re ntal requests not found.");
+                throw new NotFoundException("Rental requests not found.");
             }
 
             return rentals
@@ -70,8 +72,7 @@ namespace tongkangku_be.Services
             return setting;
         }
 
-        private async Task<Dictionary<CostType, decimal>>
-            GetActiveOperationalCostsAsync()
+        private async Task<Dictionary<CostType, decimal>>GetActiveOperationalCostsAsync()
         {
             return await _context.RentalOperationalCosts
                 .Where(x => x.IsActive)
@@ -81,10 +82,7 @@ namespace tongkangku_be.Services
                 );
         }
 
-        private static decimal GetDurationMultiplier(
-            int planDay,
-            RentalPricingSetting setting
-        )
+        private static decimal GetDurationMultiplier(int planDay,RentalPricingSetting setting)
         {
             if (planDay < setting.ShortDurationMaxDays)
             {
@@ -105,15 +103,12 @@ namespace tongkangku_be.Services
             decimal AdjustedHirePrice,
             decimal OperationalCost,
             decimal ContingencyCost,
-            decimal EstimatedCost
+            decimal EstimatedCost,
+            decimal TaxAmount,
+            decimal GrandTotal
         );
 
-        private static PricingBreakdown CalculatePricing(
-            decimal ratePerDay,
-            int planDay,
-            RentalPricingSetting setting,
-            Dictionary<CostType, decimal> operationalCosts
-        )
+        private static PricingBreakdown CalculatePricing(decimal ratePerDay, int planDay, RentalPricingSetting setting, Dictionary<CostType, decimal> operationalCosts)
         {
             var durationMultiplier =
                 GetDurationMultiplier(planDay, setting);
@@ -138,21 +133,25 @@ namespace tongkangku_be.Services
                 operationalCost +
                 contingencyCost;
 
+            var taxAmount =
+                estimatedCost * TaxRate;
+
+            var grandTotal =
+                estimatedCost + taxAmount;
+
             return new PricingBreakdown(
                 durationMultiplier,
                 baseHirePrice,
                 adjustedHirePrice,
                 operationalCost,
                 contingencyCost,
-                estimatedCost
+                estimatedCost,
+                taxAmount,
+                grandTotal
             );
         }
 
-        public async Task<RentalStatusResponseDto> CreateAsync(
-            CreateRentalDto dto,
-            Guid chartererId
-        )
-        {
+        public async Task<RentalStatusResponseDto> CreateAsync(CreateRentalDto dto, Guid chartererId){
             if (dto.PlanDay <= 0)
             {
                 throw new ValidationException(new
@@ -431,12 +430,9 @@ namespace tongkangku_be.Services
                         EstimatedCost =
                             breakdown.EstimatedCost,
 
-                        TargetMargin = 0m,
-
                         TotalEstimatedPrice =
-                            breakdown.EstimatedCost,
+                            breakdown.GrandTotal,
 
-                        // New lifecycle
                         Status =
                             RentalRequestStatus.Pending,
 
@@ -581,10 +577,7 @@ namespace tongkangku_be.Services
             );
         }
 
-        public async Task<RentalStatusResponseDto> UpdateAsync(
-            Guid id,
-            UpdateRentalDto dto
-        )
+        public async Task<RentalStatusResponseDto> UpdateAsync(Guid id, UpdateRentalDto dto )
         {
             if (dto.PlanDay <= 0)
             {
@@ -703,7 +696,7 @@ namespace tongkangku_be.Services
                         breakdown.EstimatedCost;
 
                     rental.TotalEstimatedPrice =
-                        breakdown.EstimatedCost;
+                        breakdown.GrandTotal;
 
                     rental.UpdateAt =
                         DateTime.UtcNow;
@@ -718,10 +711,7 @@ namespace tongkangku_be.Services
             return RentalMapper.ToStatusDto(rental);
         }
 
-        public async Task<RentalStatusResponseDto> CancelAsync(
-            Guid id,
-            Guid chartererId
-        )
+        public async Task<RentalStatusResponseDto> CancelAsync( Guid id, Guid chartererId)
         {
             var rental =
                 await _rentalRepository.GetByIdAsync(id);
@@ -770,9 +760,7 @@ namespace tongkangku_be.Services
             return RentalMapper.ToStatusDto(rental);
         }
 
-        public async Task<RentalEstimateResponseDto> EstimateAsync(
-            EstimateRentalDto dto
-        )
+        public async Task<RentalEstimateResponseDto> EstimateAsync(EstimateRentalDto dto)
         {
             if (dto.PlanDay <= 0)
             {
@@ -847,14 +835,6 @@ namespace tongkangku_be.Services
                     operationalCosts
                 );
 
-            var taxRate = 0.012m;
-
-            var taxAmount =
-                breakdown.EstimatedCost * taxRate;
-
-            var grandTotal =
-                breakdown.EstimatedCost + taxAmount;
-
             return new RentalEstimateResponseDto
             {
                 VesselId =
@@ -891,16 +871,16 @@ namespace tongkangku_be.Services
                     breakdown.EstimatedCost,
 
                 TotalEstimatedPrice =
-                    breakdown.EstimatedCost,
+                    breakdown.GrandTotal,
 
                 TaxRate =
-                    taxRate,
+                    TaxRate,
 
                 TaxAmount =
-                    taxAmount,
+                    breakdown.TaxAmount,
 
                 GrandTotal =
-                    grandTotal
+                    breakdown.GrandTotal
             };
         }
     }

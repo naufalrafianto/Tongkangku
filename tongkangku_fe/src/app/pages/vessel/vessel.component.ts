@@ -17,7 +17,7 @@ export class VesselComponent implements OnInit {
   errorMessage = '';
   isLoading: boolean = true;
 
-  vesselStatus = VesselStatus; // Menyambungkan enum ke template
+  vesselStatus = VesselStatus;
 
   page: number = 1;
   limit: number = 6;

@@ -42,6 +42,11 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  // Helper untuk mengecek apakah user login adalah Owner (Role 2)
+  isOwner(): boolean {
+    return this.currentUser?.role === 2;
+  }
+
   toggleProfile(): void {
     this.isProfileOpen = !this.isProfileOpen;
   }
@@ -54,17 +59,15 @@ export class NavbarComponent implements OnInit {
     this.isProfileOpen = false;
     this.isMobileMenuOpen = false;
   }
+
   getRoleName(role: number | undefined): string {
     switch (role) {
       case 0:
         return 'Admin';
-
       case 1:
         return 'Charterer';
-
       case 2:
         return 'Owner';
-
       default:
         return 'User';
     }
@@ -72,9 +75,7 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     localStorage.removeItem('access_token');
-
     this.closeMenus();
-
     this.router.navigate(['/login']);
   }
 }

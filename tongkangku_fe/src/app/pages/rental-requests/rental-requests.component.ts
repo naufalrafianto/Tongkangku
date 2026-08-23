@@ -39,9 +39,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { VesselService } from '../../core/services/vessel.service';
 import { PortService } from '../../core/services/port.service';
 import { CargoTypeService } from '../../core/services/cargo-type.service';
+import { CategoryVesselService } from '../../core/services/category-vessel.service';
+import { distinctPortsValidator } from '../../core/validator/distinctPortsValidator';
 
 @Component({
-  selector: 'app-rental-requests',
+  selector: 'app-rental-request',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -65,6 +67,7 @@ export class RentalRequestsComponent implements OnInit {
   private readonly vesselService = inject(VesselService);
   private readonly portService = inject(PortService);
   private readonly cargoTypeService = inject(CargoTypeService);
+  private readonly vesselCategoryService = inject(CategoryVesselService);
 
   readonly vessel = signal<Vessel | null>(null);
   readonly vesselLoading = signal(true);
@@ -75,13 +78,10 @@ export class RentalRequestsComponent implements OnInit {
   // Options untuk dropdown
   // =========================
 
-  readonly charterTypeOptions: SelectOption<number>[] = [
-    { value: 1, label: 'Voyage Charter' },
-    { value: 2, label: 'Time Charter' },
-    { value: 3, label: 'Bareboat Charter' },
-  ];
 
   readonly portOptions = signal<SelectOption<string>[]>([]);
+
+
   readonly cargoTypeOptions = signal<SelectOption<string>[]>([]);
   readonly referenceDataLoading = signal(true);
   readonly referenceDataError = signal<string | null>(null);
@@ -96,6 +96,7 @@ export class RentalRequestsComponent implements OnInit {
   ngOnInit(): void {
     this.loadVessel();
     this.loadReferenceData();
+    console.log(this.portOptions);
   }
 
   readonly estimateLoading = signal(false);
@@ -106,8 +107,6 @@ export class RentalRequestsComponent implements OnInit {
   });
 
   readonly form = this.fb.group({
-    charterType: this.fb.control<number | null>(null, Validators.required),
-
     loadingPortId: this.fb.control<string | null>(null, Validators.required),
 
     dischargingPortId: this.fb.control<string | null>(
@@ -125,7 +124,7 @@ export class RentalRequestsComponent implements OnInit {
     notes: this.fb.control(''),
 
     cargos: this.fb.array([this.createCargoGroup()]),
-  });
+  }, { validators: [distinctPortsValidator()] });
 
   // =========================
   // Reference data (ports & cargo types)
@@ -138,16 +137,18 @@ export class RentalRequestsComponent implements OnInit {
     forkJoin({
       ports: this.portService.getAll(),
       cargoTypes: this.cargoTypeService.getAll(),
+
     }).subscribe({
       next: ({ ports, cargoTypes }) => {
-        if (ports && ports) {
+        if (ports.success && ports.data) {
           this.portOptions.set(
-            ports.map((port) => ({
+            ports.data.map((port) => ({
               value: port.id,
               label: port.city ? `${port.name} — ${port.city}` : port.name,
             })),
           );
         }
+
 
         if (cargoTypes.success && cargoTypes.data) {
           this.cargoTypeOptions.set(
@@ -316,7 +317,6 @@ export class RentalRequestsComponent implements OnInit {
 
     const dto = {
       vesselId: this.vesselId,
-      charterType: value.charterType,
       loadingPortId: value.loadingPortId,
       dischargingPortId: value.dischargingPortId,
       startDate: value.startDate,
@@ -334,7 +334,7 @@ export class RentalRequestsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.success && response.data) {
-            this.router.navigate(['/rental-requests', response.data.id]);
+            this.router.navigate(['/rental-request', response.data.id]);
           } else {
             this.submitError.set(
               response.message || 'Failed to create rental request.',

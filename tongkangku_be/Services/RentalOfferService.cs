@@ -36,6 +36,11 @@ namespace tongkangku_be.Services
         private readonly ApplicationDbContext _context =
             context;
 
+        private static DateTime NormalizeToUtc(DateTime value) =>
+            value.Kind == DateTimeKind.Utc
+                ? value
+                : DateTime.SpecifyKind(value, DateTimeKind.Utc);
+
         public async Task<RentalOfferResponseDto> GetByIdAsync(Guid id)
         {
             var offer =
@@ -199,9 +204,7 @@ namespace tongkangku_be.Services
                 dto.BunkerAmount +
                 dto.OtherCharges;
 
-            var validUntilUtc = dto.ValidUntil.Kind == DateTimeKind.Utc
-                ? dto.ValidUntil
-                : DateTime.SpecifyKind(dto.ValidUntil, DateTimeKind.Utc);
+            var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
 
             return await _context.ExecuteInTransactionAsync(
                 async () =>
@@ -348,6 +351,8 @@ namespace tongkangku_be.Services
                 dto.BunkerAmount +
                 dto.OtherCharges;
 
+            var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
+
             return await _context.ExecuteInTransactionAsync(
                 async () =>
                 {
@@ -367,7 +372,7 @@ namespace tongkangku_be.Services
                         totalPrice;
 
                     offer.ValidUntil =
-                        dto.ValidUntil;
+                        validUntilUtc;
 
                     offer.Notes =
                         dto.Notes;
@@ -546,7 +551,7 @@ namespace tongkangku_be.Services
             );
         }
 
-        public async Task<RentalOfferStatusResponseDto> RejectAsync(Guid id,RejectRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> RejectAsync(Guid id, RejectRentalOfferDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Reason))
             {

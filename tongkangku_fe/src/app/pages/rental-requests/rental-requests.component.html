@@ -32,14 +32,6 @@
         </h2>
 
         <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-          <app-form-field label="Charter Type" [required]="true">
-            <app-form-select
-              [control]="form.controls.charterType"
-              [options]="charterTypeOptions"
-              placeholder="Select charter type"
-            />
-          </app-form-field>
-
           <app-form-field label="Loading Port" [required]="true">
             <app-form-select
               [control]="form.controls.loadingPortId"
@@ -54,8 +46,16 @@
               [options]="portOptions()"
               placeholder="Select discharging port"
             />
+            @if (
+              form.hasError("samePorts") &&
+              (form.get("dischargingPortId")?.touched ||
+                form.get("loadingPortId")?.touched)
+            ) {
+              <p class="text-xs text-red-600 ml-2">
+                Pelabuhan muat dan pelabuhan bongkar tidak boleh sama.
+              </p>
+            }
           </app-form-field>
-
           <app-form-field label="Start Date" [required]="true">
             <app-form-date [control]="form.controls.startDate" />
           </app-form-field>
@@ -224,9 +224,15 @@
 
               <div class="mt-3 flex items-center justify-between text-sm">
                 <span class="text-slate-500">Capacity</span>
-                <span class="font-medium text-slate-700"
-                  >{{ vesselData.dwtCapacity }} MT</span
-                >
+                <span class="font-medium text-slate-700">
+                  @if (vesselData.dwtCapacity > 0) {
+                    {{ vesselData.dwtCapacity | number }} MT
+                  } @else if (vesselData.capacityFeed > 0) {
+                    {{ vesselData.capacityFeed | number }} FT
+                  } @else {
+                    -
+                  }
+                </span>
               </div>
 
               <div class="mt-1 flex items-center justify-between text-sm">
@@ -248,29 +254,6 @@
             }
           }
         </div>
-
-        <!-- Charterer -->
-        <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3
-            class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400"
-          >
-            Charterer
-          </h3>
-
-          @if (currentUser(); as user) {
-            <p class="text-base font-semibold text-slate-900">
-              {{ user.name }}
-            </p>
-            <p class="text-sm text-slate-500">{{ user.email }}</p>
-          } @else {
-            <div class="space-y-2">
-              <div class="h-4 w-32 animate-pulse rounded bg-slate-200"></div>
-              <div class="h-3 w-48 animate-pulse rounded bg-slate-200"></div>
-            </div>
-          }
-        </div>
-
-        <!-- Price estimate -->
         <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div class="mb-4 flex items-center justify-between">
             <div>
@@ -466,15 +449,15 @@
                   </div>
 
                   <!-- Grand Total -->
-                  <div class="rounded-lg bg-slate-900 p-4">
+                  <div class="rounded-lg bg-blue-600 p-4">
                     <div class="flex items-end justify-between">
                       <div>
                         <p
-                          class="text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+                          class="text-[11px] font-semibold uppercase tracking-wide text-white"
                         >
                           Grand Total
                         </p>
-                        <p class="mt-0.5 text-xs text-slate-500">
+                        <p class="mt-0.5 text-xs text-white">
                           Including applicable tax
                         </p>
                       </div>

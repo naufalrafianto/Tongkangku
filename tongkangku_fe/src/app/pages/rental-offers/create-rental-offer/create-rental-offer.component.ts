@@ -124,7 +124,7 @@ export class CreateRentalOfferComponent implements OnInit {
       .subscribe({
         next: (res) => {
           if (res.success) {
-            this.router.navigate(['/rental-requests', this.rentalRequestId]);
+            this.router.navigate(['/rental-request', this.rentalRequestId]);
           } else {
             this.submitError.set(
               res.message || 'Failed to submit offer.',
@@ -140,6 +140,6 @@ export class CreateRentalOfferComponent implements OnInit {
 
   }
   cancel(): void {
-    this.router.navigate(['/rental-requests', this.rentalRequestId]);
+    this.router.navigate(['/rental-request', this.rentalRequestId]);
   }
 }

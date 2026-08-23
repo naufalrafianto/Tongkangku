@@ -8,7 +8,6 @@ export interface CargoPayload {
 
 export interface CreateRentalRequestPayload {
   vesselId: string;
-  charterType: number | null;
   loadingPortId: string | null;
   dischargingPortId: string | null;
   startDate: string | null;

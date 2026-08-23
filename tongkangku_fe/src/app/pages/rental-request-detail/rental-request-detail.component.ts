@@ -25,21 +25,15 @@ export class RentalRequestDetailComponent implements OnInit {
   private offerService = inject(RentalOfferService);
   private authService = inject(AuthService);
   private contractService = inject(RentalContractService);
+
   readonly RentalStatus = RentalStatus;
   readonly RentalOfferStatus = RentalOfferStatus;
-  showContractModal = signal(false);
-  private id = this.route.snapshot.paramMap.get('id')!;
 
-  openContractModal(): void {
-    this.showContractModal.set(true);
-  }
-  closeContractModal(): void {
-    this.showContractModal.set(false);
-  }
-  printContract(): void {
-    window.print();
-  }
+  showContractModal = signal(false);
+  readonly id = this.route.snapshot.paramMap.get('id')!;
+
   acceptingOfferId = signal<string | null>(null);
+  rejectingOfferId = signal<string | null>(null);
   offerActionError = signal<string | null>(null);
 
   detail = signal<RentalResponse | null>(null);
@@ -79,8 +73,20 @@ export class RentalRequestDetailComponent implements OnInit {
     this.loadDetail();
   }
 
+  openContractModal(): void {
+    this.showContractModal.set(true);
+  }
+
+  closeContractModal(): void {
+    this.showContractModal.set(false);
+  }
+
+  printContract(): void {
+    window.print();
+  }
+
   createOffer(): void {
-    this.router.navigate(['/rental-requests', this.id, 'offer']);
+    this.router.navigate(['/rental-request', this.id, 'offer']);
   }
 
   fetchContract(rentalRequestId: string): void {
@@ -94,13 +100,12 @@ export class RentalRequestDetailComponent implements OnInit {
         }
         this.contractLoading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.contractError.set('Gagal memuat detail kontrak.');
         this.contractLoading.set(false);
-      }
+      },
     });
   }
-
 
   private loadDetail(): void {
     this.loading.set(true);
@@ -162,7 +167,6 @@ export class RentalRequestDetailComponent implements OnInit {
         },
       });
   }
-  rejectingOfferId = signal<string | null>(null);
 
   rejectOffer(offerId: string, reason: string): void {
     this.rejectingOfferId.set(offerId);
@@ -188,6 +192,8 @@ export class RentalRequestDetailComponent implements OnInit {
     }
   }
 
+
+
   viewContract(): void {
     this.fetchContract(this.id);
   }
@@ -195,5 +201,4 @@ export class RentalRequestDetailComponent implements OnInit {
   refresh(): void {
     this.loadDetail();
   }
-
 }
