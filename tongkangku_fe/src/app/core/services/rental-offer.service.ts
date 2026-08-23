@@ -1,8 +1,8 @@
-import { CreateRentalOfferPayload, RentalOfferStatusResponse } from './../../shared/types/rental-offer/rental-offer.type';
+import { CreateRentalOfferPayload, RentalOfferPreview, RentalOfferStatusResponse } from './../../shared/types/rental-offer/rental-offer.type';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api/response.type';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { RentalOffer } from '../../shared/types/rental-offer/rental-offer.type';
 
@@ -48,6 +48,24 @@ export class RentalOfferService {
     return this.http.patch<ApiResponse<void>>(
       `${this.apiUrl}/rental-offers/${offerId}/reject`,
       { reason },
+    );
+  }
+
+  preview(
+    rentalRequestId: string,
+    ratePerDay: number,
+    bunkerAmount: number,
+    otherCharges: number,
+  ): Observable<ApiResponse<RentalOfferPreview>> {
+    const params = new HttpParams()
+      .set('rentalRequestId', rentalRequestId)
+      .set('ratePerDay', ratePerDay)
+      .set('bunkerAmount', bunkerAmount)
+      .set('otherCharges', otherCharges);
+
+    return this.http.get<ApiResponse<RentalOfferPreview>>(
+      `${this.apiUrl}/rental-offers/preview`,
+      { params },
     );
   }
 }

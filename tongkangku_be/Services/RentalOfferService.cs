@@ -15,9 +15,12 @@ namespace tongkangku_be.Services
         IRentalRepository rentalRepository,
         IRepository<Vessel> vesselRepository,
         IRepository<User> userRepository,
+        IRentalPricingService rentalPricingService,
         IRentalContractService rentalContractService,
         ApplicationDbContext context) : IRentalOfferService
     {
+        private readonly IRentalPricingService _rentalPricingService = rentalPricingService;
+
         private readonly IRentalOfferRepository _rentalOfferRepository =
             rentalOfferRepository;
 
@@ -71,9 +74,7 @@ namespace tongkangku_be.Services
                 .ToList();
         }
 
-        public async Task<RentalOfferStatusResponseDto> CreateAsync(
-            CreateRentalOfferDto dto,
-            Guid ownerId)
+        public async Task<RentalOfferStatusResponseDto> CreateAsync(CreateRentalOfferDto dto, Guid ownerId)
         {
             var rentalRequest =
                 await _rentalRepository.GetByIdAsync(
@@ -195,14 +196,9 @@ namespace tongkangku_be.Services
                 });
             }
 
-            var hireAmount =
-                dto.RatePerDay *
-                rentalRequest.PlanDay;
+            var breakdown = await _rentalPricingService.CalculateAsync(dto.RatePerDay, rentalRequest.PlanDay);
 
-            var totalPrice =
-                hireAmount +
-                dto.BunkerAmount +
-                dto.OtherCharges;
+            var totalPrice = breakdown.GrandTotal + dto.BunkerAmount + dto.OtherCharges;
 
             var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
 
@@ -212,42 +208,18 @@ namespace tongkangku_be.Services
                     var offer = new RentalOffer
                     {
                         Id = Guid.NewGuid(),
-
-                        RentalRequestId =
-                            dto.RentalRequestId,
-
-                        OwnerId =
-                            ownerId,
-
-                        RatePerDay =
-                            dto.RatePerDay,
-
-                        ValidUntil =
-                            validUntilUtc,
-
-                        HireAmount =
-                            hireAmount,
-
-                        TotalPrice =
-                            totalPrice,
-
-                        BunkerAmount =
-                            dto.BunkerAmount,
-
-                        OtherCharges =
-                            dto.OtherCharges,
-
-                        Status =
-                            RentalOfferStatus.Pending,
-
-                        Notes =
-                            dto.Notes,
-
-                        CreatedAt =
-                            DateTime.UtcNow,
-
-                        UpdatedAt =
-                            DateTime.UtcNow
+                        RentalRequestId = dto.RentalRequestId,
+                        OwnerId = ownerId,
+                        RatePerDay = dto.RatePerDay,
+                        ValidUntil = validUntilUtc,
+                        HireAmount = breakdown.AdjustedHirePrice,
+                        TotalPrice = totalPrice,
+                        BunkerAmount = dto.BunkerAmount,
+                        OtherCharges = dto.OtherCharges, 
+                        Status = RentalOfferStatus.Pending,
+                        Notes = dto.Notes,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
                     };
 
                     await _rentalOfferRepository
@@ -269,8 +241,7 @@ namespace tongkangku_be.Services
             );
         }
 
-        public async Task<List<RentalOfferResponseDto>>
-            GetByRentalRequestIdAsync(Guid rentalRequestId)
+        public async Task<List<RentalOfferResponseDto>>GetByRentalRequestIdAsync(Guid rentalRequestId)
         {
             var offers =
                 await _rentalOfferRepository
@@ -283,112 +254,74 @@ namespace tongkangku_be.Services
                 .ToList();
         }
 
+        public async Task<RentalOfferPreviewDto> PreviewAsync(Guid rentalRequestId, decimal ratePerDay, decimal bunkerAmount, decimal otherCharges)
+        {
+            var rentalRequest = await _rentalRepository.GetByIdAsync(rentalRequestId);
+            if (rentalRequest == null)
+            {
+                throw new NotFoundException($"Rental request with id '{rentalRequestId}' was not found.");
+            }
+
+            var breakdown = await _rentalPricingService.CalculateAsync(ratePerDay, rentalRequest.PlanDay);
+            var finalTotalPrice = breakdown.GrandTotal + bunkerAmount + otherCharges;
+
+            return new RentalOfferPreviewDto
+            {
+                RatePerDay = ratePerDay,
+                PlanDay = rentalRequest.PlanDay,
+                DurationMultiplier = breakdown.DurationMultiplier,
+                BaseHirePrice = breakdown.BaseHirePrice,
+                HireAmount = breakdown.AdjustedHirePrice,
+                OperationalCost = breakdown.OperationalCost,
+                ContingencyCost = breakdown.ContingencyCost,
+                TaxAmount = breakdown.TaxAmount,
+                BunkerAmount = bunkerAmount,
+                OtherCharges = otherCharges,
+                TotalPrice = finalTotalPrice
+            };
+        }
         public async Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto)
         {
-            var offer =
-                await _rentalOfferRepository.GetByIdAsync(
-                    id,
-                    "RentalRequest"
-                );
-
+            var offer = await _rentalOfferRepository.GetByIdAsync(id, "RentalRequest");
             if (offer == null)
             {
-                throw new NotFoundException(
-                    $"Rental offer with id '{id}' was not found.");
+                throw new NotFoundException($"Rental offer with id '{id}' was not found.");
             }
 
             if (offer.Status != RentalOfferStatus.Pending)
             {
-                throw new AppException(
-                    "Only pending offers can be updated",
-                    HttpStatusCode.Conflict,
-                    "INVALID_STATUS"
-                );
-            }
-
-            if (dto.RatePerDay <= 0)
-            {
-                throw new ValidationException(new
-                {
-                    RatePerDay =
-                        "Rate per day must be greater than 0."
-                });
-            }
-
-            if (dto.BunkerAmount < 0)
-            {
-                throw new ValidationException(new
-                {
-                    BunkerAmount =
-                        "Bunker amount cannot be negative."
-                });
-            }
-
-            if (dto.OtherCharges < 0)
-            {
-                throw new ValidationException(new
-                {
-                    OtherCharges =
-                        "Other charges cannot be negative."
-                });
+                throw new AppException("Only pending offers can be updated", HttpStatusCode.Conflict, "INVALID_STATUS");
             }
 
             if (dto.ValidUntil.Date < DateTime.UtcNow.Date)
             {
-                throw new ValidationException(new
-                {
-                    ValidUntil =
-                        "Valid until date cannot be in the past."
-                });
+                throw new ValidationException(new { ValidUntil = "Valid until date cannot be in the past." });
             }
 
-            var hireAmount =
-                dto.RatePerDay *
-                offer.RentalRequest.PlanDay;
-
-            var totalPrice =
-                hireAmount +
-                dto.BunkerAmount +
-                dto.OtherCharges;
-
+            var breakdown = await _rentalPricingService.CalculateAsync(dto.RatePerDay, offer.RentalRequest.PlanDay);
+            var totalPrice = breakdown.GrandTotal + dto.BunkerAmount + dto.OtherCharges;
             var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
 
-            return await _context.ExecuteInTransactionAsync(
-                async () =>
-                {
-                    offer.RatePerDay =
-                        dto.RatePerDay;
+            return await _context.ExecuteInTransactionAsync(async () =>
+            {
+                offer.RatePerDay = dto.RatePerDay;
+                offer.HireAmount = breakdown.AdjustedHirePrice;
+                offer.DurationMultiplier = breakdown.DurationMultiplier;
+                offer.OperationalCost = breakdown.OperationalCost;
+                offer.ContingencyCost = breakdown.ContingencyCost;
+                offer.TaxAmount = breakdown.TaxAmount;
+                offer.BunkerAmount = dto.BunkerAmount;
+                offer.OtherCharges = dto.OtherCharges;
+                offer.TotalPrice = totalPrice;
+                offer.ValidUntil = validUntilUtc;
+                offer.Notes = dto.Notes;
+                offer.UpdatedAt = DateTime.UtcNow;
 
-                    offer.HireAmount =
-                        hireAmount;
+                _rentalOfferRepository.Update(offer);
+                await _rentalOfferRepository.SaveChangesAsync();
 
-                    offer.BunkerAmount =
-                        dto.BunkerAmount;
-
-                    offer.OtherCharges =
-                        dto.OtherCharges;
-
-                    offer.TotalPrice =
-                        totalPrice;
-
-                    offer.ValidUntil =
-                        validUntilUtc;
-
-                    offer.Notes =
-                        dto.Notes;
-
-                    offer.UpdatedAt =
-                        DateTime.UtcNow;
-
-                    _rentalOfferRepository.Update(offer);
-
-                    await _rentalOfferRepository
-                        .SaveChangesAsync();
-
-                    return RentalOfferMapper
-                        .ToStatusDto(offer);
-                }
-            );
+                return RentalOfferMapper.ToStatusDto(offer);
+            });
         }
 
         public async Task DeleteAsync(Guid id)

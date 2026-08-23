@@ -70,7 +70,7 @@ builder.Services.AddScoped<IRentalContractRepository, RentalContractRepository>(
 builder.Services.AddScoped<IRentalOfferRepository, RentalOfferRepository>();
 builder.Services.AddScoped<IRentalOfferService, RentalOfferService>();
 
-
+builder.Services.AddScoped<IRentalPricingService, RentalPricingService>();
 builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
 builder.Services.AddScoped<IRentalContractService, RentalContractService>();

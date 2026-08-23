@@ -34,7 +34,6 @@ export class NavbarComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           const user = this.authService.getRole();
-          console.log("data userorle", user);
           this.userRole = user;
           this.currentUser = res.data;
         }

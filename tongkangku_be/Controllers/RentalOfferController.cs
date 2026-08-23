@@ -88,5 +88,20 @@ namespace tongkangku_be.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("preview")]
+        [Authorize(Roles = "Owner")]
+        public async Task<ActionResult<ApiResponse<RentalOfferPreviewDto>>> Preview(
+            [FromQuery] Guid rentalRequestId,
+            [FromQuery] decimal ratePerDay,
+            [FromQuery] decimal bunkerAmount = 0,
+            [FromQuery] decimal otherCharges = 0)
+        {
+            var result = await _rentalOfferService.PreviewAsync(
+                rentalRequestId, ratePerDay, bunkerAmount, otherCharges);
+
+            return Ok(ApiResponse<RentalOfferPreviewDto>.SuccessResult(
+                result, "Offer preview calculated successfully"));
+        }
     }
 }

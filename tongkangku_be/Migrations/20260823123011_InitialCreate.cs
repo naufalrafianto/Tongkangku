@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace tongkangku_be.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,44 @@ namespace tongkangku_be.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ports", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "rental_operational_costs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    CostType = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rental_operational_costs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "rental_pricing_settings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    ContingencyRate = table.Column<decimal>(type: "numeric(5,4)", nullable: false),
+                    TargetMargin = table.Column<decimal>(type: "numeric(5,4)", nullable: false),
+                    ShortDurationMaxDays = table.Column<int>(type: "integer", nullable: false),
+                    ShortDurationMultiplier = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    MediumDurationMaxDays = table.Column<int>(type: "integer", nullable: false),
+                    MediumDurationMultiplier = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    LongDurationMultiplier = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rental_pricing_settings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -196,7 +234,7 @@ namespace tongkangku_be.Migrations
                 name: "rental_contracts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     ContractNum = table.Column<string>(type: "text", nullable: false),
                     RentalRequestId = table.Column<Guid>(type: "uuid", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -209,6 +247,9 @@ namespace tongkangku_be.Migrations
                     AgreedBunkerAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     AgreedOtherCharges = table.Column<decimal>(type: "numeric", nullable: false),
                     AgreedTotalPrice = table.Column<decimal>(type: "numeric", nullable: true),
+                    TotalLaytimeAdjustment = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    FinalSettlementAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -265,10 +306,15 @@ namespace tongkangku_be.Migrations
                     HireAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     BunkerAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     OtherCharges = table.Column<decimal>(type: "numeric", nullable: false),
+                    DurationMultiplier = table.Column<decimal>(type: "numeric", nullable: false),
+                    OperationalCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    ContingencyCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    TaxAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     ValidUntil = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
+                    RejectionReason = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -425,6 +471,12 @@ namespace tongkangku_be.Migrations
                 column: "RentalRequestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_rental_operational_costs_CostType",
+                table: "rental_operational_costs",
+                column: "CostType",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_rental_request_cargos_CargoTypeId",
                 table: "rental_request_cargos",
                 column: "CargoTypeId");
@@ -496,6 +548,12 @@ namespace tongkangku_be.Migrations
 
             migrationBuilder.DropTable(
                 name: "rental_offers");
+
+            migrationBuilder.DropTable(
+                name: "rental_operational_costs");
+
+            migrationBuilder.DropTable(
+                name: "rental_pricing_settings");
 
             migrationBuilder.DropTable(
                 name: "rental_request_cargos");

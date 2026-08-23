@@ -10,6 +10,7 @@ namespace tongkangku_be.Interfaces
         Task<RentalOfferStatusResponseDto> CreateAsync(CreateRentalOfferDto dto, Guid ownerId);
         Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto);
         Task DeleteAsync(Guid id);
+        Task<RentalOfferPreviewDto> PreviewAsync(Guid rentalRequestId, decimal ratePerDay, decimal bunkerAmount, decimal otherCharges);
         Task<RentalOfferStatusResponseDto> WithdrawAsync(Guid id);
         Task<RentalOfferStatusResponseDto> AcceptAsync(Guid id);
         Task<RentalOfferStatusResponseDto> RejectAsync(Guid id, RejectRentalOfferDto dto);

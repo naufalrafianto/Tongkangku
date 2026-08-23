@@ -15,6 +15,7 @@ namespace tongkangku_be.Services
         IRentalRepository rentalRepository,
         IRepository<Vessel> vesselRepository,
         IRepository<User> userRepository,
+         IRentalPricingService rentalPricingService,
         ApplicationDbContext context
     ) : IRentalService
     {
@@ -22,7 +23,7 @@ namespace tongkangku_be.Services
         private readonly IRepository<Vessel> _vesselRepository = vesselRepository;
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly ApplicationDbContext _context = context;
-
+        private readonly IRentalPricingService _rentalPricingService = rentalPricingService;
         private const decimal TaxRate = 0.012m;
 
         public async Task<RentalResponseDto> GetByIdAsync(Guid id)
@@ -371,13 +372,7 @@ namespace tongkangku_be.Services
                 );
             }
 
-            var breakdown =
-                CalculatePricing(
-                    vessel.RatePerDay,
-                    dto.PlanDay,
-                    pricingSetting,
-                    operationalCosts
-                );
+            var breakdown = await _rentalPricingService.CalculateAsync(vessel.RatePerDay, dto.PlanDay);
 
             if (breakdown.DurationMultiplier <= 0)
             {
@@ -661,13 +656,7 @@ namespace tongkangku_be.Services
                 );
             }
 
-            var breakdown =
-                CalculatePricing(
-                    vessel.RatePerDay,
-                    dto.PlanDay,
-                    pricingSetting,
-                    operationalCosts
-                );
+            var breakdown = await _rentalPricingService.CalculateAsync(vessel.RatePerDay, dto.PlanDay);
 
             await _context.ExecuteInTransactionAsync(
                 async () =>
@@ -825,13 +814,7 @@ namespace tongkangku_be.Services
                 );
             }
 
-            var breakdown =
-                CalculatePricing(
-                    vessel.RatePerDay,
-                    dto.PlanDay,
-                    pricingSetting,
-                    operationalCosts
-                );
+            var breakdown = await _rentalPricingService.CalculateAsync(vessel.RatePerDay, dto.PlanDay);
 
             return new RentalEstimateResponseDto
             {

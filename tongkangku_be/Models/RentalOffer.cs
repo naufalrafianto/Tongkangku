@@ -23,6 +23,10 @@ namespace tongkangku_be.Models
         public decimal BunkerAmount { get; set; }
 
         public decimal OtherCharges { get; set; }
+        public decimal DurationMultiplier { get; set; }
+        public decimal OperationalCost { get; set; }
+        public decimal ContingencyCost { get; set; }
+        public decimal TaxAmount { get; set; }
 
         public decimal TotalPrice { get; set; }
 
