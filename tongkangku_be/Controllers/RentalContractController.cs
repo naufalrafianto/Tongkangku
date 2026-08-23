@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.RentalContract;
 using tongkangku_be.Dtos.RentalOffer;
 using tongkangku_be.Dtos.RentalRequest;
+using tongkangku_be.Extensions;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Shared;
 
@@ -16,10 +17,17 @@ namespace tongkangku_be.Controllers
         private readonly IRentalContractService _rentalContractService = rentalContractService;
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<ApiResponse<List<RentalContractResponseDto>>>> GetAll()
         {
-            var contracts = await _rentalContractService.GetAllAsync();
-            return Ok(contracts);
+            var ownerId = User.GetUserId();
+
+            var contracts = await _rentalContractService.GetAllAsync(ownerId);
+            return Ok(
+                ApiResponse<List<RentalContractResponseDto>>.SuccessResult(
+                    contracts,
+                    "Rental contracts retrieved successfully"
+                )
+             );
         }
 
         [HttpGet("{id:guid}")]
@@ -36,7 +44,7 @@ namespace tongkangku_be.Controllers
             return Ok(
                 ApiResponse<RentalContractResponseDto>.SuccessResult(
                     result,
-                    "Rental requests retrieved successfully"
+                    "Rental contract retrieved successfully"
                 )
              );
         }

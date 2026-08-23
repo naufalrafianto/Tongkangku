@@ -410,8 +410,6 @@ namespace tongkangku_be.Services
                         VesselId = dto.VesselId,
                         ChartererId = chartererId,
 
-                        CharterType = dto.CharterType,
-
                         LoadingPortId =
                             dto.LoadingPortId,
 

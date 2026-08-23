@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
 
   isProfileOpen = false;
   isMobileMenuOpen = false;
-
+  userRole: any = 0;
   ngOnInit(): void {
     this.loadCurrentUser();
   }
@@ -33,6 +33,9 @@ export class NavbarComponent implements OnInit {
     this.authService.getMe().subscribe({
       next: (res) => {
         if (res.success && res.data) {
+          const user = this.authService.getRole();
+          console.log("data userorle", user);
+          this.userRole = user;
           this.currentUser = res.data;
         }
       },
@@ -76,6 +79,7 @@ export class NavbarComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('access_token');
     this.closeMenus();
-    this.router.navigate(['/login']);
+
+    this.router.navigate(['/auth/login']);
   }
 }

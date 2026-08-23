@@ -26,27 +26,17 @@ export class LoginComponent {
 
     this.authService.login(this.loginData).subscribe({
       next: (res) => {
-        if (!res.success) {
-          this.errorMessage = res.message || 'Login gagal.';
-          return;
-        }
-
         const userRole = this.authService.getRole();
-
         if (userRole === 2) {
           this.router.navigate(['/vessels/create']);
         } else if (userRole === 1) {
           this.router.navigate(['/vessels']);
-        } else if (userRole === 0) {
-          this.router.navigate(['/vessels/create']);
         } else {
           this.errorMessage = 'Role user tidak dikenali.';
         }
       },
-
       error: (err) => {
         console.error('Login error:', err);
-
         this.errorMessage = err?.error?.message || 'Email atau password salah.';
       },
     });

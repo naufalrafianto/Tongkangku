@@ -50,9 +50,10 @@ namespace tongkangku_be.Services
                 : RentalContractMapper.ToDto(contract);
         }
 
-        public async Task<List<RentalContractResponseDto>> GetAllAsync()
+        public async Task<List<RentalContractResponseDto>> GetAllAsync(Guid ownerId)
         {
-            var contracts = await _rentalContractRepository.GetAllAsync(
+            var contracts = await _rentalContractRepository.GetAllByOwnerAsync(
+                ownerId,
                 "Owner",
                 "ContractCargos"
             );

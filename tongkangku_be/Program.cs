@@ -76,6 +76,7 @@ builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 builder.Services.AddScoped<IRentalContractService, RentalContractService>();
 
 builder.Services.AddScoped<ILaytimeRecordRepository, LaytimeRecordRepository>();
+builder.Services.AddScoped<IVesselRepository, VesselRepository>();
 builder.Services.AddScoped<ILaytimeRecordService, LaytimeRecordService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICargoTypeService, CargoTypeService>();

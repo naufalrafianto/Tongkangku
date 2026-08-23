@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CategoryVesselService } from '../../core/services/category-vessel.service';
 import { categoryVessel } from '../../shared/interface/category-vessel';
@@ -26,7 +26,7 @@ export class VesselCreateComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authSvc = inject(AuthService)
   private vesselSvc = inject(VesselService);
-
+ private router = inject(Router);
   vesselCategoryData: categoryVessel[] | null = null;
   portData: portInterface[] | null = null;
 
@@ -72,9 +72,10 @@ export class VesselCreateComponent implements OnInit {
   fetchCategoryVessel(): void {
     this.isLoadingCategory = true;
     this.vesselCategorySvc.GetAllCategory().subscribe({
-      next: (response) => {
-        this.vesselCategoryData = response;
-        console.log("data kapal lawut",response);
+      next: (response: any) => { 
+        this.vesselCategoryData = response.data;
+        
+        console.log("data kapal laut", this.vesselCategoryData);
         this.isLoadingCategory = false;
       },
       error: (err) => {
@@ -95,7 +96,7 @@ export class VesselCreateComponent implements OnInit {
     subscribe({
       next: () => {
         alert("data vessel berhasil ditambahkan!");
-        
+        this.router.navigate(['/vessels']);
       },
       error : (err) => {
         this.errorMessage = err.error?.

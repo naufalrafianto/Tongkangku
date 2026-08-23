@@ -11,18 +11,23 @@ namespace tongkangku_be.Services
 {
     public class VesselService : IVesselService
     {
-        private readonly IRepository<Vessel> _vesselRepository;
+        IVesselRepository _vesselRepository;
         private readonly IRepository<Port> _portRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepository<VesselCategory> _vesselCategoryRepository;
 
-        public VesselService(IRepository<Vessel> vesselRepository, IHttpContextAccessor httpContextAccessor, IRepository<Port> portRepository, IRepository<VesselCategory> vesselCategoryRepository)
+        public VesselService(
+            IVesselRepository vesselRepository,
+            IHttpContextAccessor httpContextAccessor,
+            IRepository<Port> portRepository,
+            IRepository<VesselCategory> vesselCategoryRepository)
         {
             _vesselRepository = vesselRepository;
             _httpContextAccessor = httpContextAccessor;
             _portRepository = portRepository;
             _vesselCategoryRepository = vesselCategoryRepository;
         }
+
 
 
         public async Task<VesselResponseDto> CreateVesselAsync(VesselRequestDto request)
@@ -55,7 +60,12 @@ namespace tongkangku_be.Services
             {
                 throw new NotFoundException("category id tidak ada!");
             }
+            if (request == null)
+            {
 
+                throw new AppException("Request tidak boleh kosong", System.Net.HttpStatusCode.BadRequest);
+
+            }
             var vessel = new Vessel
             {
                 Name = request.name,
@@ -88,6 +98,38 @@ namespace tongkangku_be.Services
 
 
         }
+        public async Task<List<VesselResponseDto>> GetAllVesselByOwnerAsync(Guid ownerId, string? search, int limit, int page)
+        {
+            var vessels = await _vesselRepository.GetAllByOwnerAsync(ownerId);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                vessels = vessels
+                    .Where(v => v.Name.Contains(
+                        search,
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            return vessels
+                .Skip((page - 1) * limit)
+                .Take(limit)
+                .Select(v => new VesselResponseDto
+                {
+                    Id = v.Id,
+                    name = v.Name,
+                    ownerId = v.OwnerId,
+                    categoryId = v.CategoryId,
+                    portId = v.PortId,
+                    capacityFeed = v.CapacityFeed,
+                    dwtCapacity = v.DwtCapacity,
+                    status = (int)v.Status,
+                    year = v.Year,
+                    ratePerDay = v.RatePerDay,
+                    createdAt = v.CreatedAt,
+                })
+                .ToList();
+        }
 
         public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search,int limit, int page)
         {
@@ -103,6 +145,7 @@ namespace tongkangku_be.Services
             var vesselPages = vessel
                  .Skip((page - 1) * limit)
                  .Take(limit)
+                 
                 .Select(v => new VesselResponseDto
                 {
                     Id = v.Id,
@@ -126,7 +169,7 @@ namespace tongkangku_be.Services
             var vessel = await _vesselRepository.GetByIdAsync(id);
             if (vessel == null)
             {
-                throw new KeyNotFoundException("Vessel tidak ditemukan.");
+                throw new NotFoundException("Vessel tidak ditemukan.");
             }
 
             return new VesselResponseDto

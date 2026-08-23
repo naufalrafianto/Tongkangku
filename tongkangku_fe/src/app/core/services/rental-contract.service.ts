@@ -12,6 +12,10 @@ export class RentalContractService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  getAll(): Observable<ApiResponse<RentalContract[]>> {
+    return this.http.get<ApiResponse<RentalContract[]>>(`${this.apiUrl}/rental-contracts`);
+  }
+
   getById(id: string): Observable<ApiResponse<RentalContract>> {
     return this.http.get<ApiResponse<RentalContract>>(
       `${this.apiUrl}/rental-contracts/${id}`,

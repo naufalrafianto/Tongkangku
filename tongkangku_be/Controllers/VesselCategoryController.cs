@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.VesselCategoryRequest;
 using tongkangku_be.Interfaces;
+using tongkangku_be.Shared;
 
 namespace tongkangku_be.Controllers
 {
@@ -20,41 +21,117 @@ namespace tongkangku_be.Controllers
 
         public async Task<IActionResult> CreateVesselCategoryAsync([FromBody] VesselCategoryRequestDto request)
         {
-            var result = await _vesselCategoryService.CreateVesselCategoryAsync(request);
-            if (result == null)
-                return BadRequest(new { status = "error", message = "Gagal membuat kategori kapal" });
-            return Ok(result);
+            try
+            {
+                var result = await _vesselCategoryService.CreateVesselCategoryAsync(request);
+                return Ok(ApiResponse<VesselCategoryResponseDto>.SuccessResult(
+                    result,
+                    "vessel category created successfully"
+                    ));
+            }catch(AppException ex)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResult(
+                    ex.Message,
+                    "BAD_REQUEST"
+                    ));
+            }
+           
+            catch (Exception)
+            {
+                return StatusCode(500, ApiResponse<object>.ErrorResult(
+                    "An unexpected error occurred.",
+                    "INTERNAL_SERVER_ERROR"
+                ));
+            }
+
         }
 
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllVesselCategoriesAsync()
         {
             var result = await _vesselCategoryService.GetAllVesselCategoriesAsync();
-            return Ok(result);
+            return Ok(ApiResponse<List<VesselCategoryResponseDto>>.SuccessResult(
+                result,
+                "vessel categories data!"
+                ));
         }
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetByIdVesselCategoryAsync(Guid id)
         {
-            var result = await _vesselCategoryService.GetByIdVesselCategoriesAsync(id);
-            if (result == null)
-                return NotFound(new { status = "error", message = $"Kategori kapal dengan id '{id}' tidak ditemukan" });
-            return Ok(result);
+            try
+            {
+                var result = await _vesselCategoryService.GetByIdVesselCategoriesAsync(id);
+                return Ok(ApiResponse<VesselCategoryResponseDto>.SuccessResult(
+                    result,
+                    $"succes get vessel category {id}"
+                    ));
+            } catch(NotFoundException ex)
+            {
+                return NotFound(ApiResponse<object>.ErrorResult(
+                    ex.Message, "DATA_NOT_FOUND"
+                    ));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ApiResponse<object>.ErrorResult(
+                    "An unexpected error occurred.",
+                    "INTERNAL_SERVER_ERROR"
+                ));
+            }
+
         }
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateVesselCategoryAsync(Guid id, [FromBody] VesselCategoryRequestDto request)
         {
-            var result = await _vesselCategoryService.UpdateVesselCategoryAsync(id, request);
-            if (result == null)
-                return NotFound(new { status = "error", message = $"Kategori kapal dengan id '{id}' tidak ditemukan" });
-            return Ok(result);
+            try
+            {
+                var result = await _vesselCategoryService.UpdateVesselCategoryAsync(id, request);
+                return Ok(ApiResponse<VesselCategoryResponseDto>.SuccessResult(
+                    result,
+                    $"succes update {id} "
+                    ));
+            }catch(NotFoundException ex)
+            {
+                return NotFound(ApiResponse<object>.ErrorResult(
+                    ex.Message,
+                    "DATA_NOT_FOUND"
+                    ));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ApiResponse<object>.ErrorResult(
+                    "An unexpected error occurred.",
+                    "INTERNAL_SERVER_ERROR"
+                ));
+            }
         }
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _vesselCategoryService.DeleteVesselCategoryAsync(id);
+            try
+            {
+                await _vesselCategoryService.DeleteVesselCategoryAsync(id);
+                return Ok(ApiResponse<VesselCategoryResponseDto>.SuccessResult(
+                    data: null,
+                    message: $"Data dengan ID {id} berhasil dihapus."
+                ));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ApiResponse<object>.ErrorResult(
+                    ex.Message,
+                    "DATA_NOT_FOUND"
+                    ));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ApiResponse<object>.ErrorResult(
+                    "An unexpected error occurred.",
+                    "INTERNAL_SERVER_ERROR"
+                ));
+            }
 
-            return Ok(new { status = "success", message = "Kategori kapal berhasil dihapus" });
         }
     }
 }
