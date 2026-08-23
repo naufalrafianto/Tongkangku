@@ -6,6 +6,7 @@ using tongkangku_be.Dtos.AuthRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
+using tongkangku_be.Shared;
 namespace tongkangku_be.Services
 {
     public class AuthService : IAuthService
@@ -27,7 +28,7 @@ namespace tongkangku_be.Services
 
             if (request == null)
             {
-                return null;
+                throw new AppException("Request tidak bolhe kosong!",System.Net.HttpStatusCode.BadRequest);
             }
 
             var password = BCrypt.Net.BCrypt.HashPassword(request.password);
@@ -57,17 +58,22 @@ namespace tongkangku_be.Services
         }
         public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request)
         {
+           if(request == null)
+            {
+                throw new AppException("Request Tidak Boleh Kosong", System.Net.HttpStatusCode.BadRequest);
+            }
             List<User> users = await _userRepository.GetAllAsync();
             User? user = users.FirstOrDefault(u => u.Email == request.Email);
             if (user == null)
             {
-                return null;
+                throw new NotFoundException("periksa email anda");
             }
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!isPasswordValid)
             {
-                return null;
+                throw new NotFoundException("periksa kata sandi anda");
+
             }
 
             Claim[] claims = new Claim[]

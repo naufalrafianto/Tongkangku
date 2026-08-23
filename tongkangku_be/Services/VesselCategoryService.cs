@@ -1,4 +1,6 @@
-﻿using tongkangku_be.Dtos.VesselCategoryRequest;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using tongkangku_be.Controllers;
+using tongkangku_be.Dtos.VesselCategoryRequest;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
@@ -19,10 +21,10 @@ namespace tongkangku_be.Services
         {
             if (request == null)
             {
-                return null;
+                throw new AppException("Request data tidak boleh kosong!", System.Net.HttpStatusCode.BadRequest);
             }
 
-           
+
             var vesselCategory = new VesselCategory
             {
                 Name = request.Name,

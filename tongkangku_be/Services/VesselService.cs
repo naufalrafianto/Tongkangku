@@ -55,7 +55,12 @@ namespace tongkangku_be.Services
             {
                 throw new NotFoundException("category id tidak ada!");
             }
+            if (request == null)
+            {
 
+                throw new AppException("Request tidak boleh kosong", System.Net.HttpStatusCode.BadRequest);
+
+            }
             var vessel = new Vessel
             {
                 Name = request.name,
@@ -103,6 +108,7 @@ namespace tongkangku_be.Services
             var vesselPages = vessel
                  .Skip((page - 1) * limit)
                  .Take(limit)
+                 
                 .Select(v => new VesselResponseDto
                 {
                     Id = v.Id,
@@ -126,7 +132,7 @@ namespace tongkangku_be.Services
             var vessel = await _vesselRepository.GetByIdAsync(id);
             if (vessel == null)
             {
-                throw new KeyNotFoundException("Vessel tidak ditemukan.");
+                throw new NotFoundException("Vessel tidak ditemukan.");
             }
 
             return new VesselResponseDto

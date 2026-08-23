@@ -2,6 +2,7 @@
 using tongkangku_be.Interfaces;
 using tongkangku_be.Models;
 using tongkangku_be.Repositories;
+using tongkangku_be.Shared;
 
 namespace tongkangku_be.Services
 {
@@ -19,7 +20,8 @@ namespace tongkangku_be.Services
             {
                 if (port == null)
                 {
-                    throw new KeyNotFoundException("Port tidak ditemukan.");
+                    throw new NotFoundException("Port tidak ditemukan.");
+                   
                 }
 
                 return new PortResponseDto
@@ -36,6 +38,11 @@ namespace tongkangku_be.Services
 
         public async Task<PortResponseDto> CreatePortAsync(PortRequestDto request)
         {
+            if (request == null)
+            {
+                throw new AppException("Request Tidak Boleh Kosong", System.Net.HttpStatusCode.BadRequest);
+            }
+
             var port = new Port
             {
                 City = request.City,
@@ -43,10 +50,7 @@ namespace tongkangku_be.Services
                 Province = request.Province,
                 CreatedAt = DateTime.UtcNow,
             };
-            if (port == null)
-            {
-                return null;
-            }
+            
 
             await _PortRepository.AddAsync(port);
             await _PortRepository.SaveChangesAsync();
@@ -66,7 +70,7 @@ namespace tongkangku_be.Services
             var port = await _PortRepository.GetByIdAsync(id);
             if (port == null)
             {
-                throw new Exception("Port not found");
+                throw new NotFoundException("Port not found");
             }
             _PortRepository.Delete(port);
             await _PortRepository.SaveChangesAsync(); 
@@ -78,7 +82,7 @@ namespace tongkangku_be.Services
 
             if(ports == null )
             {
-                throw new KeyNotFoundException("Port tidak ditemukan.");
+                throw new NotFoundException("Port tidak ditemukan.");
             }
 
             return ports.Select(port => new PortResponseDto
