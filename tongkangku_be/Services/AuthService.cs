@@ -14,12 +14,14 @@ namespace tongkangku_be.Services
         private readonly IRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IRepository<User> userRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IRepository<User> userRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _contextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
 
@@ -28,7 +30,8 @@ namespace tongkangku_be.Services
 
             if (request == null)
             {
-                throw new AppException("Request tidak bolhe kosong!",System.Net.HttpStatusCode.BadRequest);
+                _logger.LogWarning("Percobaan Register gagal request tidak boleh kosong!");
+                throw new AppException("Request tidak boleh kosong!",System.Net.HttpStatusCode.BadRequest);
             }
 
             var password = BCrypt.Net.BCrypt.HashPassword(request.password);
@@ -53,6 +56,7 @@ namespace tongkangku_be.Services
                 email = newUser.Email,
                 role = newUser.Role.ToString()
             };
+            _logger.LogInformation("Register Berhasil user ID: {id}", newUser.Id);
             return ResponseDto;
 
         }
@@ -60,18 +64,21 @@ namespace tongkangku_be.Services
         {
            if(request == null)
             {
+                _logger.LogWarning("Data Login Tidak Boleh Kosong!");
                 throw new AppException("Request Tidak Boleh Kosong", System.Net.HttpStatusCode.BadRequest);
             }
             List<User> users = await _userRepository.GetAllAsync();
             User? user = users.FirstOrDefault(u => u.Email == request.Email);
             if (user == null)
             {
+                _logger.LogWarning("Login Gagal Email Salah {email}", request.Email);
                 throw new NotFoundException("periksa email anda");
             }
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!isPasswordValid)
             {
+                _logger.LogWarning("Login Gagal Perikas Password anda!");
                 throw new NotFoundException("periksa kata sandi anda");
 
             }
@@ -99,7 +106,10 @@ namespace tongkangku_be.Services
                 signingCredentials: creds
                 );
 
+            _logger.LogInformation("Login Berhasil: {id}", user.Id);
+
             return new LoginResponseDto
+            
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
             };

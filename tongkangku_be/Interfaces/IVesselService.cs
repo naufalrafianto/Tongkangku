@@ -8,5 +8,7 @@ namespace tongkangku_be.Interfaces
         Task<List<VesselResponseDto>> GetAllVesselAsync(string? search, int page, int limit);
         Task<List<VesselResponseDto>> GetAllVesselByOwnerAsync(Guid ownerId, string? search, int limit, int page);
         Task<VesselResponseDto> GetVesselById(Guid id);
+        Task<List<VesselResponseDto>> GetMyVessel();
+        Task<bool> DeleteVesselAsync(Guid id);
     }
 }

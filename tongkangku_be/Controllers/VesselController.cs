@@ -9,6 +9,7 @@ namespace tongkangku_be.Controllers
 {
     [ApiController]
     [Route("api/vessels")]
+    [Authorize]
     public class VesselController : ControllerBase
     {
         private readonly IVesselService _vesselService;
@@ -49,6 +50,12 @@ namespace tongkangku_be.Controllers
             {
                 return StatusCode(500, ApiResponse<object>.ErrorResult("An unexpected error occurred.", "INTERNAL_SERVER_ERROR"));
             }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVesselAsync(Guid id)
+        {
+            await _vesselService.DeleteVesselAsync(id);
+            return Ok(ApiResponse<string>.SuccessResult("Vessel berhasil dihapus", "Vessel deleted successfully"));
         }
 
         [HttpGet]
@@ -120,5 +127,35 @@ namespace tongkangku_be.Controllers
                 ));
             }
         }
+
+        [HttpGet("my-vessels")]
+        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetMyVesselAsync()
+        {
+            try
+            {
+                
+                var result = await _vesselService.GetMyVessel();
+                return Ok(ApiResponse<List<VesselResponseDto>>.SuccessResult(
+                    data: result,
+                    message: "Daftar kapal milik Anda berhasil diambil."
+                ));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                
+                return Unauthorized(ApiResponse<object>.ErrorResult(
+                    message: ex.Message,
+                    errorCode: "UNAUTHORIZED"
+                ));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ApiResponse<object>.ErrorResult(
+                    message: "An unexpected error occurred.",
+                    errorCode: "INTERNAL_SERVER_ERROR"
+                ));
+            }
+        }
+
     }
 }
