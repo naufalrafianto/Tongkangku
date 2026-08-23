@@ -45,6 +45,19 @@ export class VesselOwnComponent {
     });
   }
 
+  deleteVessel(id: string, name: string): void {
+    if (confirm(`Apakah Anda yakin ingin menghapus kapal "${name}"?`)) {
+      this.vesselService.DeleteVessels(id).subscribe({
+        next: () => {
+          this.loadVessels(); // Reload data setelah berhasil dihapus
+        },
+        error: (err) => {
+          alert(err?.error?.message || 'Gagal menghapus kapal.');
+        }
+      });
+    }
+  }
+
   onSearchChange(): void {
     this.page = 1;
     this.loadVessels();

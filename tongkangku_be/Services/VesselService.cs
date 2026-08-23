@@ -1,29 +1,5 @@
-<<<<<<< Updated upstream
-﻿using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
-using tongkangku_be.Dtos.PortRequest;
-using tongkangku_be.Dtos.VesselRequest;
-using tongkangku_be.Interfaces;
-using tongkangku_be.Models;
-using tongkangku_be.Repositories;
-using tongkangku_be.Shared;
-
-namespace tongkangku_be.Services
-{
-    public class VesselService : IVesselService
-    {
-        IVesselRepository _vesselRepository;
-        private readonly IRepository<Port> _portRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IRepository<VesselCategory> _vesselCategoryRepository;
-
-        public VesselService(
-            IVesselRepository vesselRepository,
-            IHttpContextAccessor httpContextAccessor,
-            IRepository<Port> portRepository,
-            IRepository<VesselCategory> vesselCategoryRepository)
-=======
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using tongkangku_be.Dtos.PortRequest;
 using tongkangku_be.Dtos.VesselRequest;
@@ -40,55 +16,22 @@ namespace tongkangku_be.Services
         private readonly IRepository<Port> _portRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRepository<VesselCategory> _vesselCategoryRepository;
-
         private readonly ILogger<VesselService> _logger;
 
-        public VesselService(IRepository<Vessel> vesselRepository, IHttpContextAccessor httpContextAccessor, IRepository<Port> portRepository, IRepository<VesselCategory> vesselCategoryRepository, ILogger<VesselService> logger
-            )
->>>>>>> Stashed changes
+        public VesselService(
+            IRepository<Vessel> vesselRepository,
+            IHttpContextAccessor httpContextAccessor,
+            IRepository<Port> portRepository,
+            IRepository<VesselCategory> vesselCategoryRepository,
+            ILogger<VesselService> logger)
         {
             _vesselRepository = vesselRepository;
             _httpContextAccessor = httpContextAccessor;
             _portRepository = portRepository;
             _vesselCategoryRepository = vesselCategoryRepository;
-<<<<<<< Updated upstream
-        }
-
-
-
-        public async Task<VesselResponseDto> CreateVesselAsync(VesselRequestDto request)
-        {
-            var userIdClaim = _httpContextAccessor
-                              .HttpContext?
-                              .User?
-                               .FindFirst(ClaimTypes.NameIdentifier) ?? _httpContextAccessor.HttpContext?.User?
-                               .FindFirst
-                               ("id");
-
-            if (userIdClaim == null)
-            {
-                throw new UnauthorizedAccessException("User belum login");
-            }
-
-            if (!Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                throw new UnauthorizedAccessException("Format id tidak UUID!");
-            }
-            ;
-            var port = await _portRepository.GetByIdAsync(request.portId);
-
-            if (port == null)
-            {
-                throw new NotFoundException("port id tidak ada!");
-            }
-            var category = await _vesselCategoryRepository.GetByIdAsync(request.categoryId);
-            if (category == null)
-            {
-                throw new NotFoundException("category id tidak ada!");
-            }
-=======
             _logger = logger;
         }
+
         public async Task<bool> DeleteVesselAsync(Guid id)
         {
             _logger.LogInformation("Memproses penghapusan vessel dengan ID: {Id}", id);
@@ -100,28 +43,24 @@ namespace tongkangku_be.Services
                 throw new NotFoundException($"Vessel dengan ID {id} tidak ditemukan");
             }
 
-             _vesselRepository.Delete(vessel);
+            _vesselRepository.Delete(vessel);
             await _vesselRepository.SaveChangesAsync();
 
             _logger.LogInformation("Berhasil menghapus vessel ID: {Id}", id);
             return true;
         }
 
-
         public async Task<List<VesselResponseDto>> GetMyVessel()
         {
-            var userIdClaim = _httpContextAccessor
-                             .HttpContext?
-                             .User?
-                              .FindFirst(ClaimTypes.NameIdentifier) ?? _httpContextAccessor.HttpContext?.User?
-                              .FindFirst
-                              ("id");
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
+                ?? _httpContextAccessor.HttpContext?.User?.FindFirst("id");
 
             if (userIdClaim == null)
             {
                 _logger.LogWarning("user harus login dulu!");
                 throw new UnauthorizedAccessException("User belum login");
             }
+
             if (!Guid.TryParse(userIdClaim.Value, out var userId))
             {
                 _logger.LogWarning("Format user ID di dalam token tidak valid!");
@@ -131,44 +70,36 @@ namespace tongkangku_be.Services
             var allVessels = await _vesselRepository.GetAllAsync();
 
             var myVessels = allVessels
-        .Where(v => v.OwnerId == userId) 
-        .Select(v => new VesselResponseDto
-        {
-            Id = v.Id,
-            name = v.Name,
-            ownerId = v.OwnerId,
-            categoryId = v.CategoryId,
-            portId = v.PortId,
-            capacityFeed = v.CapacityFeed,
-            dwtCapacity = v.DwtCapacity,
-            status = (int)v.Status,
-            year = v.Year,
-            ratePerDay = v.RatePerDay,
-            createdAt = v.CreatedAt,
-        }).ToList();
+                .Where(v => v.OwnerId == userId)
+                .Select(v => new VesselResponseDto
+                {
+                    Id = v.Id,
+                    name = v.Name,
+                    ownerId = v.OwnerId,
+                    categoryId = v.CategoryId,
+                    portId = v.PortId,
+                    capacityFeed = v.CapacityFeed,
+                    dwtCapacity = v.DwtCapacity,
+                    status = (int)v.Status,
+                    year = v.Year,
+                    ratePerDay = v.RatePerDay,
+                    createdAt = v.CreatedAt,
+                }).ToList();
 
             _logger.LogInformation("Vessel Berhasil diambil!");
             return myVessels;
-
-
         }
+
         public async Task<VesselResponseDto> CreateVesselAsync(VesselRequestDto request)
         {
->>>>>>> Stashed changes
             if (request == null)
             {
                 _logger.LogWarning("request data vessel create kosong!");
-
                 throw new AppException("Request tidak boleh kosong", System.Net.HttpStatusCode.BadRequest);
-
             }
 
-            var userIdClaim = _httpContextAccessor
-                              .HttpContext?
-                              .User?
-                               .FindFirst(ClaimTypes.NameIdentifier) ?? _httpContextAccessor.HttpContext?.User?
-                               .FindFirst
-                               ("id");
+            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
+                ?? _httpContextAccessor.HttpContext?.User?.FindFirst("id");
 
             if (userIdClaim == null)
             {
@@ -180,60 +111,21 @@ namespace tongkangku_be.Services
             {
                 throw new UnauthorizedAccessException("Format id tidak UUID!");
             }
-            ;
-            var port = await _portRepository.GetByIdAsync(request.portId);
 
+            var port = await _portRepository.GetByIdAsync(request.portId);
             if (port == null)
             {
-                _logger.LogWarning("Port id tidak ada! {id}", port.Id);
+                _logger.LogWarning("Port id tidak ada! {id}", request.portId);
                 throw new NotFoundException("port id tidak ada!");
             }
+
             var category = await _vesselCategoryRepository.GetByIdAsync(request.categoryId);
             if (category == null)
             {
-                _logger.LogWarning("category Id tidak ada: {id}", category.Id);
+                _logger.LogWarning("category Id tidak ada: {id}", request.categoryId);
                 throw new NotFoundException("category id tidak ada!");
             }
-            
-              var vessel = new Vessel
-            {
-                Name = request.name,
-                OwnerId = userId,
-                CategoryId = category.Id,
-                PortId = port.Id,
-                CapacityFeed = request.capacityFeed,
-                Year = request.year,
-                RatePerDay = request.ratePerDay,
-                Status = (VesselStatus)request.status,
-                CreatedAt = DateTime.UtcNow,
-            };
 
-            await _vesselRepository.AddAsync(vessel);
-            await _vesselRepository.SaveChangesAsync();
-            _logger.LogInformation("succes create vessel: {name}, ditambahakan oleh {ownerId}", vessel.Name, vessel.OwnerId);
-            return new VesselResponseDto
-            {
-                Id = vessel.Id,
-                ownerId = vessel.OwnerId,
-                categoryId = vessel.CategoryId,
-                portId = vessel.PortId,
-                capacityFeed = vessel.CapacityFeed,
-                year = vessel.Year,
-                ratePerDay = vessel.RatePerDay,
-                status = (int)vessel.Status,
-                createdAt = vessel.CreatedAt,
-            };
-
-
-
-        }
-
-        public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search,int limit, int page)
-        {
-            var vessel = await _vesselRepository.GetAllAsync();
-
-<<<<<<< Updated upstream
-            }
             var vessel = new Vessel
             {
                 Name = request.name,
@@ -250,9 +142,12 @@ namespace tongkangku_be.Services
             await _vesselRepository.AddAsync(vessel);
             await _vesselRepository.SaveChangesAsync();
 
+            _logger.LogInformation("succes create vessel: {name}, ditambahakan oleh {ownerId}", vessel.Name, vessel.OwnerId);
+
             return new VesselResponseDto
             {
                 Id = vessel.Id,
+                name = vessel.Name,
                 ownerId = vessel.OwnerId,
                 categoryId = vessel.CategoryId,
                 portId = vessel.PortId,
@@ -262,24 +157,22 @@ namespace tongkangku_be.Services
                 status = (int)vessel.Status,
                 createdAt = vessel.CreatedAt,
             };
-
-
-
         }
+
         public async Task<List<VesselResponseDto>> GetAllVesselByOwnerAsync(Guid ownerId, string? search, int limit, int page)
         {
-            var vessels = await _vesselRepository.GetAllByOwnerAsync(ownerId);
+            var vessels = await _vesselRepository.GetAllAsync();
+
+            var ownerVessels = vessels.Where(v => v.OwnerId == ownerId).ToList();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                vessels = vessels
-                    .Where(v => v.Name.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase))
+                ownerVessels = ownerVessels
+                    .Where(v => v.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
-            return vessels
+            return ownerVessels
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .Select(v => new VesselResponseDto
@@ -299,12 +192,10 @@ namespace tongkangku_be.Services
                 .ToList();
         }
 
-        public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search,int limit, int page)
+        public async Task<List<VesselResponseDto>> GetAllVesselAsync(string? search, int limit, int page)
         {
             var vessel = await _vesselRepository.GetAllAsync();
 
-=======
->>>>>>> Stashed changes
             if (!string.IsNullOrEmpty(search))
             {
                 vessel = vessel
@@ -313,9 +204,8 @@ namespace tongkangku_be.Services
             }
 
             var vesselPages = vessel
-                 .Skip((page - 1) * limit)
-                 .Take(limit)
-                 
+                .Skip((page - 1) * limit)
+                .Take(limit)
                 .Select(v => new VesselResponseDto
                 {
                     Id = v.Id,
@@ -355,8 +245,6 @@ namespace tongkangku_be.Services
                 year = vessel.Year,
                 status = (int)vessel.Status
             };
-           
-
         }
     }
 }
