@@ -1,170 +1,618 @@
-<div class="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-sm border border-gray-100 mt-6">
-  
-  <!-- Header -->
-  <div class="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Tambah Kapal Baru</h1>
-      <p class="text-sm text-gray-500 mt-1">Lengkapi data di bawah untuk menambahkan armada kapal baru.</p>
-    </div>
-    <a 
-      routerLink="/vessel" 
-      class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
-      Kembali
-    </a>
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- HEADER -->
+  <div class="mb-6">
+
+    <h1 class="text-2xl font-bold text-gray-900">
+      Manajemen Armada
+    </h1>
+
+    <p class="text-sm text-gray-500 mt-1">
+      Kelola kapal yang kamu miliki dan tambahkan armada baru.
+    </p>
+
   </div>
 
-  <!-- Alert Pesan Error -->
-  @if (errorMessage) {
-    <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm">
-      {{ errorMessage }}
+
+  <!-- ============================= -->
+  <!-- TABS -->
+  <!-- ============================= -->
+
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm mb-6">
+
+    <div class="flex border-b border-gray-200">
+
+      <!-- TAB MY VESSELS -->
+
+      <button
+        type="button"
+        (click)="showMyVessels()"
+        [class.border-blue-600]="activeTab === 'list'"
+        [class.text-blue-600]="activeTab === 'list'"
+        [class.text-gray-500]="activeTab !== 'list'"
+        class="px-6 py-4 text-sm font-semibold border-b-2 border-transparent transition hover:text-blue-600"
+      >
+
+        🚢
+
+        Kapal Saya
+
+      </button>
+
+
+      <!-- TAB CREATE -->
+
+      <button
+        type="button"
+        (click)="showCreateForm()"
+        [class.border-blue-600]="activeTab === 'create'"
+        [class.text-blue-600]="activeTab === 'create'"
+        [class.text-gray-500]="activeTab !== 'create'"
+        class="px-6 py-4 text-sm font-semibold border-b-2 border-transparent transition hover:text-blue-600"
+      >
+
+        ＋
+
+        Tambah Kapal
+
+      </button>
+
     </div>
+
+  </div>
+
+
+  <!-- ERROR -->
+
+  @if (errorMessage) {
+
+    <div
+      class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm"
+    >
+
+      {{ errorMessage }}
+
+    </div>
+
   }
 
-  <form [formGroup]="createVessel" (ngSubmit)="onSubmit()" class="space-y-6">
-    
-    <!-- Section 1: Informasi Utama -->
-    <div>
-      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Informasi Dasar</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        <!-- Nama Kapal -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kapal</label>
-          <input 
-            type="text" 
-            formControlName="name"
-            placeholder="Contoh: Tongkang Perwira 01"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition" />
-          @if (createVessel.get('name')?.touched && createVessel.get('name')?.invalid) {
-            <p class="text-xs text-rose-500 mt-1">Nama kapal wajib diisi.</p>
-          }
+
+  <!-- ================================================= -->
+  <!-- TAB 1 : MY VESSELS -->
+  <!-- ================================================= -->
+
+  @if (activeTab === 'list') {
+
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+    >
+
+      <!-- HEADER -->
+
+      <div
+        class="p-6 border-b border-gray-100 flex justify-between items-center"
+      >
+
+        <div>
+
+          <h2 class="text-lg font-bold text-gray-900">
+            Kapal Saya
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Daftar kapal yang kamu miliki.
+          </p>
+
         </div>
 
-        <!-- Kategori Kapal -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Kapal</label>
-          <select 
-            formControlName="categoryId"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-            <option value="" disabled selected>
-              {{ isLoadingCategory ? 'Memuat kategori...' : 'Pilih Kategori' }}
-            </option>
-            @for (item of vesselCategoryData; track item.id) {
-              <option [value]="item.id">
-                {{ item.name && item.name.trim() !== '' ? item.name : (item.description || item.id) }}
-              </option>
-            }
-          </select>
-          @if (createVessel.get('categoryId')?.touched && createVessel.get('categoryId')?.invalid) {
-            <p class="text-xs text-rose-500 mt-1">Kategori kapal wajib dipilih.</p>
-          }
-        </div>
-
-        <!-- Pelabuhan (Port) -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Pelabuhan</label>
-          <select 
-            formControlName="portId"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-            <option value="" disabled selected>
-              {{ isLoadingPort ? 'Memuat pelabuhan...' : 'Pilih Pelabuhan' }}
-            </option>
-            @for (port of portData; track port.id) {
-              <option [value]="port.id">
-                {{ port.name && port.name.trim() !== '' ? port.name : port.id }}
-              </option>
-            }
-          </select>
-          @if (createVessel.get('portId')?.touched && createVessel.get('portId')?.invalid) {
-            <p class="text-xs text-rose-500 mt-1">Pelabuhan wajib dipilih.</p>
-          }
-        </div>
+        <button
+          type="button"
+          (click)="showCreateForm()"
+          class="px-4 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition"
+        >
+          + Tambah Kapal
+        </button>
 
       </div>
-    </div>
 
-    <hr class="border-gray-100">
 
-    <!-- Section 2: Spesifikasi & Biaya -->
-    <div>
-      <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Spesifikasi & Biaya</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        
-        <!-- Capacity Feed -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Capacity Feet</label>
-          <input 
-            type="number" 
-            formControlName="capacityFeed"
-            placeholder="0"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition" />
+      <!-- LOADING -->
+
+      @if (isLoading) {
+
+        <div class="p-12 text-center">
+
+          <div
+            class="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+          ></div>
+
+          <p class="text-sm text-gray-500 mt-3">
+            Memuat kapal...
+          </p>
+
         </div>
 
-        <!-- DWT Capacity -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">DWT Capacity (Ton)</label>
-          <input 
-            type="number" 
-            formControlName="dwtCapacity"
-            placeholder="0"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition" />
-        </div>
+      }
 
-        <!-- Tahun Pembuatan -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Pembuatan</label>
-          <input 
-            type="number" 
-            formControlName="year"
-            placeholder="2024"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition" />
-        </div>
 
-        <!-- Tarif per Hari -->
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Sewa / Hari (IDR)</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-sm text-gray-400 font-semibold">Rp</span>
-            <input 
-              type="number" 
-              formControlName="ratePerDay"
-              placeholder="0"
-              class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition" />
+      <!-- EMPTY -->
+
+      @if (!isLoading && myVesselsData.length === 0) {
+
+        <div class="p-12 text-center">
+
+          <div class="text-4xl mb-3">
+            🚢
           </div>
+
+          <h3 class="text-lg font-bold text-gray-800">
+            Belum Ada Kapal
+          </h3>
+
+          <p class="text-sm text-gray-500 mt-1 mb-5">
+            Kamu belum memiliki kapal.
+          </p>
+
+          <button
+            type="button"
+            (click)="showCreateForm()"
+            class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700"
+          >
+            Tambah Kapal Pertama
+          </button>
+
         </div>
 
-        <!-- Status Operational -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Status Operational</label>
-          <select 
-            formControlName="status"
-            class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-            <option [ngValue]="1">Available (1)</option>
-            <option [ngValue]="2">Unavailable (2)</option>
-          </select>
+      }
+
+
+      <!-- LIST -->
+
+      @if (!isLoading && myVesselsData.length > 0) {
+
+        <div class="divide-y divide-gray-100">
+
+          @for (vessel of myVesselsData; track vessel.id) {
+
+            <div
+              class="p-5 flex items-center justify-between gap-4 hover:bg-gray-50 transition"
+            >
+
+              <!-- INFO -->
+
+              <div class="flex items-center gap-4">
+
+                <!-- ICON -->
+
+                <div
+                  class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl"
+                >
+                  🚢
+                </div>
+
+
+                <div>
+
+                  <h3 class="font-bold text-gray-900">
+                    {{ vessel.name }}
+                  </h3>
+
+                  <p class="text-xs text-gray-500 mt-1">
+                    Tahun {{ vessel.year }}
+                    · {{ vessel.dwtCapacity | number }} DWT
+                  </p>
+
+
+                  <!-- STATUS -->
+
+                  <span
+                    [class]="
+                      vessel.status === vesselStatus.Available
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-rose-100 text-rose-700'
+                    "
+                    class="inline-flex mt-2 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  >
+
+                    {{
+                      vessel.status === vesselStatus.Available
+                        ? 'Tersedia'
+                        : 'Tidak Tersedia'
+                    }}
+
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <!-- ACTION -->
+
+              <div class="flex items-center gap-2">
+
+                <!-- DETAIL -->
+
+                <a
+                  [routerLink]="[
+                    '/vessels',
+                    vessel.id,
+                    'detail'
+                  ]"
+                  class="px-3 py-2 text-sm font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                >
+                  Detail
+                </a>
+
+
+                <!-- DELETE -->
+
+                <button
+                  type="button"
+                  (click)="deleteVessel(vessel)"
+                  title="Hapus kapal"
+                  class="w-10 h-10 flex items-center justify-center rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition"
+                >
+
+                  <!-- TRASH ICON -->
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 7h12M9 7V4h6v3m-8 0 .7 13h6.6L15 7M10 11v6m4-6v6"
+                    />
+                  </svg>
+
+                </button>
+
+              </div>
+
+            </div>
+
+          }
+
         </div>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- ================================================= -->
+  <!-- TAB 2 : CREATE -->
+  <!-- ================================================= -->
+
+  @if (activeTab === 'create') {
+
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+    >
+
+      <!-- HEADER -->
+
+      <div
+        class="border-b border-gray-100 pb-4 mb-6 flex justify-between items-center"
+      >
+
+        <div>
+
+          <h2 class="text-xl font-bold text-gray-900">
+            Tambah Kapal Baru
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Lengkapi data di bawah untuk menambahkan armada kapal baru.
+          </p>
+
+        </div>
+
+        <button
+          type="button"
+          (click)="showMyVessels()"
+          class="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition"
+        >
+          Kembali
+        </button>
 
       </div>
+
+
+      <!-- FORM KAMU -->
+
+      <form
+        [formGroup]="createVessel"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6"
+      >
+
+        <!-- INFORMASI DASAR -->
+
+        <div>
+
+          <h2
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4"
+          >
+            Informasi Dasar
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- NAME -->
+
+            <div class="md:col-span-2">
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Nama Kapal
+              </label>
+
+              <input
+                type="text"
+                formControlName="name"
+                placeholder="Contoh: Tongkang Perwira 01"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              />
+
+              @if (
+                createVessel.get('name')?.touched &&
+                createVessel.get('name')?.invalid
+              ) {
+
+                <p class="text-xs text-rose-500 mt-1">
+                  Nama kapal wajib diisi.
+                </p>
+
+              }
+
+            </div>
+
+
+            <!-- CATEGORY -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Kategori Kapal
+              </label>
+
+              <select
+                formControlName="categoryId"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              >
+
+                <option value="" disabled>
+                  {{
+                    isLoadingCategory
+                      ? 'Memuat kategori...'
+                      : 'Pilih Kategori'
+                  }}
+                </option>
+
+                @for (
+                  item of vesselCategoryData;
+                  track item.id
+                ) {
+
+                  <option [value]="item.id">
+
+                    {{
+                      item.name &&
+                      item.name.trim() !== ''
+                        ? item.name
+                        : (item.description || item.id)
+                    }}
+
+                  </option>
+
+                }
+
+              </select>
+
+            </div>
+
+
+            <!-- PORT -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Pelabuhan
+              </label>
+
+              <select
+                formControlName="portId"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              >
+
+                <option value="" disabled>
+                  {{
+                    isLoadingPort
+                      ? 'Memuat pelabuhan...'
+                      : 'Pilih Pelabuhan'
+                  }}
+                </option>
+
+                @for (
+                  port of portData;
+                  track port.id
+                ) {
+
+                  <option [value]="port.id">
+                    {{ port.name }}
+                  </option>
+
+                }
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <hr class="border-gray-100">
+
+
+        <!-- SPESIFIKASI -->
+
+        <div>
+
+          <h2
+            class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4"
+          >
+            Spesifikasi & Biaya
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- CAPACITY -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Capacity Feet
+              </label>
+
+              <input
+                type="number"
+                formControlName="capacityFeed"
+                placeholder="0"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl"
+              />
+
+            </div>
+
+
+            <!-- DWT -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                DWT Capacity
+              </label>
+
+              <input
+                type="number"
+                formControlName="dwtCapacity"
+                placeholder="0"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl"
+              />
+
+            </div>
+
+
+            <!-- YEAR -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Tahun Pembuatan
+              </label>
+
+              <input
+                type="number"
+                formControlName="year"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl"
+              />
+
+            </div>
+
+
+            <!-- RATE -->
+
+            <div class="md:col-span-2">
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Sewa / Hari (IDR)
+              </label>
+
+              <input
+                type="number"
+                formControlName="ratePerDay"
+                placeholder="0"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl"
+              />
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div>
+
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Status Operational
+              </label>
+
+              <select
+                formControlName="status"
+                class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl"
+              >
+
+                <option [ngValue]="vesselStatus.Available">
+                  Available
+                </option>
+
+                <option [ngValue]="vesselStatus.Unavailable">
+                  Unavailable
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="pt-4 flex justify-end gap-3">
+
+          <button
+            type="button"
+            (click)="showMyVessels()"
+            class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200"
+          >
+            Batal
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="createVessel.invalid || isSubmitting"
+            class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+
+            @if (isSubmitting) {
+
+              <div
+                class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"
+              ></div>
+
+            }
+
+            {{ isSubmitting ? 'Menyimpan...' : 'Simpan Kapal' }}
+
+          </button>
+
+        </div>
+
+      </form>
+
     </div>
 
-    <!-- Actions -->
-    <div class="pt-4 flex justify-end gap-3">
-      <button 
-        type="button" 
-        routerLink="/vessel" 
-        class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-        Batal
-      </button>
-      <button 
-        type="submit" 
-        [disabled]="createVessel.invalid || isSubmitting"
-        class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-blue-200 transition flex items-center gap-2">
-        @if (isSubmitting) {
-          <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        }
-        <span>{{ isSubmitting ? 'Menyimpan...' : 'Simpan Kapal' }}</span>
-      </button>
-    </div>
+  }
 
-  </form>
 </div>

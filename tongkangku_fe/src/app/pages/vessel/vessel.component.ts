@@ -14,6 +14,7 @@ import { VesselResponseDto, VesselStatus } from '../../shared/interface/Interfac
 export class VesselComponent implements OnInit {
   private vesselService = inject(VesselService);
   vesselData: VesselResponseDto[] = [];
+   myVesselsData: VesselResponseDto[] = [];
   errorMessage = '';
   isLoading: boolean = true;
 
@@ -44,7 +45,23 @@ export class VesselComponent implements OnInit {
       },
     });
   }
-
+fetchMyVessels(): void {
+    this.isLoading = true;
+    this.vesselService.GetMyVessels().subscribe({
+      next: (response) => {
+       
+        if (response.success && response.data) {
+          this.myVesselsData = response.data;
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Gagal mengambil data kapal saya:', err);
+        this.errorMessage = err.error?.message || 'Gagal memuat data kapal Anda.';
+        this.isLoading = false;
+      }
+    });
+  }
   onSearch(): void {
     this.page = 1;
     this.fetchVessel();

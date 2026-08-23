@@ -43,10 +43,18 @@ export class VesselService {
     return this.http.post<any>(`${this.apiUrl}/vessels`, payload);
   }
 
-  GetByid(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/vessels/${id}`);
-  }
+GetByid(id: string): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/vessels/${id}`); 
+}
+GetMyVessels(): Observable<any>
+{
+  return this.http.get<any>(`${this.apiUrl}/vessels/my-vessels`);
+}
 
-
-
+DeleteVessels(id: string): Observable<any> {
+  return this.http.delete<any>(
+    `${this.apiUrl}/vessels/${id}`
+  );
+}
+ 
 }

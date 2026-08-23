@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Security.Claims;
 using System.Text;
 using tongkangku_be.Data;
@@ -10,8 +11,21 @@ using tongkangku_be.Middlewares.tongkangku_be.Middleware;
 using tongkangku_be.Repositories;
 using tongkangku_be.Services;
 
-
 var builder = WebApplication.CreateBuilder(args);
+//implement logger
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File(
+        path: "logs/backend-.log",
+        rollingInterval: RollingInterval.Day,
+        buffered: false, // LANGSUNG TULIS KE FILE TANPA NUNGGU BUFFER
+        shared: true     // BISA DIBUKA MULTI-PROCESS
+    )
+
+    .CreateLogger();
+builder.Host.UseSerilog();
+
 var config = builder.Configuration;
 var jwtKey = config["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT Key belum dikonfigurasi.");
