@@ -79,7 +79,7 @@ namespace tongkangku_be.Controllers
 
         [Authorize]
         [HttpGet("own")]
-        public async Task<IActionResult> GetAllByOwner(
+        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetAllByOwner(
             [FromQuery] string? search,
             [FromQuery] int page = 1,
             [FromQuery] int limit = 10)
@@ -87,7 +87,10 @@ namespace tongkangku_be.Controllers
             var ownerId = User.GetUserId();
 
             var result = await _vesselService.GetAllVesselByOwnerAsync(ownerId, search, limit, page);
-            return Ok(result);
+            return Ok(ApiResponse<List<VesselResponseDto>>.SuccessResult(
+                    result,
+                    "Vessel data retrieved successfully."
+                ));
         }
 
         [HttpGet("{id:guid}")]

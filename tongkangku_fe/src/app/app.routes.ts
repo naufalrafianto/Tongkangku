@@ -14,14 +14,9 @@ import { RentalRequestListComponent } from './pages/rental-request-list/rental-r
 import { CreateRentalOfferComponent } from './pages/rental-offers/create-rental-offer/create-rental-offer.component';
 import { ownerGuard } from './core/guards/owner.guard';
 import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
+import { VesselOwnComponent } from './pages/vessel-own/vessel-own.component';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'auth/login',
-    pathMatch: 'full',
-  },
-
   // =========================
   // Public / Auth Routes
   // =========================
@@ -55,6 +50,10 @@ export const routes: Routes = [
             component: VesselComponent,
           },
           {
+            path: 'own',
+            component: VesselOwnComponent,
+          },
+          {
             path: ':id/rental-request',
             component: RentalRequestsComponent,
           },
@@ -85,6 +84,13 @@ export const routes: Routes = [
             canActivate: [ownerGuard],
           },
         ],
+      },
+      {
+        path: 'rental-contract',
+        loadComponent: () =>
+          import('./pages/rental-contract/rental-contract-list/rental-contract-list.component').then(
+            (m) => m.RentalContractListComponent,
+          ),
       },
     ],
   },

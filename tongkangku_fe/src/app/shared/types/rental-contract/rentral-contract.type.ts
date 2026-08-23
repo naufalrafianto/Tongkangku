@@ -1,4 +1,9 @@
-export type RentalContractStatus = 'Draft' | 'Active' | 'Complete' | 'Cancelled';
+export enum RentalContractStatus {
+  Draft = 0,
+  Active = 1,
+  Complete = 2,
+  Cancelled = 3
+}
 
 export interface ContractCargo {
   id: string;
@@ -29,7 +34,7 @@ export interface RentalContract {
   agreedOtherCharges: number;
   agreedTotalPrice: number | null;
 
-  status: RentalContractStatus;
+  status: number;
   cargos: ContractCargo[];
 
   totalLaytimeAdjustment: number;

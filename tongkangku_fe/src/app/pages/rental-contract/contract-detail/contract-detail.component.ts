@@ -18,7 +18,7 @@ import {
 } from '../../../shared/types/laytime/laytime-record.type';
 import { RentalContractService } from '../../../core/services/rental-contract.service';
 import { LaytimeRecordService } from '../../../core/services/laytime.service';
-import { RentalContract } from '../../../shared/types/rental-contract/rentral-contract.type';
+import { RentalContract, RentalContractStatus } from '../../../shared/types/rental-contract/rentral-contract.type';
 
 interface LaytimeRowForm {
   operationType: LaytimeOperationType;
@@ -157,7 +157,7 @@ export class ContractDetailComponent implements OnInit {
   }
 
   canFinishContract(): boolean {
-    return this.contract?.status === 'Active';
+    return this.contract?.status === RentalContractStatus.Active;
   }
 
   openFinishModal(): void {

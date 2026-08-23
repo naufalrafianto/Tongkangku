@@ -11,7 +11,7 @@
       </div>
 
       <div class="hidden items-center gap-1 md:flex">
-        @if (userRole === 0) {
+        @if (userRole === 2) {
           <a
             routerLink="/vessels/create"
             routerLinkActive="bg-blue-50 text-blue-600"
@@ -25,6 +25,13 @@
             class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
           >
             Kapal Saya
+          </a>
+          <a
+            routerLink="/rental-request"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Tawaran Peminjaman
           </a>
           <a
             routerLink="/rental-contract"
@@ -41,37 +48,6 @@
             routerLinkActive="bg-blue-50 text-blue-600"
             class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
           >
-            Kapal Saya
-          </a>
-          <a
-            routerLink="/rental-offers"
-            routerLinkActive="bg-blue-50 text-blue-600"
-            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
-          >
-            Penawaran Sewa
-          </a>
-          <a
-            routerLink="/rental-request"
-            routerLinkActive="bg-blue-50 text-blue-600"
-            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
-          >
-            Masuk Permintaan
-          </a>
-          <a
-            routerLink="/rental-contract"
-            routerLinkActive="bg-blue-50 text-blue-600"
-            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
-          >
-            Kontrak
-          </a>
-        }
-
-        @if (userRole === 2) {
-          <a
-            routerLink="/vessels"
-            routerLinkActive="bg-blue-50 text-blue-600"
-            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
-          >
             Cari Kapal
           </a>
           <a
@@ -79,14 +55,14 @@
             routerLinkActive="bg-blue-50 text-blue-600"
             class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
           >
-            Request Peminjaman
+            Pengajuan Peminjaman
           </a>
           <a
             routerLink="/rental-contract"
             routerLinkActive="bg-blue-50 text-blue-600"
             class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
           >
-            Lihat Kontrak Saya
+            Kontrak
           </a>
         }
       </div>
