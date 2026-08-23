@@ -14,13 +14,23 @@ export class VesselService {
 
   getAll(search: string = '', limit: number = 10, page: number = 1): Observable<ApiResponse<Vessel[]>> {
     let params = new HttpParams()
-    .set('search', search)
-    .set('limit', limit)
-    .set('page', page)
+      .set('search', search)
+      .set('limit', limit)
+      .set('page', page)
+    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels`, { params });
+  }
 
+  getAllByOwner(
+    search: string = '',
+    limit: number = 10,
+    page: number = 1,
+  ): Observable<ApiResponse<Vessel[]>> {
+    const params = new HttpParams()
+      .set('search', search)
+      .set('limit', limit)
+      .set('page', page);
 
-
-    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels`, {params});
+    return this.http.get<ApiResponse<Vessel[]>>(`${this.apiUrl}/vessels/own`, { params });
   }
 
   getById(vesselId: string): Observable<ApiResponse<Vessel>> {
@@ -33,10 +43,10 @@ export class VesselService {
     return this.http.post<any>(`${this.apiUrl}/vessels`, payload);
   }
 
-GetByid(id: string): Observable<any> {
-  return this.http.get<any>(`${this.apiUrl}/vessels/${id}`); 
-}
+  GetByid(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/vessels/${id}`);
+  }
 
 
- 
+
 }

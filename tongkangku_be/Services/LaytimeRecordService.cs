@@ -1,9 +1,10 @@
-﻿using tongkangku_be.Data;
+﻿using System.Diagnostics.Contracts;
+using tongkangku_be.Data;
 using tongkangku_be.Dtos.LaytimeRecord;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Mappers;
-using tongkangku_be.Models.Enums;
 using tongkangku_be.Models;
+using tongkangku_be.Models.Enums;
 using tongkangku_be.Shared;
 
 namespace tongkangku_be.Services
@@ -16,6 +17,9 @@ namespace tongkangku_be.Services
         private readonly ILaytimeRecordRepository _laytimeRecordRepository = laytimeRecordRepository;
         private readonly IRentalContractRepository _rentalContractRepository = rentalContractRepository;
         private readonly ApplicationDbContext _context = context;
+        private const int GracePeriodMinutes = 30; 
+        private const int MaxOvertimeHoursCap = 720; 
+
 
         public async Task<LaytimeRecordResponseDto> GetByIdAsync(Guid id)
         {
@@ -96,7 +100,8 @@ namespace tongkangku_be.Services
                 savedHours,
                 demurrageAmount,
                 despatchAmount,
-                netAmount
+                netAmount,
+                isOvertimeCapped
             ) = CalculateLaytime(
                 dto.StartTime,
                 dto.EndTime,
@@ -131,7 +136,7 @@ namespace tongkangku_be.Services
 
                     NetLaytimeAmount = netAmount,
 
-                    Notes = dto.Notes ?? string.Empty,
+                    Notes = isOvertimeCapped? $"{dto.Notes ?? string.Empty} [Demurrage dibatasi maksimum {MaxOvertimeHoursCap} jam]".Trim(): dto.Notes ?? string.Empty,
 
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -181,8 +186,21 @@ namespace tongkangku_be.Services
                 throw new NotFoundException($"Laytime record with id '{id}' was not found.");
             }
 
-            var (actualHours, overtimeHours, savedHours, demurrageAmount, despatchAmount, netAmount) =
-                CalculateLaytime(dto.StartTime, dto.EndTime, dto.LaytimeHours, record.DemurrageRate, record.DespatchRate);
+            var (
+            actualHours,
+            overtimeHours,
+            savedHours,
+            demurrageAmount,
+            despatchAmount,
+            netAmount,
+            isOvertimeCapped
+        ) = CalculateLaytime(
+            dto.StartTime,
+            dto.EndTime,
+            dto.LaytimeHours,
+            record.DemurrageRate,
+            record.DespatchRate
+        );
 
             await _context.ExecuteInTransactionAsync(async () =>
             {
@@ -222,43 +240,34 @@ namespace tongkangku_be.Services
         }
 
         private (
-    int ActualHours,
-    int OvertimeHours,
-    int SavedHours,
-    decimal DemurrageAmount,
-    decimal DespatchAmount,
-    decimal NetAmount
-) CalculateLaytime(
-    DateTime startTime,
-    DateTime endTime,
-    int laytimeHours,
-    decimal demurrageRate,
-    decimal despatchRate)
+            int ActualHours,
+            int OvertimeHours,
+            int SavedHours,
+            decimal DemurrageAmount,
+            decimal DespatchAmount,
+            decimal NetAmount,
+            bool IsOvertimeCapped
+        ) CalculateLaytime(
+            DateTime startTime,
+            DateTime endTime,
+            int laytimeHours,
+            decimal demurrageRate,
+            decimal despatchRate)
         {
             var duration = endTime - startTime;
+            var wholeHours = (int)duration.TotalHours;
+            var remainderMinutes = duration.TotalMinutes - (wholeHours * 60);
+            var actualHours = remainderMinutes >= GracePeriodMinutes
+                ? wholeHours + 1
+                : wholeHours;
+            var rawOvertimeHours = Math.Max(actualHours - laytimeHours, 0);
+            var savedHours = Math.Max(laytimeHours - actualHours, 0);
+            var isOvertimeCapped = rawOvertimeHours > MaxOvertimeHoursCap;
+            var overtimeHours = Math.Min(rawOvertimeHours, MaxOvertimeHoursCap);
 
-            var actualHours = (int)Math.Ceiling(
-                duration.TotalHours
-            );
-
-            var overtimeHours = Math.Max(
-                actualHours - laytimeHours,
-                0
-            );
-
-            var savedHours = Math.Max(
-                laytimeHours - actualHours,
-                0
-            );
-
-            var demurrageAmount =
-                overtimeHours * demurrageRate;
-
-            var despatchAmount =
-                savedHours * despatchRate;
-
-            var netAmount =
-                demurrageAmount - despatchAmount;
+            var demurrageAmount = overtimeHours * demurrageRate;
+            var despatchAmount = savedHours * despatchRate;
+            var netAmount = demurrageAmount - despatchAmount;
 
             return (
                 actualHours,
@@ -266,7 +275,8 @@ namespace tongkangku_be.Services
                 savedHours,
                 demurrageAmount,
                 despatchAmount,
-                netAmount
+                netAmount,
+                isOvertimeCapped
             );
         }
     }

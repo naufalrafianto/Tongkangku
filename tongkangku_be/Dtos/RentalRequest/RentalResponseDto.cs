@@ -1,7 +1,9 @@
-﻿using tongkangku_be.Models.Enums;
+﻿using tongkangku_be.Dtos.RentalContract;
+using tongkangku_be.Models.Enums;
 
 namespace tongkangku_be.Dtos.RentalRequest
 {
+    
     public class RentalResponseDto
     {
         public Guid Id { get; set; }
@@ -17,6 +19,7 @@ namespace tongkangku_be.Dtos.RentalRequest
         public string? Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
+        public List<ContractCargoResponseDto> Cargos { get; set; } = [];
     }
 
     public class RentalStatusResponseDto

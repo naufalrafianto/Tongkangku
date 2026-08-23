@@ -20,3 +20,26 @@ export interface RentalOffer {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface CreateRentalOfferPayload {
+  rentalRequestId: string;
+  ratePerDay: number;
+  bunkerAmount: number;
+  otherCharges: number;
+  validUntil: string;
+  notes: string;
+}
+
+export enum RentalOfferStatus {
+  Pending = 0,
+  Accepted = 1,
+  Rejected = 2,
+  Withdrawn = 3,
+  Expired = 4
+}
+
+export interface RentalOfferStatusResponse {
+  id: string;
+  status: RentalOfferStatus;
+  updatedAt: string;
+}

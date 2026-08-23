@@ -49,6 +49,6 @@ export class RentalRequestListComponent implements OnInit {
   }
 
   viewDetail(id: string): void {
-    this.router.navigate(['/rental-requests', id]);
+    this.router.navigate(['/rental-request', id]);
   }
 }

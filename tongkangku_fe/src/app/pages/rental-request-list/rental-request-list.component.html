@@ -185,9 +185,6 @@
                       'border-emerald-200 bg-emerald-100 text-emerald-800':
                         request.status === RentalStatus.Contracted,
 
-                      'border-red-200 bg-red-100 text-red-800':
-                        request.status === RentalStatus.Rejected,
-
                       'border-slate-200 bg-slate-100 text-slate-700':
                         request.status === RentalStatus.Cancelled,
                     }"
@@ -204,11 +201,6 @@
                       @case (RentalStatus.Contracted) {
                         Contracted
                       }
-
-                      @case (RentalStatus.Rejected) {
-                        Rejected
-                      }
-
                       @case (RentalStatus.Cancelled) {
                         Cancelled
                       }

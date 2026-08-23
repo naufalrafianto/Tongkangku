@@ -28,7 +28,7 @@ export class LoginComponent {
       next: (res) => {
         const userRole = this.authService.getRole();
         if (userRole === 2) {
-        this.router.navigate(['/vessels/create']); 
+          this.router.navigate(['/vessels/create']);
         } else if (userRole === 1) {
           this.router.navigate(['/vessels']);
         } else {

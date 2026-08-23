@@ -1,4 +1,5 @@
-﻿using tongkangku_be.Dtos.RentalRequest;
+﻿using tongkangku_be.Dtos.RentalContract;
+using tongkangku_be.Dtos.RentalRequest;
 using tongkangku_be.Models;
 
 namespace tongkangku_be.Mappers
@@ -25,7 +26,15 @@ namespace tongkangku_be.Mappers
                 Notes = rental.Notes,
 
                 CreatedAt = rental.CreatedAt,
-                UpdateAt = rental.UpdateAt
+                UpdateAt = rental.UpdateAt,
+                Cargos = rental.Cargos?.Select(c => new ContractCargoResponseDto
+                {
+                    Id = c.Id,
+                    CargoTypeId = c.CargoTypeId,
+                    CargoTypeName = c.CargoType?.Name ?? string.Empty,
+                    Quantity = c.Quantity,
+                    Unit = c.Unit
+                }).ToList() ?? new List<ContractCargoResponseDto>()
             };
         }
         public static RentalStatusResponseDto ToStatusDto(RentalRequest rental)

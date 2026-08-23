@@ -1,146 +1,278 @@
-<nav class="sticky top-0 z-50 border-b border-gray-200 bg-white">
+<nav class="border-b border-slate-200 bg-white">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
-      
-      <!-- Logo -->
       <div class="flex items-center">
-        <a routerLink="/dashboard" (click)="closeMenus()" class="flex items-center gap-2">
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-            TK
-          </div>
-          <span class="text-xl font-bold text-gray-900">TongkangKu</span>
-        </a>
+        <div
+          class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white"
+        >
+          TK
+        </div>
+        <span class="text-xl font-bold text-gray-900">TongkangKu</span>
       </div>
 
-      <!-- ==================================================== -->
-      <!-- Desktop Navigation (Menu Berubah Berdasarkan Role) -->
-      <!-- ==================================================== -->
       <div class="hidden items-center gap-1 md:flex">
-        
-        <!-- Semua Role: Bisa melihat Dashboard -->
-        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-blue-600" [routerLinkActiveOptions]="{ exact: true }" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-          Dashboard
-        </a>
-
-        <!-- 0. MENU KHUSUS ADMIN -->
-        @if (userRole === 0) {
-          <a routerLink="/vessels" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Kelola Kapal
+        @if (userRole === 2) {
+          <a
+            routerLink="/vessels/create"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Buat Postingan Kapal
           </a>
-          <a routerLink="/vessels/categories" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Kategori Kapal
-          </a>
-          <a routerLink="/users" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Kelola Pengguna
-          </a>
-        }
-
-        <!-- 1. MENU KHUSUS OWNER (Pemilik Tongkang) -->
-        @if (userRole === 1) {
-          <a routerLink="/vessels" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
+          <a
+            routerLink="/vessels/own"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
             Kapal Saya
           </a>
-          <a routerLink="/rental-offers" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Penawaran Sewa
+          <a
+            routerLink="/rental-request"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Tawaran Peminjaman
           </a>
-          <a routerLink="/rental-requests" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Masuk Permintaan
-          </a>
-        }
-
-        <!-- 2. MENU KHUSUS CHARTERER (Penyewa) -->
-        @if (userRole === 2) {
-          <a routerLink="/vessels" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Cari Tongkang
-          </a>
-          <a routerLink="/rental-requests" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Permintaan Sewa Saya
+          <a
+            routerLink="/rental-contract"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Kontrak Saya
           </a>
         }
 
-        <!-- Menu Dokumen Bersama: Muncul hanya untuk Owner dan Charterer -->
-        @if (userRole === 1 || userRole === 2) {
-          <a routerLink="/contracts" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
+        @if (userRole === 1) {
+          <a
+            routerLink="/vessels"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Cari Kapal
+          </a>
+          <a
+            routerLink="/rental-request"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
+            Pengajuan Peminjaman
+          </a>
+          <a
+            routerLink="/rental-contract"
+            routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
+          >
             Kontrak
           </a>
-          <a routerLink="/laytime" routerLinkActive="bg-blue-50 text-blue-600" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900">
-            Laytime
-          </a>
         }
-
       </div>
 
-      <!-- User Profile Dropdown Desktop -->
       <div class="relative hidden md:block">
-        <button type="button" (click)="toggleProfile()" class="flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-gray-50">
-          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-600">
+        <button
+          type="button"
+          (click)="toggleProfile()"
+          class="flex items-center gap-3 rounded-lg px-3 py-2 transition hover:bg-gray-50"
+        >
+          <div
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-600"
+          >
             {{ currentUser?.name?.charAt(0)?.toUpperCase() || "U" }}
           </div>
           <div class="text-left">
-            <p class="text-sm font-semibold text-gray-900">{{ currentUser?.name || "User" }}</p>
+            <p class="text-sm font-semibold text-gray-900">
+              {{ currentUser?.name || "User" }}
+            </p>
             <p class="text-xs text-gray-500">{{ getRoleName(userRole) }}</p>
           </div>
-          <svg class="h-4 w-4 text-gray-500 transition" [class.rotate-180]="isProfileOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+          <svg
+            class="h-4 w-4 text-gray-500 transition"
+            [class.rotate-180]="isProfileOpen"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m19 9-7 7-7-7"
+            />
           </svg>
         </button>
 
         @if (isProfileOpen) {
-          <div class="absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 bg-white py-2 shadow-lg">
+          <div
+            class="absolute right-0 mt-2 w-56 rounded-xl border border-gray-200 bg-white py-2 shadow-lg"
+          >
             <div class="border-b border-gray-100 px-4 py-3">
-              <p class="text-sm font-semibold text-gray-900">{{ currentUser?.name }}</p>
-              <p class="truncate text-xs text-gray-500">{{ currentUser?.email }}</p>
+              <p class="text-sm font-semibold text-gray-900">
+                {{ currentUser?.name }}
+              </p>
+              <p class="truncate text-xs text-gray-500">
+                {{ currentUser?.email }}
+              </p>
             </div>
-            <a routerLink="/profile" (click)="closeMenus()" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50">
+            <a
+              routerLink="/profile"
+              (click)="closeMenus()"
+              class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
               Profile
             </a>
-            <button type="button" (click)="logout()" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50">
+            <button
+              type="button"
+              (click)="logout()"
+              class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
+            >
               Logout
             </button>
           </div>
         }
       </div>
 
-      <!-- Mobile Menu Button -->
       <div class="flex items-center md:hidden">
-        <button type="button" (click)="toggleMobileMenu()" class="rounded-lg p-2 text-gray-600 hover:bg-gray-100">
+        <button
+          type="button"
+          (click)="toggleMobileMenu()"
+          class="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
+        >
           @if (!isMobileMenuOpen) {
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
           } @else {
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           }
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- ==================================================== -->
-  <!-- Mobile Navigation Panel (Menu Menyesuaikan Role)   -->
-  <!-- ==================================================== -->
   @if (isMobileMenuOpen) {
-    <div class="border-b border-gray-200 bg-white px-2 pt-2 pb-3 space-y-1 md:hidden">
-      <a routerLink="/dashboard" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Dashboard</a>
-      
+    <div
+      class="space-y-1 border-b border-gray-200 bg-white px-2 pt-2 pb-3 md:hidden"
+    >
+      <a
+        routerLink="/dashboard"
+        (click)="closeMenus()"
+        class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+      >
+        Dashboard
+      </a>
+
       @if (userRole === 0) {
-        <a routerLink="/vessels" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Kelola Kapal</a>
-        <a routerLink="/vessels/categories" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Kategori Kapal</a>
+        <a
+          routerLink="/vessels/create"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Buat Postingan Kapal
+        </a>
+        <a
+          routerLink="/vessels/own"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Kapal Saya
+        </a>
+        <a
+          routerLink="/rental-contract"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Kontrak Saya
+        </a>
       }
-      
+
       @if (userRole === 1) {
-        <a routerLink="/vessels" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Kapal Saya</a>
-        <a routerLink="/rental-offers" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Penawaran Sewa</a>
+        <a
+          routerLink="/vessels"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Kapal Saya
+        </a>
+        <a
+          routerLink="/rental-offers"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Penawaran Sewa
+        </a>
+        <a
+          routerLink="/rental-request"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Masuk Permintaan
+        </a>
+        <a
+          routerLink="/rental-contract"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Kontrak
+        </a>
       }
 
       @if (userRole === 2) {
-        <a routerLink="/vessels" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Cari Tongkang</a>
-        <a routerLink="/rental-requests" (click)="closeMenus()" class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Permintaan Sewa</a>
+        <a
+          routerLink="/vessels"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cari Kapal
+        </a>
+        <a
+          routerLink="/rental-request"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Request Peminjaman
+        </a>
+        <a
+          routerLink="/rental-contract"
+          (click)="closeMenus()"
+          class="block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Lihat Kontrak Saya
+        </a>
       }
 
-      <div class="border-t border-gray-200 pt-4 mt-4 px-3">
-        <p class="text-sm font-semibold text-gray-900">{{ currentUser?.name }}</p>
-        <p class="text-xs text-gray-500 mb-3">{{ getRoleName(userRole) }}</p>
-        <button type="button" (click)="logout()" class="block w-full text-left text-sm font-medium text-red-600">Logout</button>
+      <div class="mt-4 border-t border-gray-200 px-3 pt-4">
+        <p class="text-sm font-semibold text-gray-900">
+          {{ currentUser?.name }}
+        </p>
+        <p class="mb-3 text-xs text-gray-500">{{ getRoleName(userRole) }}</p>
+        <button
+          type="button"
+          (click)="logout()"
+          class="block w-full text-left text-sm font-medium text-red-600"
+        >
+          Logout
+        </button>
       </div>
     </div>
   }

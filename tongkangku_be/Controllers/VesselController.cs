@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using tongkangku_be.Dtos.VesselRequest;
+using tongkangku_be.Extensions;
 using tongkangku_be.Interfaces;
 using tongkangku_be.Shared;
 
@@ -73,6 +75,22 @@ namespace tongkangku_be.Controllers
             {
                 return StatusCode(500, ApiResponse<object>.ErrorResult("An unexpected error occurred.", "INTERNAL_SERVER_ERROR"));
             }
+        }
+
+        [Authorize]
+        [HttpGet("own")]
+        public async Task<ActionResult<ApiResponse<List<VesselResponseDto>>>> GetAllByOwner(
+            [FromQuery] string? search,
+            [FromQuery] int page = 1,
+            [FromQuery] int limit = 10)
+                {
+            var ownerId = User.GetUserId();
+
+            var result = await _vesselService.GetAllVesselByOwnerAsync(ownerId, search, limit, page);
+            return Ok(ApiResponse<List<VesselResponseDto>>.SuccessResult(
+                    result,
+                    "Vessel data retrieved successfully."
+                ));
         }
 
         [HttpGet("{id:guid}")]

@@ -34,13 +34,14 @@ namespace tongkangku_be.Services
             laytimeRecordRepository;
 
         private readonly ApplicationDbContext _context = context;
+        private const int HoursPerDay = 24;
 
         public async Task<RentalContractResponseDto> GetByIdAsync(Guid id)
         {
             var contract = await _rentalContractRepository.GetByIdAsync(
                 id,
                 "Owner",
-                "Cargos"
+                "ContractCargos"
             );
 
             return contract == null
@@ -49,11 +50,12 @@ namespace tongkangku_be.Services
                 : RentalContractMapper.ToDto(contract);
         }
 
-        public async Task<List<RentalContractResponseDto>> GetAllAsync()
+        public async Task<List<RentalContractResponseDto>> GetAllAsync(Guid ownerId)
         {
-            var contracts = await _rentalContractRepository.GetAllAsync(
+            var contracts = await _rentalContractRepository.GetAllByOwnerAsync(
+                ownerId,
                 "Owner",
-                "Cargos"
+                "ContractCargos"
             );
 
             if (contracts.Count == 0)
@@ -73,7 +75,7 @@ namespace tongkangku_be.Services
                 .GetByRentalRequestIdAsync(
                     rentalRequestId,
                     "Owner",
-                    "Cargos"
+                    "ContractCargos"
                 );
 
             return contract == null
@@ -189,14 +191,13 @@ namespace tongkangku_be.Services
             var startDate = rentalRequest.StartDate.Date;
             var endDate = startDate.AddDays(rentalRequest.PlanDay);
 
-            var contractNum =
-                await GenerateContractNumAsync(startDate);
-
-            var demurrageRate = offer.RatePerDay;
-            var despatchRate = offer.RatePerDay / 2;
+            var demurrageRate = offer.RatePerDay / HoursPerDay;
+            var despatchRate = demurrageRate / 2;
 
             return await _context.ExecuteInTransactionAsync(async () =>
             {
+                var contractNum = await GenerateContractNumAsync(startDate);
+
                 var contract = new RentalContract
                 {
                     Id = Guid.NewGuid(),
@@ -374,6 +375,14 @@ namespace tongkangku_be.Services
 
                 if (rentalRequest != null)
                 {
+                    // FIX: sebelumnya status RentalRequest tidak diubah sama sekali,
+                    // sehingga tetap "Contracted" padahal kontraknya sudah Cancelled.
+                    // Ini membuat request nyangkut di status yang tidak valid dan
+                    // tidak bisa diproses lebih lanjut (CreateOffer hanya menerima
+                    // status Pending/Offered).
+                    rentalRequest.Status =
+                        RentalRequestStatus.Cancelled;
+
                     rentalRequest.UpdateAt =
                         DateTime.UtcNow;
 

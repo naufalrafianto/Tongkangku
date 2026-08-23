@@ -12,15 +12,14 @@ namespace tongkangku_be.Repositories
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<List<RentalRequest>> GetAllByChartererIdAsync(Guid chartererId)
+        public async Task<List<RentalRequest>> GetAllByUserAsync(Guid userId)
         {
             return await _context.RentalRequests
-                .AsNoTracking()
-                .Include(x => x.Vessel)
-                .Include(x => x.Charterer)
-                .Where(x => x.ChartererId == chartererId)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
+            .Include(x => x.Vessel)
+            .Include(x => x.Charterer)
+            .Where(x => x.ChartererId == userId || x.Vessel.OwnerId == userId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
         }
 
         public async Task<bool> HasActiveRentalConflictAsync(
@@ -38,5 +37,7 @@ namespace tongkangku_be.Repositories
                     r.StartDate.AddDays(r.PlanDay) > startDate
                 );
         }
+
+
     }
 }

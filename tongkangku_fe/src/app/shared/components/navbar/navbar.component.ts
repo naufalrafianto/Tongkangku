@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
 
   isProfileOpen = false;
   isMobileMenuOpen = false;
-   userRole : any = 0;
+  userRole: any = 0;
   ngOnInit(): void {
     this.loadCurrentUser();
   }
@@ -34,7 +34,7 @@ export class NavbarComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           const user = this.authService.getRole();
-          console.log("data userorle",user);
+          console.log("data userorle", user);
           this.userRole = user;
           this.currentUser = res.data;
         }
@@ -43,6 +43,11 @@ export class NavbarComponent implements OnInit {
         this.logout();
       },
     });
+  }
+
+  // Helper untuk mengecek apakah user login adalah Owner (Role 2)
+  isOwner(): boolean {
+    return this.currentUser?.role === 2;
   }
 
   toggleProfile(): void {
@@ -57,17 +62,15 @@ export class NavbarComponent implements OnInit {
     this.isProfileOpen = false;
     this.isMobileMenuOpen = false;
   }
+
   getRoleName(role: number | undefined): string {
     switch (role) {
       case 0:
         return 'Admin';
-
       case 1:
-        return 'Owner';
-
-      case 2:
         return 'Charterer';
-
+      case 2:
+        return 'Owner';
       default:
         return 'User';
     }
@@ -75,7 +78,6 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     localStorage.removeItem('access_token');
-
     this.closeMenus();
 
     this.router.navigate(['/auth/login']);

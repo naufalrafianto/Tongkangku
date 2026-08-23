@@ -1,3 +1,4 @@
+import { CreateRentalOfferPayload, RentalOfferStatusResponse } from './../../shared/types/rental-offer/rental-offer.type';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../shared/types/api/response.type';
@@ -11,6 +12,16 @@ import { RentalOffer } from '../../shared/types/rental-offer/rental-offer.type';
 export class RentalOfferService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+
+  create(
+    payload: CreateRentalOfferPayload,
+  ): Observable<ApiResponse<RentalOfferStatusResponse>> {
+    return this.http.post<ApiResponse<RentalOfferStatusResponse>>(
+      `${this.apiUrl}/rental-offers`,
+      payload,
+    );
+  }
+
 
   getById(rentalId: string): Observable<ApiResponse<RentalOffer>> {
     return this.http.get<ApiResponse<RentalOffer>>(

@@ -8,7 +8,6 @@ export interface CargoPayload {
 
 export interface CreateRentalRequestPayload {
   vesselId: string;
-  charterType: number | null;
   loadingPortId: string | null;
   dischargingPortId: string | null;
   startDate: string | null;
@@ -16,7 +15,15 @@ export interface CreateRentalRequestPayload {
   notes: string;
   cargos: CargoPayload[];
 }
-
+export type Cargo = {
+  id: string;
+  cargoTypeId: string;
+  cargoTypeName: string;
+  cargoName: string;
+  quantity: number;
+  unit: string;
+  freightRatePerTon: number | null;
+};
 export interface RentalResponse {
   id: string;
   vesselId: string;
@@ -31,4 +38,5 @@ export interface RentalResponse {
   notes?: string | null;
   createdAt: string;
   updateAt: string;
+  cargos: Cargo[]
 }

@@ -36,6 +36,11 @@ namespace tongkangku_be.Services
         private readonly ApplicationDbContext _context =
             context;
 
+        private static DateTime NormalizeToUtc(DateTime value) =>
+            value.Kind == DateTimeKind.Utc
+                ? value
+                : DateTime.SpecifyKind(value, DateTimeKind.Utc);
+
         public async Task<RentalOfferResponseDto> GetByIdAsync(Guid id)
         {
             var offer =
@@ -81,12 +86,13 @@ namespace tongkangku_be.Services
                     $"Rental request with id '{dto.RentalRequestId}' was not found.");
             }
 
-            if (rentalRequest.Status != RentalRequestStatus.Offered)
+            if (rentalRequest.Status != RentalRequestStatus.Pending &&
+                rentalRequest.Status != RentalRequestStatus.Offered)
             {
                 throw new ValidationException(new
                 {
                     RentalRequestId =
-                        "Offers can only be submitted for rental requests with Offered status."
+                        "Offers can only be submitted for rental requests with Pending or Offered status."
                 });
             }
 
@@ -198,6 +204,8 @@ namespace tongkangku_be.Services
                 dto.BunkerAmount +
                 dto.OtherCharges;
 
+            var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
+
             return await _context.ExecuteInTransactionAsync(
                 async () =>
                 {
@@ -215,7 +223,7 @@ namespace tongkangku_be.Services
                             dto.RatePerDay,
 
                         ValidUntil =
-                            dto.ValidUntil,
+                            validUntilUtc,
 
                         HireAmount =
                             hireAmount,
@@ -245,6 +253,13 @@ namespace tongkangku_be.Services
                     await _rentalOfferRepository
                         .AddAsync(offer);
 
+                    if (rentalRequest.Status == RentalRequestStatus.Pending)
+                    {
+                        rentalRequest.Status = RentalRequestStatus.Offered;
+                        _rentalRepository.Update(rentalRequest);
+                        await _rentalRepository.SaveChangesAsync();
+                    }
+
                     await _rentalOfferRepository
                         .SaveChangesAsync();
 
@@ -268,9 +283,7 @@ namespace tongkangku_be.Services
                 .ToList();
         }
 
-        public async Task<RentalOfferStatusResponseDto> UpdateAsync(
-            Guid id,
-            UpdateRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> UpdateAsync(Guid id, UpdateRentalOfferDto dto)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(
@@ -338,6 +351,8 @@ namespace tongkangku_be.Services
                 dto.BunkerAmount +
                 dto.OtherCharges;
 
+            var validUntilUtc = NormalizeToUtc(dto.ValidUntil);
+
             return await _context.ExecuteInTransactionAsync(
                 async () =>
                 {
@@ -357,7 +372,7 @@ namespace tongkangku_be.Services
                         totalPrice;
 
                     offer.ValidUntil =
-                        dto.ValidUntil;
+                        validUntilUtc;
 
                     offer.Notes =
                         dto.Notes;
@@ -401,8 +416,7 @@ namespace tongkangku_be.Services
             await _rentalOfferRepository.SaveChangesAsync();
         }
 
-        public async Task<RentalOfferStatusResponseDto> WithdrawAsync(
-            Guid id)
+        public async Task<RentalOfferStatusResponseDto> WithdrawAsync(Guid id)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(id);
@@ -437,8 +451,7 @@ namespace tongkangku_be.Services
                 .ToStatusDto(offer);
         }
 
-        public async Task<RentalOfferStatusResponseDto> AcceptAsync(
-            Guid id)
+        public async Task<RentalOfferStatusResponseDto> AcceptAsync(Guid id)
         {
             var offer =
                 await _rentalOfferRepository.GetByIdAsync(id);
@@ -538,9 +551,7 @@ namespace tongkangku_be.Services
             );
         }
 
-        public async Task<RentalOfferStatusResponseDto> RejectAsync(
-            Guid id,
-            RejectRentalOfferDto dto)
+        public async Task<RentalOfferStatusResponseDto> RejectAsync(Guid id, RejectRentalOfferDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Reason))
             {

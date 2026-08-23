@@ -31,19 +31,18 @@ namespace tongkangku_be.Mappers
                 FinalSettlementAmount = contract.FinalSettlementAmount,
                 CompletedAt = contract.CompletedAt,
                 Status = contract.Status,
-
-                Cargos = contract.ContractCargos?.Select(c => new ContractCargoResponseDto
-                {
-                    Id = c.Id,
-                    CargoTypeId = c.CargoTypeId,
-                    CargoName = c.CargoName,
-                    Quantity = c.Quantity,
-                    Unit = c.Unit,
-                    FreightRatePerTon = c.FreightRatePerTon
-                }).ToList() ?? [],
-
                 CreatedAt = contract.CreatedAt,
-                UpdatedAt = contract.UpdatedAt
+                UpdatedAt = contract.UpdatedAt,
+                Cargos = contract.ContractCargos?
+                    .Select(c => new ContractCargoResponseDto
+                    {
+                        Id = c.Id,
+                        CargoTypeId = c.CargoTypeId,
+                        CargoName = c.CargoName,
+                        Quantity = (decimal)c.Quantity,
+                        Unit = c.Unit
+                    })
+                    .ToList() ?? new List<ContractCargoResponseDto>()
             };
         }
 

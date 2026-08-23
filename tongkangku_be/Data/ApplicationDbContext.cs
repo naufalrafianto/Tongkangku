@@ -293,6 +293,10 @@ namespace tongkangku_be.Data
 
         public async Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action)
         {
+            if (Database.CurrentTransaction != null)
+            {
+                return await action();
+            }
             var strategy = Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>
@@ -314,6 +318,11 @@ namespace tongkangku_be.Data
 
         public async Task ExecuteInTransactionAsync(Func<Task> action)
         {
+            if (Database.CurrentTransaction != null)
+            {
+                await action();
+                return;
+            }
             var strategy = Database.CreateExecutionStrategy();
 
             await strategy.ExecuteAsync(async () =>

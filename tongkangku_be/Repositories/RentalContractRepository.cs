@@ -21,11 +21,21 @@ namespace tongkangku_be.Repositories
 
             return await query.FirstOrDefaultAsync();
         }
-        public async Task<bool> ExistsForRentalRequestAsync(Guid rentalRequestId) =>
-          await _context.RentalContracts.AnyAsync(x => x.RentalRequestId == rentalRequestId);
+        public async Task<bool> ExistsForRentalRequestAsync(Guid rentalRequestId) => await _context.RentalContracts.AnyAsync(x => x.RentalRequestId == rentalRequestId);
+        public async Task<int> CountByDatePrefixAsync(string prefix) => await _context.RentalContracts.CountAsync(x => x.ContractNum.StartsWith(prefix));
+        public async Task<List<RentalContract>> GetAllByOwnerAsync(Guid ownerId, params string[] includes)
+        {
+            IQueryable<RentalContract> query = _context.RentalContracts;
 
-        public async Task<int> CountByDatePrefixAsync(string prefix) =>
-            await _context.RentalContracts.CountAsync(x => x.ContractNum.StartsWith(prefix));
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query
+                .Where(rc => rc.OwnerId == ownerId)
+                .ToListAsync();
+        }
 
     }
 }

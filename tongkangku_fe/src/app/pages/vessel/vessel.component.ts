@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VesselResponseDto, VesselStatus } from '../../shared/interface/InterfaceVessel';
-
 @Component({
   selector: 'app-vessel',
   standalone: true,
@@ -14,15 +13,14 @@ import { VesselResponseDto, VesselStatus } from '../../shared/interface/Interfac
 })
 export class VesselComponent implements OnInit {
   private vesselService = inject(VesselService);
-
   vesselData: VesselResponseDto[] = [];
   errorMessage = '';
   isLoading: boolean = true;
-  
-  vesselStatus = VesselStatus; // Menyambungkan enum ke template
+
+  vesselStatus = VesselStatus;
 
   page: number = 1;
-  limit: number = 6; 
+  limit: number = 6;
   search: string = '';
   hasMoreData: boolean = true;
 
@@ -48,7 +46,7 @@ export class VesselComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.page = 1; 
+    this.page = 1;
     this.fetchVessel();
   }
 
