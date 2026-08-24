@@ -1,0 +1,100 @@
+<div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-slate-900">Tambah Pelabuhan Baru</h1>
+    <p class="mt-1 text-sm text-slate-500">
+      Masukkan detail informasi pelabuhan baru ke dalam sistem.
+    </p>
+  </div>
+
+  @if (errorMessage) {
+    <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form
+    [formGroup]="portForm"
+    (ngSubmit)="onSubmit()"
+    class="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+  >
+    <!-- Nama Pelabuhan -->
+    <div>
+      <label for="name" class="block text-sm font-medium text-slate-700">
+        Nama Pelabuhan
+      </label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="Contoh: Pelabuhan Tanjung Priok"
+        class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        [ngClass]="{
+          'border-red-500 focus:border-red-500 focus:ring-red-500':
+            portForm.get('name')?.touched && portForm.get('name')?.invalid
+        }"
+      />
+      @if (
+        portForm.get('name')?.touched &&
+        portForm.get('name')?.hasError('minlength')
+      ) {
+        <p class="mt-1 text-xs text-red-600">Nama pelabuhan minimal 3 karakter.</p>
+      }
+    </div>
+
+    <!-- Kota / Kabupaten -->
+    <div>
+      <label for="city" class="block text-sm font-medium text-slate-700">
+        Kota / Kabupaten
+      </label>
+      <input
+        type="text"
+        id="city"
+        formControlName="city"
+        placeholder="Contoh: Jakarta Utara"
+        class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+      />
+    </div>
+
+    <!-- Provinsi (Wajib Diisi) -->
+    <div>
+      <label for="province" class="block text-sm font-medium text-slate-700">
+        Provinsi <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="province"
+        formControlName="province"
+        placeholder="Contoh: DKI Jakarta"
+        class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+        [ngClass]="{
+          'border-red-500 focus:border-red-500 focus:ring-red-500':
+            portForm.get('province')?.touched && portForm.get('province')?.invalid
+        }"
+      />
+      @if (portForm.get('province')?.touched) {
+        @if (portForm.get('province')?.hasError('required')) {
+          <p class="mt-1 text-xs text-red-600">Provinsi wajib diisi.</p>
+        } @else if (portForm.get('province')?.hasError('minlength')) {
+          <p class="mt-1 text-xs text-red-600">Nama provinsi minimal 3 karakter.</p>
+        }
+      }
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="flex items-center justify-end gap-3 pt-4">
+      <a
+        routerLink="/vessels/own"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+      >
+        Batal
+      </a>
+      <button
+        type="submit"
+        [disabled]="isSubmitting"
+        class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-50"
+      >
+        {{ isSubmitting ? 'Menyimpan...' : 'Simpan Pelabuhan' }}
+      </button>
+    </div>
+  </form>
+</div>

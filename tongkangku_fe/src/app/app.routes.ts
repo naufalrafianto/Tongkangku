@@ -15,6 +15,9 @@ import { CreateRentalOfferComponent } from './pages/rental-offers/create-rental-
 import { ownerGuard } from './core/guards/owner.guard';
 import { RentalRequestsComponent } from './pages/rental-requests/rental-requests.component';
 import { VesselOwnComponent } from './pages/vessel-own/vessel-own.component';
+import { CreatePortComponent } from './pages/create-port/create-port.component';
+import { createComponent } from '@angular/core';
+import { CreateVesselsCategoryComponent } from './pages/create-vessels-category/create-vessels-category.component';
 
 export const routes: Routes = [
   // =========================
@@ -52,6 +55,7 @@ export const routes: Routes = [
           {
             path: 'own',
             component: VesselOwnComponent,
+            canActivate: [ownerGuard],
           },
           {
             path: ':id/rental-request',
@@ -64,7 +68,20 @@ export const routes: Routes = [
           {
             path: 'create',
             component: VesselCreateComponent,
+            canActivate: [ownerGuard],
           },
+        
+          { 
+            path: 'create-port',
+            component: CreatePortComponent,
+            canActivate: [ownerGuard],
+          },
+          {
+            path: 'create-category-vessels',
+            component: CreateVesselsCategoryComponent,
+            canActivate: [ownerGuard],
+          }
+           
         ],
       },
       {
