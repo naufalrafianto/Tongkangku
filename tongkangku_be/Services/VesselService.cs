@@ -135,6 +135,7 @@ namespace tongkangku_be.Services
                 CapacityFeed = request.capacityFeed,
                 Year = request.year,
                 RatePerDay = request.ratePerDay,
+                DwtCapacity = request.dwtCapacity,
                 Status = (VesselStatus)request.status,
                 CreatedAt = DateTime.UtcNow,
             };
